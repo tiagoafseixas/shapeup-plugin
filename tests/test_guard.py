@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-GUARD = Path(__file__).resolve().parents[1] / "hooks" / "guard.py"
+GUARD = Path(__file__).resolve().parents[1] / "plugins" / "shapeup-team" / "hooks" / "guard.py"
 
 
 @pytest.fixture
@@ -14,7 +14,10 @@ def repo(tmp_path):
     root = tmp_path / "app"
     (root / "shape" / "pitches" / "win").mkdir(parents=True)
     (root / "shape" / "team.md").write_text(
-        "| Key | Value |\n|---|---|\n| Backend path | backend/ |\n| Frontend path | ../web (separate repo) |\n"
+        "## Roles\n\n| Role id | Agent | Stack pack | Path |\n|---|---|---|---|\n"
+        "| backend-drf | backend-dev | stack-django-drf | backend/ |\n"
+        "| frontend-react | frontend-dev | stack-react-mui | ../web (separate repo) |\n"
+        "| database | dba | stack-postgres-cloudsql | — |\n"
     )
     (root / "backend" / "deals" / "migrations").mkdir(parents=True)
     (root / "backend" / "deals" / "tests").mkdir()
@@ -41,17 +44,17 @@ def bash(repo, command, agent=""):
 
 
 def test_backend_dev_edits_backend_code_and_tech_doc(repo):
-    assert edit(repo, "shapeup-team:backend-drf", "backend/deals/services.py") == "allow"
-    assert edit(repo, "shapeup-team:backend-drf", "shape/pitches/win/tech.md") == "allow"
+    assert edit(repo, "shapeup-team:backend-dev", "backend/deals/services.py") == "allow"
+    assert edit(repo, "shapeup-team:backend-dev", "shape/pitches/win/tech.md") == "allow"
 
 
 def test_backend_dev_cannot_edit_pitch_or_frontend(repo):
-    assert edit(repo, "shapeup-team:backend-drf", "shape/pitches/win/pitch.md") == "deny"
-    assert edit(repo, "shapeup-team:backend-drf", "../web/src/page.js") == "deny"
+    assert edit(repo, "shapeup-team:backend-dev", "shape/pitches/win/pitch.md") == "deny"
+    assert edit(repo, "shapeup-team:backend-dev", "../web/src/page.js") == "deny"
 
 
 def test_frontend_dev_edits_the_separate_web_repo(repo):
-    assert edit(repo, "shapeup-team:frontend-react", "../web/src/page.js") == "allow"
+    assert edit(repo, "shapeup-team:frontend-dev", "../web/src/page.js") == "allow"
 
 
 def test_qa_edits_tests_and_board_only(repo):
@@ -78,7 +81,7 @@ def test_main_session_has_no_file_limits_except_env_files(repo):
 
 
 def test_pushing_the_cycle_branch_is_allowed(repo):
-    assert bash(repo, "git push origin cycle/2026-C1-win", "shapeup-team:backend-drf") == "allow"
+    assert bash(repo, "git push origin cycle/2026-C1-win", "shapeup-team:backend-dev") == "allow"
 
 
 def test_force_push_push_to_main_and_merge_are_blocked(repo):
@@ -102,7 +105,7 @@ def test_dba_backup_asks_the_cto(repo):
 
 
 def test_other_roles_cannot_take_backups(repo):
-    assert bash(repo, "gcloud sql backups create --instance=pg", "shapeup-team:backend-drf") == "deny"
+    assert bash(repo, "gcloud sql backups create --instance=pg", "shapeup-team:backend-dev") == "deny"
 
 
 def test_cloud_sql_writes_other_than_backups_are_blocked(repo):
@@ -124,3 +127,29 @@ def test_env_writes_and_production_settings_are_blocked(repo):
 
 def test_guard_is_inactive_outside_shape_repos(tmp_path):
     assert bash(tmp_path, "git push --force origin main") == "allow"
+
+
+def test_a_second_backend_role_gets_its_own_path(repo):
+    team = repo / "shape" / "team.md"
+    team.write_text(team.read_text() + "| backend-node | backend-dev | stack-node-nest | services/billing/ |\n")
+    assert edit(repo, "shapeup-team:backend-dev", "services/billing/src/invoice.ts") == "allow"
+    assert edit(repo, "shapeup-team:backend-dev", "backend/deals/services.py") == "allow"
+
+
+def test_older_team_files_with_path_keys_still_work(tmp_path):
+    root = tmp_path / "old"
+    (root / "shape").mkdir(parents=True)
+    (root / "shape" / "team.md").write_text("| Key | Value |\n|---|---|\n| Backend path | backend/ |\n")
+    assert edit(root, "shapeup-team:backend-dev", "backend/x.py") == "allow"
+    assert edit(root, "shapeup-team:backend-dev", "web/x.js") == "deny"
+
+
+def test_aws_snapshot_asks_and_other_rds_writes_are_blocked(repo):
+    assert bash(repo, "aws rds create-db-snapshot --db-instance-identifier app --db-snapshot-identifier pre-s4", "shapeup-team:dba") == "ask"
+    assert bash(repo, "aws rds describe-db-snapshots --db-instance-identifier app", "shapeup-team:dba") == "allow"
+    assert bash(repo, "aws rds modify-db-instance --db-instance-identifier app --apply-immediately", "shapeup-team:dba") == "deny"
+
+
+def test_literal_mysql_and_mongo_urls_to_remote_hosts_are_blocked(repo):
+    assert bash(repo, "mysql --url mysql://root:pw@10.0.0.9/app") == "deny"
+    assert bash(repo, "mongosh mongodb+srv://u:p@cluster0.example.net/app") == "deny"

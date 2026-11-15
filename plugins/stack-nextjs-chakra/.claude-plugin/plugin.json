@@ -1,0 +1,19 @@
+{
+  "name": "stack-nextjs-chakra",
+  "version": "0.1.0",
+  "description": "Stack pack for the shapeup-team plugin: Next.js App Router frontends with Chakra UI v3.",
+  "author": {
+    "name": "Tiago Seixas"
+  },
+  "license": "MIT",
+  "keywords": [
+    "shapeup-team",
+    "stack-pack",
+    "frontend",
+    "nextjs",
+    "chakra-ui",
+    "react"
+  ],
+  "repository": "https://github.com/tiagoafseixas/shapeup-plugin",
+  "homepage": "https://github.com/tiagoafseixas/shapeup-plugin"
+}

@@ -108,4 +108,4 @@ if __name__ == "__main__":
     from pathlib import Path
     root = Path(__file__).resolve().parents[1]
     (root / "docs" / "logo.svg").write_text(crew_svg())
-    (root / ".claude-plugin" / "icon.svg").write_text(icon_svg())
+    (root / "plugins" / "shapeup-team" / ".claude-plugin" / "icon.svg").write_text(icon_svg())

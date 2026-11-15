@@ -1,0 +1,18 @@
+{
+  "name": "stack-django-drf",
+  "version": "0.1.0",
+  "description": "Stack pack for the shapeup-team plugin: Django + Django REST Framework backends (thin views, fat models, service layer).",
+  "author": {
+    "name": "Tiago Seixas"
+  },
+  "license": "MIT",
+  "keywords": [
+    "shapeup-team",
+    "stack-pack",
+    "backend",
+    "django",
+    "drf"
+  ],
+  "repository": "https://github.com/tiagoafseixas/shapeup-plugin",
+  "homepage": "https://github.com/tiagoafseixas/shapeup-plugin"
+}
