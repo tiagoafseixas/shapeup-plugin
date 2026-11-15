@@ -4,7 +4,7 @@
 
 <h1 align="center">shapeup-team</h1>
 
-<p align="center"><em>Five agents. One hill. Nobody merges but you.</em></p>
+<p align="center"><em>Five agents. One hill. Work gets done.</em></p>
 
 ---
 
