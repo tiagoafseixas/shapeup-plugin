@@ -1,0 +1,126 @@
+"""Behaviour of the PreToolUse guard: what each role may edit and which commands are blocked or need the CTO."""
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+import pytest
+
+GUARD = Path(__file__).resolve().parents[1] / "hooks" / "guard.py"
+
+
+@pytest.fixture
+def repo(tmp_path):
+    root = tmp_path / "app"
+    (root / "shape" / "pitches" / "win").mkdir(parents=True)
+    (root / "shape" / "team.md").write_text(
+        "| Key | Value |\n|---|---|\n| Backend path | backend/ |\n| Frontend path | ../web (separate repo) |\n"
+    )
+    (root / "backend" / "deals" / "migrations").mkdir(parents=True)
+    (root / "backend" / "deals" / "tests").mkdir()
+    (tmp_path / "web" / "src").mkdir(parents=True)
+    return root
+
+
+def run(repo, tool, tool_input, agent=""):
+    event = {"tool_name": tool, "agent_type": agent, "cwd": str(repo), "tool_input": tool_input}
+    result = subprocess.run([sys.executable, str(GUARD)], input=json.dumps(event), capture_output=True, text=True)
+    if result.returncode == 2:
+        return "deny"
+    if '"ask"' in result.stdout:
+        return "ask"
+    return "allow"
+
+
+def edit(repo, agent, relpath):
+    return run(repo, "Edit", {"file_path": str((repo / relpath).resolve())}, agent)
+
+
+def bash(repo, command, agent=""):
+    return run(repo, "Bash", {"command": command}, agent)
+
+
+def test_backend_dev_edits_backend_code_and_tech_doc(repo):
+    assert edit(repo, "shapeup-team:backend-drf", "backend/deals/services.py") == "allow"
+    assert edit(repo, "shapeup-team:backend-drf", "shape/pitches/win/tech.md") == "allow"
+
+
+def test_backend_dev_cannot_edit_pitch_or_frontend(repo):
+    assert edit(repo, "shapeup-team:backend-drf", "shape/pitches/win/pitch.md") == "deny"
+    assert edit(repo, "shapeup-team:backend-drf", "../web/src/page.js") == "deny"
+
+
+def test_frontend_dev_edits_the_separate_web_repo(repo):
+    assert edit(repo, "shapeup-team:frontend-react", "../web/src/page.js") == "allow"
+
+
+def test_qa_edits_tests_and_board_only(repo):
+    assert edit(repo, "shapeup-team:qa-engineer", "backend/deals/tests/test_win.py") == "allow"
+    assert edit(repo, "shapeup-team:qa-engineer", "shape/pitches/win/board.md") == "allow"
+    assert edit(repo, "shapeup-team:qa-engineer", "backend/deals/services.py") == "deny"
+
+
+def test_dba_edits_migrations_and_runbook_only(repo):
+    assert edit(repo, "shapeup-team:dba", "backend/deals/migrations/0008_x.py") == "allow"
+    assert edit(repo, "shapeup-team:dba", "shape/pitches/win/runbook.md") == "allow"
+    assert edit(repo, "shapeup-team:dba", "backend/deals/models.py") == "deny"
+
+
+def test_po_edits_shape_docs_but_not_team_config_or_code(repo):
+    assert edit(repo, "shapeup-team:product-owner", "shape/pitches/win/pitch.md") == "allow"
+    assert edit(repo, "shapeup-team:product-owner", "shape/team.md") == "deny"
+    assert edit(repo, "shapeup-team:product-owner", "backend/deals/models.py") == "deny"
+
+
+def test_main_session_has_no_file_limits_except_env_files(repo):
+    assert edit(repo, "", "backend/deals/models.py") == "allow"
+    assert edit(repo, "", "backend/.env") == "deny"
+
+
+def test_pushing_the_cycle_branch_is_allowed(repo):
+    assert bash(repo, "git push origin cycle/2026-C1-win", "shapeup-team:backend-drf") == "allow"
+
+
+def test_force_push_push_to_main_and_merge_are_blocked(repo):
+    assert bash(repo, "git push --force origin cycle/2026-C1-win") == "deny"
+    assert bash(repo, "git push origin HEAD:main") == "deny"
+    assert bash(repo, "git merge main") == "deny"
+    assert bash(repo, "gh pr merge 412") == "deny"
+
+
+def test_read_only_git_commands_pass(repo):
+    assert bash(repo, "git merge-base main HEAD") == "allow"
+
+
+def test_deploys_are_blocked(repo):
+    assert bash(repo, "gcloud app deploy app_prd.yaml") == "deny"
+    assert bash(repo, "./deploy.sh prd") == "deny"
+
+
+def test_dba_backup_asks_the_cto(repo):
+    assert bash(repo, "gcloud sql backups create --instance=pg", "shapeup-team:dba") == "ask"
+
+
+def test_other_roles_cannot_take_backups(repo):
+    assert bash(repo, "gcloud sql backups create --instance=pg", "shapeup-team:backend-drf") == "deny"
+
+
+def test_cloud_sql_writes_other_than_backups_are_blocked(repo):
+    assert bash(repo, "gcloud sql instances patch pg --tier=db-custom-4", "shapeup-team:dba") == "deny"
+    assert bash(repo, "gcloud sql backups list --instance=pg", "shapeup-team:dba") == "allow"
+
+
+def test_only_the_read_only_database_url_is_usable(repo):
+    assert bash(repo, 'psql "$READONLY_DATABASE_URL" -c "select 1"') == "allow"
+    assert bash(repo, 'psql "$DATABASE_URL" -c "select 1"') == "deny"
+    assert bash(repo, "psql postgres://admin:pw@10.0.0.5:5432/app") == "deny"
+    assert bash(repo, "psql postgres://u:p@localhost:5432/test") == "allow"
+
+
+def test_env_writes_and_production_settings_are_blocked(repo):
+    assert bash(repo, "echo SECRET=1 >> backend/.env") == "deny"
+    assert bash(repo, "python manage.py migrate --settings=config.settings_prod") == "deny"
+
+
+def test_guard_is_inactive_outside_shape_repos(tmp_path):
+    assert bash(tmp_path, "git push --force origin main") == "allow"

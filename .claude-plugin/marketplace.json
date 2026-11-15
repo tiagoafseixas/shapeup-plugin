@@ -1,0 +1,12 @@
+{
+  "name": "shapeup",
+  "owner": { "name": "Tiago Seixas" },
+  "plugins": [
+    {
+      "name": "shapeup-team",
+      "source": "./",
+      "description": "Shape Up product team of agents: PO, backend-drf, frontend-react, QA and DBA, with git and production guardrails enforced by a hook.",
+      "version": "0.1.0"
+    }
+  ]
+}
