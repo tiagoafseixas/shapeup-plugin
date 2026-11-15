@@ -18,7 +18,7 @@
 | Local DB | <docker compose up -d db> |
 | Versions | <Python 3.x · Django x.y · DRF x.y · Next.js x · React x · Chakra UI x · Postgres x on Cloud SQL (edition)> |
 | Prod DB instance | <project:region:instance> |
-| Read-only DB access | <user agent_ro on <replica or primary>; the CTO sets READONLY_DATABASE_URL in the session on request> |
+| Read-only DB access | <user agent_ro on <replica or primary>; the user sets READONLY_DATABASE_URL in the session on request> |
 | Budget Small batch | 8 rounds |
 | Budget Big batch | 20 rounds |
 | Ponytail level | full |

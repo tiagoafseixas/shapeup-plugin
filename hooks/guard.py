@@ -93,7 +93,7 @@ def check_file(event, role):
     if repo is None and role is None:
         return
     if name.startswith(".env"):
-        deny(f"{name} is off-limits: secrets and env files are the CTO's (SKILL.md › Git rules).")
+        deny(f"{name} is off-limits: secrets and env files are the user's (SKILL.md › Git rules).")
     if role is None or repo is None:
         return
 
@@ -129,16 +129,16 @@ def check_file(event, role):
 GIT_DENY = [
     (r"\bgit\s+push\b[^;&|]*(\s--force\b|\s-f\b|\s--force-with-lease\b|\s\+\S)", "force-push is never allowed"),
     (r"\bgit\s+push\b[^;&|]*\s(\S+:)?(refs/heads/)?(main|master|develop|production|prod)\b(?!-)", "push to the base branch is never allowed"),
-    (r"\bgit\s+(merge|rebase)(?![-\w])(?![^;&|]*--(abort|continue|quit))", "merge and rebase are the CTO's"),
-    (r"\bgh\s+pr\s+merge\b", "only the CTO merges"),
+    (r"\bgit\s+(merge|rebase)(?![-\w])(?![^;&|]*--(abort|continue|quit))", "merge and rebase are the user's"),
+    (r"\bgh\s+pr\s+merge\b", "only the user merges"),
     (r"\bgit\s+commit\b[^;&|]*--no-verify", "commits keep their hooks (--no-verify)"),
 ]
 DEPLOY_DENY = [
-    (r"\bgcloud\s+(app|run|functions)\s+(deploy|services\s+update|update)\b", "deploys are the CTO's"),
-    (r"\bgcloud\s+builds\s+submit\b", "deploys are the CTO's"),
-    (r"(^|[\s/;&|])deploy\.sh\b", "deploys are the CTO's"),
-    (r"\bterraform\s+(apply|destroy|import)\b", "infrastructure changes are the CTO's"),
-    (r"\bkubectl\s+(apply|delete|edit|patch|scale|rollout)\b", "infrastructure changes are the CTO's"),
+    (r"\bgcloud\s+(app|run|functions)\s+(deploy|services\s+update|update)\b", "deploys are the user's"),
+    (r"\bgcloud\s+builds\s+submit\b", "deploys are the user's"),
+    (r"(^|[\s/;&|])deploy\.sh\b", "deploys are the user's"),
+    (r"\bterraform\s+(apply|destroy|import)\b", "infrastructure changes are the user's"),
+    (r"\bkubectl\s+(apply|delete|edit|patch|scale|rollout)\b", "infrastructure changes are the user's"),
 ]
 SQL_READ = r"\bgcloud\s+sql\s+(backups\s+(list|describe)|instances\s+(list|describe)|operations\s+(list|describe|wait)|databases\s+(list|describe)|users\s+list|flags\s+list|tiers\s+list)\b"
 
@@ -154,7 +154,7 @@ def check_bash(event, role):
             deny(f"{reason}. Write it as a HUMAN row or a runbook step.")
 
     if re.search(r"(>{1,2}|\btee\b[^|;&]*|\bsed\s+-i[^;&|]*|\bcp\b[^;&|]*|\bmv\b[^;&|]*)\s*\S*\.env\b", cmd):
-        deny("env files are the CTO's; never write credentials.")
+        deny("env files are the user's; never write credentials.")
 
     if re.search(r"\bgcloud\s+sql\b", cmd):
         if re.search(r"\bgcloud\s+sql\s+backups\s+create\b", cmd):
@@ -175,7 +175,7 @@ def check_bash(event, role):
             deny(f"connection string to {host}: use READONLY_DATABASE_URL from the environment, never a literal URL.")
 
     if re.search(r"(--settings[= ]\S*(prod|prd|production)|DJANGO_SETTINGS_MODULE=\S*(prod|prd|production))", cmd, re.I):
-        deny("Django commands against production settings are the CTO's (runbook step).")
+        deny("Django commands against production settings are the user's (runbook step).")
 
 
 def main():

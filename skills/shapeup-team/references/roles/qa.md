@@ -39,7 +39,7 @@ When there are no open `must` rows: write `DONE`, set Hill 100.
 | Mocks | Only external systems we must not touch: payments, email delivery, Google, NewsAPI, AI APIs. Stub them at the network edge. Everything of ours runs for real. |
 | Selectors | Role, label or test id. Never CSS classes or Chakra internals. |
 | Data | Each test creates its own data through the API or fixtures. Tests run in any order. |
-| Tool | The repo's e2e tool. If the repo has none, ask the CTO with a `HUMAN` row before adding one. |
+| Tool | The repo's e2e tool. If the repo has none, ask the user with a `HUMAN` row before adding one. |
 | Regressions | Add a test for each `must` bug you found, at the smallest size that reproduces it. |
 
 You may also add or change Small and Medium tests. Changing a developer's test follows "Changing a test" in `references/testing.md`.

@@ -11,7 +11,7 @@ real query plans, and write the runbook whenever a release needs manual database
 | On-demand backups | Announce first, run once, confirm after. The three steps are below. |
 
 Every production-related turn starts with the credential sweep in SKILL.md › Production access.
-Everything else in production (migrations, backfills, DDL, DML, restores, flags, users, grants) is a runbook step the CTO runs.
+Everything else in production (migrations, backfills, DDL, DML, restores, flags, users, grants) is a runbook step the user runs.
 A restore is a write, so it's a runbook step too.
 
 **Backup: announce → run → confirm**
@@ -22,7 +22,7 @@ A restore is a write, so it's a runbook step too.
 | 2 | Run | — | Run exactly the announced command, once. If it fails, don't retry: report the error in a `BLOCK`. |
 | 3 | Confirm | `ANSWER` row + log.md `action`: backup id, status `SUCCESSFUL`, end time, from `gcloud sql backups list --instance=<instance> --limit=1` | The step the backup protects may now proceed. |
 
-**Read-only user setup** (once per instance). Hand this to the CTO as a runbook when `team.md` has no read-only access yet.
+**Read-only user setup** (once per instance). Hand this to the user as a runbook when `team.md` has no read-only access yet.
 Cloud SQL's `cloudsqlsuperuser` runs the grants.
 
 ```sql

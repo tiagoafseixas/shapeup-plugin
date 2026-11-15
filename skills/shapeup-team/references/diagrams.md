@@ -13,7 +13,7 @@ the code doesn't answer at a glance.
 | Sequence | `sequenceDiagram` | A use case crosses 3+ participants (UI → API → service → DB → task/external) | backend-drf (frontend-react for UI-only flows) | tech.md · Flows |
 | Activity | `flowchart TD` (Mermaid has no activity type) | A process has branches, loops or retries: backfill, import, job | Owner of the process | tech.md · Processes |
 | State | `stateDiagram-v2` | An entity has a lifecycle with rules about which transitions are allowed | backend-drf | tech.md · Processes |
-| Wireframe | ASCII in a ` ```text ` block | The pitch adds a screen or changes a screen's layout | PO + CTO | pitch.md · Wireframes |
+| Wireframe | ASCII in a ` ```text ` block | The pitch adds a screen or changes a screen's layout | PO + user | pitch.md · Wireframes |
 
 ## Rules
 

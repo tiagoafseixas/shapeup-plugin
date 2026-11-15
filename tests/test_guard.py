@@ -1,4 +1,4 @@
-"""Behaviour of the PreToolUse guard: what each role may edit and which commands are blocked or need the CTO."""
+"""Behaviour of the PreToolUse guard: what each role may edit and which commands are blocked or need the user."""
 import json
 import subprocess
 import sys

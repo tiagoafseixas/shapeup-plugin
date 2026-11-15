@@ -10,7 +10,7 @@ All text follows `writing-style.md`.
 
 - `#`: next integer. Never renumber. Refer to other rows as `re #12`.
 - `Rnd`: the current round (0 during kickoff).
-- `From` / `To`: `PO`, `backend-drf`, `frontend-react`, `QA`, `DBA`, `Conductor`, `CTO`, `ALL`.
+- `From` / `To`: `PO`, `backend-drf`, `frontend-react`, `QA`, `DBA`, `Conductor`, `user`, `ALL`.
 - `Message`: ≤3 sentences, self-contained. A reader must understand it without opening another file: name the scope (`S2`),
   the file or endpoint, and what you need. HUMAN rows add `Options: A) … B) … Rec: A. Waiting: <what>.`
 - `Status`: `NOTE`, `ANSWER`, `DECIDE` and `DONE` rows are created `done`. `ASK`, `HANDOFF`, `BLOCK`, `FLAG` and `HUMAN` start `open`,
@@ -27,7 +27,7 @@ All text follows `writing-style.md`.
 | `BLOCK` | You cannot continue any scope without this | Handle it first |
 | `FLAG` | Stall, scope creep, budget risk, or something outside the pitch | PO decides: cut, split, ignore, or `HUMAN` |
 | `DECIDE` | You decided something others must know. Also append it to log.md as `decision`. | — |
-| `HUMAN` | Only the CTO can decide: the pitch's boundaries, appetite, money, security exceptions, prod ops, merges. Also: requests for read-only DB access, and every DBA backup announcement. | Conductor batches it to the CTO; the CTO's answer goes to log.md. A backup announcement is the one HUMAN row sent immediately, not batched. |
+| `HUMAN` | Only the user can decide: the pitch's boundaries, appetite, money, security exceptions, prod ops, merges. Also: requests for read-only DB access, and every DBA backup announcement. | Conductor batches it to the user; the user's answer goes to log.md. A backup announcement is the one HUMAN row sent immediately, not batched. |
 | `DONE` | A scope passed QA (QA writes it) | — |
 
 ## Handoff contracts
@@ -42,7 +42,7 @@ A HANDOFF row without its contract is invalid, and the Conductor sends it back.
 | Dev → QA | Scope, what changed (≤2 sentences), how to run it locally, commands already green |
 | QA → Dev | One QA table row per finding: severity, case, expected vs actual |
 | PO → anyone | The decision, and what is now cut or kept |
-| anyone → CTO | The question, options A/B(/C), a recommendation, and what waits on it |
+| anyone → user | The question, options A/B(/C), a recommendation, and what waits on it |
 
 ## Hill chart
 

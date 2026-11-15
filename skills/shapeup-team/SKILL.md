@@ -12,10 +12,10 @@ product or technical calls for a role. The process is fixed. How each role solve
 
 | Who | Kind | Mandate | Instructions | May edit |
 |---|---|---|---|---|
-| CTO | human | Shapes pitches with the PO, answers HUMAN rows, merges PRs | — | anything |
+| User | human | Shapes pitches with the PO, answers HUMAN rows, merges PRs | — | anything |
 | Founders | humans | Betting table: decide what gets built next | — | — |
 | Conductor | this session | Runs phases, spawns roles, routes Log rows, enforces gates and git rules, logs phase changes | this file | board header, log.md, scaffolding |
-| PO | agent | Shapes with the CTO; during the build answers ASKs, hammers scope, guards no-gos | `references/roles/po.md` | pitch.md, log.md, board rows |
+| PO | agent | Shapes with the user; during the build answers ASKs, hammers scope, guards no-gos | `references/roles/po.md` | pitch.md, log.md, board rows |
 | backend-drf | agent | Django/DRF: models, services, APIs, migrations, Small and Medium tests written first; tech.md Classes, Flows, API | `references/roles/backend-drf.md` | backend code, tech.md, board rows |
 | frontend-react | agent | Next.js App Router + Chakra UI v3: screens, components, Small and Medium tests written first; UI flows in tech.md when needed | `references/roles/frontend-react.md` | frontend code, tech.md, board rows |
 | QA | agent | Writes "Done when" checks, gates each scope and the ship, owns Large (end-to-end) tests | `references/roles/qa.md` | tests, board rows |
@@ -26,9 +26,9 @@ Developer roles are named `<layer>-<stack>`. To add a stack (e.g. `backend-node`
 ## Plugin
 
 Installed as the shapeup-team plugin, the team adds commands `/shape`, `/kickoff`, `/round` and `/gate`, one agent per role
-(spawn by role name; the CTO can also call a role directly), and a hook that blocks what the Git rules and Production access
+(spawn by role name; the user can also call a role directly), and a hook that blocks what the Git rules and Production access
 tables forbid: file edits outside a role's area, force-push, merge, push to the base branch, deploys, `gcloud sql` writes,
-non-read-only DB URLs and `.env` writes. A production backup asks the CTO before it runs.
+non-read-only DB URLs and `.env` writes. A production backup asks the user before it runs.
 
 ## Fixed vs free
 
@@ -69,8 +69,8 @@ diagram captions, filler phrases). Diagram and wireframe rules: `references/diag
 
 | # | Phase | Who | Output | Exit gate (`references/gates.md`) |
 |---|---|---|---|---|
-| 0 | Setup (once per repo) | Conductor + CTO | `shape/team.md` filled | Setup gate |
-| 1 | Shape | CTO + PO (you take the PO role) | pitch.md `ready`, log.md | Ready gate |
+| 0 | Setup (once per repo) | Conductor + user | `shape/team.md` filled | Setup gate |
+| 1 | Shape | User + PO (you take the PO role) | pitch.md `ready`, log.md | Ready gate |
 | 2 | Bet | Founders | Betting pack; pitch status `bet` + cycle id | Founders' decision |
 | 3 | Kickoff | Conductor → all roles | Branch, draft PR, board with scopes, tech.md | Kickoff gate |
 | 4 | Build | Roles, in rounds | Scopes move over the hill to done | Scope gate, per scope |
@@ -86,15 +86,15 @@ Append with `scaffold.py log <repo> <slug> --by <who> --kind <kind> --entry "<wh
 
 | Kind | Written by | When |
 |---|---|---|
-| `decision` | whoever decides (PO, CTO, a role) | Every shaping call, every `DECIDE` row, every HUMAN answer |
+| `decision` | whoever decides (PO, user, a role) | Every shaping call, every `DECIDE` row, every HUMAN answer |
 | `cut` | PO | Every scope or `~` item cut |
 | `phase` | Conductor | Each phase change, the bet, status changes, budget triggers |
 | `gate` | whoever runs the gate | Each gate result: pass, or fail with the failing rows |
-| `action` | Conductor | Branch created, PR opened or marked ready, runbook handed over, merge reported by the CTO |
+| `action` | Conductor | Branch created, PR opened or marked ready, runbook handed over, merge reported by the user |
 
 The board's Log is the conversation. log.md is the record. A decision lives on the board as a `DECIDE` row and in log.md as one line.
 
-## Phase 1: Shape (interactive with the CTO)
+## Phase 1: Shape (interactive with the user)
 
 Read `references/roles/po.md` and act as the PO yourself. Shaping is a conversation, so don't spawn it out.
 `scaffold.py pitch` creates `pitch.md` and `log.md`. Challenge, then write. Log each shaping decision.
@@ -102,7 +102,7 @@ When a rabbit hole is technical, spawn backend-drf, frontend-react or DBA for a 
 Risks that survive become Rabbit holes rows; log the check and its findings in log.md. The pitch has no tech-check section. Several checks can run in parallel. Mark the pitch `ready` only after the Ready gate passes.
 
 For the betting table, the PO builds `shape/betting/<date>.md` from every `ready` pitch. Never place bets.
-When the CTO reports the founders' bets, set each chosen pitch's status to `bet` and log it (`phase`).
+When the user reports the founders' bets, set each chosen pitch's status to `bet` and log it (`phase`).
 Pitches that weren't chosen stay `ready`. They are not queued, and can go to a later betting table.
 
 ## Phase 3: Kickoff
@@ -132,11 +132,11 @@ A **round** is one pass of this loop:
    for every DECIDE. Run `scaffold.py lint <repo> <slug>`: it checks the writing limits. If something is missing or lint fails,
    send the role back once with the gap. If it's still missing, write a `FLAG` row and move on.
 4. End of round: increment `Rounds` in the board header, push the branch, apply the breaker, then send all open
-   `HUMAN` rows to the CTO in one message (question, options, recommendation). Other scopes keep moving while HUMAN rows wait.
-   Exception: a DBA backup announcement goes to the CTO at once. After his explicit go, the DBA gets a turn to run it and confirm it.
-   A HUMAN row that asks the CTO to **run** something (SQL, `gcloud`, a command against prod) is never forwarded on trust:
+   `HUMAN` rows to the user in one message (question, options, recommendation). Other scopes keep moving while HUMAN rows wait.
+   Exception: a DBA backup announcement goes to the user at once. After his explicit go, the DBA gets a turn to run it and confirm it.
+   A HUMAN row that asks the user to **run** something (SQL, `gcloud`, a command against prod) is never forwarded on trust:
    read it against the role's rules (e.g. `dba.md`). If anything looks wrong, hold it and send it back to its author as a
-   `BLOCK` with the defect named; it goes to the CTO next round. The CTO runs exactly what he receives.
+   `BLOCK` with the defect named; it goes to the user next round. The user runs exactly what he receives.
 
 **Routing** (open row → next turn):
 
@@ -148,7 +148,7 @@ A **round** is one pass of this loop:
 | `HANDOFF` dev→QA (scope ready) | QA |
 | QA finding, severity `must` | the scope's owner |
 | `FLAG` (stall, scope creep, budget) | PO |
-| `HUMAN` | CTO, batched at the end of the round |
+| `HUMAN` | the user, batched at the end of the round |
 
 **Turn priority** (inside one role's turn): `BLOCK` rows → QA `must` findings → rows that unblock another role
 (an ASK addressed to it, a HANDOFF to pick up) → its next scope. Finishing beats starting: a scope near the bottom of the
@@ -170,7 +170,7 @@ recalibrate the budgets from those numbers, never from human estimates.
 
 QA runs the Ship gate. DBA writes `runbook.md` (`scaffold.py add <repo> <slug> runbook`) if the release needs manual ops:
 a large backfill, a flag change, an ordered deploy. The Conductor updates the PR body from the board, runs `gh pr ready`, logs the
-`action`, and tells the CTO in ≤5 lines: what shipped, what was cut, what the runbook says.
+`action`, and tells the user in ≤5 lines: what shipped, what was cut, what the runbook says.
 
 ## Phase 6: Cool-down
 
@@ -184,7 +184,7 @@ Match the model to the judgment a turn needs, not to the role's seniority. Pass 
 
 | Work | Model | Why |
 |---|---|---|
-| Shaping with the CTO (PO in the main session) | the session's model: run shaping sessions on **Opus** | Pushback, rabbit-hole hunting and appetite calls are the highest-leverage judgment in the process |
+| Shaping with the user (PO in the main session) | the session's model: run shaping sessions on **Opus** | Pushback, rabbit-hole hunting and appetite calls are the highest-leverage judgment in the process |
 | Tech check during shaping (backend-drf/frontend-react/DBA, read-only) | **Sonnet** | Reads code and finds risks; no writes |
 | Ideas: betting pack, cool-down ideas, alternatives | **Sonnet** | Breadth over depth; the humans decide |
 | PO during the build (answers, hammering) | **Sonnet** | Bounded by the pitch and appetite already set |
@@ -232,8 +232,8 @@ Without the plugin, prepend: `You are the <ROLE> of a Shape Up team. Read first:
 | Commit `shape/pitches/<slug>/*` on the cycle branch | Deploy |
 | Run migrations against the local or test DB | Touch production beyond the "Production access" table below |
 
-Only the CTO merges. If an action isn't in the "Allowed" column, write a `HUMAN` row. Before kickoff there is no cycle branch:
-shaping files (pitch, log, betting pack, `team.md`, `ideas.md`) stay uncommitted in the working tree, and the CTO commits them to the base branch.
+Only the user merges. If an action isn't in the "Allowed" column, write a `HUMAN` row. Before kickoff there is no cycle branch:
+shaping files (pitch, log, betting pack, `team.md`, `ideas.md`) stay uncommitted in the working tree, and the user commits them to the base branch.
 
 ## Production access
 
@@ -241,14 +241,14 @@ Production (and staging) is off-limits except for the two rows below. Each row i
 
 | Who | May do | Only like this |
 |---|---|---|
-| Any role | Read-only queries | 1. Ask for a read-only DB user with a `HUMAN` row: the query, why it's needed, and what waits on it. 2. Use the credentials the CTO puts in the session environment (`READONLY_DATABASE_URL`); never write them to the repo, the board, log.md or a commit. 3. Before the first query, run `SELECT current_user, current_setting('transaction_read_only');`. It must return the read-only user and `on`, or stop and write a `BLOCK`. 4. Prefer a read replica, set `statement_timeout`, never `SELECT *` on a large table without `LIMIT`. |
-| DBA | On-demand backups, nothing else | 1. Before: a `HUMAN` row with the exact command, instance, reason, and expected duration (`gcloud sql backups create --instance=<instance> --description="<pitch>: before <step>"`). Wait for the CTO's explicit go. 2. Run exactly that command, once. 3. After: confirm the backup id and status (`gcloud sql backups list --instance=<instance> --limit=1`) in an `ANSWER` row and a log.md `action`. |
-| Everyone | Anything else: DDL, DML, migrations, backfills, restores, flags, config, deploys, user or grant changes | Never. Write it as a runbook step for the CTO. |
+| Any role | Read-only queries | 1. Ask for a read-only DB user with a `HUMAN` row: the query, why it's needed, and what waits on it. 2. Use the credentials the user puts in the session environment (`READONLY_DATABASE_URL`); never write them to the repo, the board, log.md or a commit. 3. Before the first query, run `SELECT current_user, current_setting('transaction_read_only');`. It must return the read-only user and `on`, or stop and write a `BLOCK`. 4. Prefer a read replica, set `statement_timeout`, never `SELECT *` on a large table without `LIMIT`. |
+| DBA | On-demand backups, nothing else | 1. Before: a `HUMAN` row with the exact command, instance, reason, and expected duration (`gcloud sql backups create --instance=<instance> --description="<pitch>: before <step>"`). Wait for the user's explicit go. 2. Run exactly that command, once. 3. After: confirm the backup id and status (`gcloud sql backups list --instance=<instance> --limit=1`) in an `ANSWER` row and a log.md `action`. |
+| Everyone | Anything else: DDL, DML, migrations, backfills, restores, flags, config, deploys, user or grant changes | Never. Write it as a runbook step for the user. |
 
 **Credential sweep.** Any turn that involves production starts with this command:
 `env | grep -iE 'DATABASE_URL|PGPASSWORD|PGUSER|DB_' ; grep -rlE 'postgres(ql)?://' --include='.env*' --include='*.py' --include='*.toml' --include='*.yaml' . 2>/dev/null`.
 Every hit other than `READONLY_DATABASE_URL` and local/test hosts (`localhost`, `127.0.0.1`, `db`) is treated as write-capable. The agent
-doesn't use it, even for reads, and writes a `BLOCK` to the CTO naming the variable or the file path, never the value. A secret committed to the repo gets the same `BLOCK`.
+doesn't use it, even for reads, and writes a `BLOCK` to the user naming the variable or the file path, never the value. A secret committed to the repo gets the same `BLOCK`.
 
 ## Rules for every role
 

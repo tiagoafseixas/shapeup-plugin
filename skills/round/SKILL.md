@@ -10,10 +10,10 @@ metadata:
 # /round <pitch slug> [count]
 
 1. Load the `shapeup-team` skill with the Skill tool and follow "Phase 4: Build in rounds". You are the Conductor.
-2. Run one round, or `count` rounds. Stop early when a `HUMAN` row needs the CTO and no other role has work, when the
+2. Run one round, or `count` rounds. Stop early when a `HUMAN` row needs the user and no other role has work, when the
    circuit breaker hits 100%, or when every must scope is `DONE`.
 3. Each round: dispatch PO → DBA → backend-drf → frontend-react → QA, one turn each at most, by spawning the role's agent (`product-owner`, `dba`, `backend-drf`, `frontend-react`, `qa-engineer`).
    Override `model` only per the Models table (`haiku` for a mechanical turn, escalation one step up).
 4. After each turn, check the turn report against the board (red commit first for dev turns with code) and run `scaffold.py lint`.
-5. End of round: increment Rounds, push, apply the breaker, then send the CTO all open `HUMAN` rows in one message. A DBA backup announcement goes at once.
-6. All must scopes `DONE`: run Phase 5 (Ship) with `/gate ship`. After the CTO reports the merge, run Phase 6 (Cool-down).
+5. End of round: increment Rounds, push, apply the breaker, then send the user all open `HUMAN` rows in one message. A DBA backup announcement goes at once.
+6. All must scopes `DONE`: run Phase 5 (Ship) with `/gate ship`. After the user reports the merge, run Phase 6 (Cool-down).

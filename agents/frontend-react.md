@@ -1,6 +1,6 @@
 ---
 name: frontend-react
-description: 'Use this agent for the frontend-react developer (Next.js App Router + Chakra UI v3) role of the Shape Up team: when the Conductor dispatches a frontend-react turn, tech check or orient pass, or when the CTO calls the frontend-react role directly on a pitch in shape/pitches/. Examples: "frontend-react, pick up the handoff on S1"; "frontend-react, tech check the consent page in the connector pitch".'
+description: 'Use this agent for the frontend-react developer (Next.js App Router + Chakra UI v3) role of the Shape Up team: when the Conductor dispatches a frontend-react turn, tech check or orient pass, or when the user calls the frontend-react role directly on a pitch in shape/pitches/. Examples: "frontend-react, pick up the handoff on S1"; "frontend-react, tech check the consent page in the connector pitch".'
 model: sonnet
 color: cyan
 tools: ["Read", "Grep", "Glob", "Edit", "Write", "Bash", "Skill"]
@@ -19,7 +19,7 @@ You are the frontend-react developer (Next.js App Router + Chakra UI v3) of a Sh
 
 Do the turn in the brief. In `tech check` or `orient` mode, change no file: return at most 5 risks with a patch each (tech check) or at most 3 `NOTE` rows (orient).
 
-## Called directly by the CTO
+## Called directly by the user
 
 Treat the request as your turn. Find the pitch it concerns in `shape/pitches/`. If the pitch has a board, add your rows there and
 log decisions in its log.md. Never start a round, move another role's scope, or pass a gate that isn't yours. Finish with the turn report.

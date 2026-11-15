@@ -3,7 +3,7 @@
 A gate passes when every row is ✓. Whoever runs the gate appends the result to the pitch's `log.md`
 (kind `gate`): `<Gate name>: pass`, or `<Gate name>: fail on rows 2, 5: <one clause each>`.
 
-## Setup gate (Conductor + CTO, once per repo)
+## Setup gate (Conductor + user, once per repo)
 
 | # | Check | How |
 |---|---|---|
@@ -12,7 +12,7 @@ A gate passes when every row is ✓. Whoever runs the gate appends the result to
 | 3 | Ponytail plugin installed | `/plugin install ponytail@ponytail` if missing |
 | 4 | `gh auth status` is OK, and the remote is reachable | run it |
 | 5 | A local or test Postgres can run the migrations | `python manage.py migrate` against it |
-| 6 | A read-only DB user exists for prod (replica preferred), set up per `roles/dba.md`. The way the CTO hands its URL to a session is written in `team.md`. | `SELECT current_setting('transaction_read_only');` returns `on` as that user |
+| 6 | A read-only DB user exists for prod (replica preferred), set up per `roles/dba.md`. The way the user hands its URL to a session is written in `team.md`. | `SELECT current_setting('transaction_read_only');` returns `on` as that user |
 | 7 | No write-capable prod credentials reachable from agent sessions (env, `.env`, config files) | grep the repo and the session env |
 
 ## Ready gate (PO, before a pitch goes to the betting table)
@@ -28,7 +28,7 @@ A gate passes when every row is ✓. Whoever runs the gate appends the result to
 | 7 | Tech check logged in log.md whenever the pitch touches the schema, a new integration or a new library; its risks are in Rabbit holes |
 | 8 | Works when: 3–5 outcomes a user can observe |
 | 9 | ≤600 words outside code blocks (wireframes excluded). Passes the final check in `writing-style.md`. No task lists. |
-| 10 | log.md records the shaping decisions taken with the CTO |
+| 10 | log.md records the shaping decisions taken with the user |
 | 11 | `scaffold.py lint <repo> <slug>` is clean |
 | 12 | The pitch stands alone: no other pitch named, no justifications (they live in log.md) |
 

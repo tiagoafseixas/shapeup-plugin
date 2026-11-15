@@ -54,8 +54,8 @@ Needs `python3` on the PATH (the guard hook) and `gh` (branches and draft PRs). 
 
 | # | Phase | Who | Output | Command |
 |---|---|---|---|---|
-| 0 | Setup (once per repo) | Conductor + CTO | `shape/team.md` filled | `/gate setup` |
-| 1 | Shape | CTO + PO | `pitch.md` with status `ready`, `log.md` | `/shape` |
+| 0 | Setup (once per repo) | Conductor + user | `shape/team.md` filled | `/gate setup` |
+| 1 | Shape | User + PO | `pitch.md` with status `ready`, `log.md` | `/shape` |
 | 2 | Bet | Founders | Pitch status `bet` with a cycle id | — |
 | 3 | Kickoff | Conductor → all roles | Branch, draft PR, board with scopes, `tech.md` | `/kickoff` |
 | 4 | Build | Roles, in rounds | Scopes move over the hill to done | `/round` |
@@ -63,15 +63,15 @@ Needs `python3` on the PATH (the guard hook) and `gh` (branches and draft PRs). 
 | 6 | Cool-down | Conductor + PO | Retro; cut items in `shape/ideas.md` | `/round` (after the merge) |
 
 Appetite is a round budget, not a calendar: Small batch 8 rounds, Big batch 20 by default. At 75% the PO hammers scope; at 100%
-the build stops and the default is drop and re-shape. Only the CTO extends.
+the build stops and the default is drop and re-shape. Only the user extends.
 
 ## Commands
 
 | Command | Does |
 |---|---|
-| `/shape [idea or slug]` | Shapes a pitch with the CTO; role agents run read-only tech checks; Ready gate |
+| `/shape [idea or slug]` | Shapes a pitch with the user; role agents run read-only tech checks; Ready gate |
 | `/kickoff <slug> <cycle>` | Branch `cycle/<cycle>-<slug>`, draft PR, board, scope map, `tech.md`, Kickoff gate |
-| `/round <slug> [count]` | Runs build rounds (PO → DBA → backend-drf → frontend-react → QA), applies the circuit breaker, batches questions for the CTO |
+| `/round <slug> [count]` | Runs build rounds (PO → DBA → backend-drf → frontend-react → QA), applies the circuit breaker, batches questions for the user |
 | `/gate <setup / ready / kickoff / scope S<n> / ship> <slug>` | Runs one gate and logs the result |
 
 ## Roles
@@ -91,7 +91,7 @@ step up when a turn fails. Call a role directly by name: "DBA, review migration 
 
 The guard runs before every `Write`, `Edit` and `Bash` call in a repo with `shape/team.md`, and on every call made by a team agent.
 
-| Blocked | Asks the CTO first |
+| Blocked | Asks the user first |
 |---|---|
 | Edits outside the role's area (Roles table) | `gcloud sql backups create` (DBA only) |
 | `.env*` writes | `cloud-sql-proxy` |
@@ -100,8 +100,8 @@ The guard runs before every `Write`, `Edit` and `Bash` call in a repo with `shap
 | Every other `gcloud sql` write | |
 | Any `…DATABASE_URL` other than `READONLY_DATABASE_URL`, `PGPASSWORD=`, literal non-local `postgres://` URLs, production Django settings | |
 
-Production access is read-only queries through a read-only user the CTO provides, plus on-demand backups by the DBA. Everything
-else becomes a runbook step for the CTO. Only the CTO merges.
+Production access is read-only queries through a read-only user the user provides, plus on-demand backups by the DBA. Everything
+else becomes a runbook step for the user. Only the user merges.
 
 ## Standards the team follows
 
