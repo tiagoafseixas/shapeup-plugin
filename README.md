@@ -1,9 +1,44 @@
-# shapeup-plugin
+<p align="center">
+  <img src="docs/logo.svg" width="600" alt="Five round characters on a hill chart: frontend-react with a paintbrush and backend-drf with a gear climbing, the PO holding a flag at the top, QA with a magnifier and the DBA carrying a database coming down.">
+</p>
 
-A Shape Up product team of Claude agents: a Product Owner, a Django/DRF developer, a Next.js/Chakra UI developer, QA and a
-Postgres/Cloud SQL DBA. The main Claude session is the **Conductor**: it runs the phases, dispatches the roles and enforces the gates.
+<h1 align="center">shapeup-team</h1>
+
+<p align="center"><em>Five agents. One hill. Nobody merges but you.</em></p>
+
+---
+
+You have an idea. Everyone has an idea.
+
+The PO reads it, asks what people do today instead, and cuts it in half. Then cuts the half.
+What's left fits on one page and says, in writing, what it won't do.
+
+The founders bet on it. Or they don't, and it waits. Nothing carries over.
+
+Then the crew walks up the hill.
+
+**frontend-react** goes first, paintbrush in hand. Queries by role, never by CSS class. Has opinions about empty states.
+
+**backend-drf** follows with a gear. Thin views, fat models, a service for anything with a side effect. Writes the failing test first, every time, and commits it so you can check.
+
+**The PO** stands at the top holding the flag. Not to celebrate. To mark the line: past it, nothing new gets figured out. It only gets made.
+
+**QA** comes down the other side with a magnifier. Wrote "Done when" before anyone wrote code. Will not let you change a test to make it pass.
+
+**The DBA** carries the database like it's fragile, because it is. In production: backups. Only backups. And asks first.
+
+Somewhere below, the Conductor counts rounds. At 75% of the budget, the scope gets hammered. At 100%, the build stops.
+Nobody extends it but you.
+
+They don't do standups. They write one row on the board and get back to work.
+
+This plugin puts that crew inside Claude.
+
+---
+
+**What it is.** A Shape Up product team of Claude agents for a Django/DRF + Next.js/Chakra UI + Postgres/Cloud SQL product.
+The main Claude session is the **Conductor**: it runs the phases, dispatches the roles and enforces the gates.
 A hook blocks what the team must never do: work outside its area, rewrite git history, deploy, or write to production.
-
 The process is fixed. How each role solves its step is up to the role.
 
 ## Install
@@ -97,7 +132,8 @@ shape/
 
 | Path | Holds |
 |---|---|
-| `.claude-plugin/` | `plugin.json` and the `shapeup` marketplace |
+| `.claude-plugin/` | `plugin.json`, the `shapeup` marketplace and the icon |
+| `docs/` | Logo and the script that draws it (`python3 docs/make_logo.py` redraws the logo and the icon) |
 | `skills/shapeup-team/` | The Conductor's process: SKILL.md, role files, gates, standards, knowledge-base links, templates, `scaffold.py` |
 | `skills/{shape,kickoff,round,gate}/` | The four commands |
 | `agents/` | One agent per role |

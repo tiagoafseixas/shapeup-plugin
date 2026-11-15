@@ -1,6 +1,9 @@
 {
   "name": "shapeup",
-  "owner": { "name": "Tiago Seixas" },
+  "description": "Shape Up product team of Claude agents with git and production guardrails.",
+  "owner": {
+    "name": "Tiago Seixas"
+  },
   "plugins": [
     {
       "name": "shapeup-team",

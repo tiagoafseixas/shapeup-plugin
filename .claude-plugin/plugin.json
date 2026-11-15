@@ -15,5 +15,6 @@
     "tdd"
   ],
   "repository": "https://github.com/tiagoafseixas/shapeup-plugin",
-  "homepage": "https://github.com/tiagoafseixas/shapeup-plugin"
+  "homepage": "https://github.com/tiagoafseixas/shapeup-plugin",
+  "icon": "./.claude-plugin/icon.svg"
 }
