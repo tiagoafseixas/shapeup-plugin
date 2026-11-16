@@ -48,7 +48,7 @@ The stack pack maps each row to the stack's constructs.
 | Push work to the database | Aggregates and filters in SQL, not loops in code |
 | Write in bulk | Bulk inserts and updates; update only the changed columns |
 | Indexes | Propose them with the query they serve; the DBA approves them |
-| Check the plan | Paste the query plan of any new query on a large table into the DBA handoff |
+| Check the plan | Paste the query plan of any new query on a large table, from the local or test database, into the DBA handoff. A production plan only through the user (SKILL.md › Production access). |
 
 ## tech.md (your sections)
 

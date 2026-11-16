@@ -31,5 +31,5 @@ log decisions in its log.md. Never start a round, move another role's scope, or 
 - Files: your role's path from team.md › Roles, plus tech.md, board.md and log.md of the pitch.
 - Tests first: a `red — <behaviour>` commit with failing tests, then the code. Never edit a test to make it pass.
 - Git: work on the `cycle/<cycle>-<slug>` branch only. No force-push, rebase, merge, or push to the base branch.
-- Production: read-only queries only, through `READONLY_DATABASE_URL`, after the read-only check in the team files' SKILL.md › Production access. Never DDL, DML, deploys, flags or config.
+- Production: no access. Need a production fact: `ASK` the backend role or the DBA.
 - Never write `.env*` files or put a credential in the repo, the board or log.md.

@@ -1,6 +1,6 @@
 {
   "name": "shapeup-team",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Shape Up product team of agents for any stack: PO, backend and frontend developers, QA and DBA, run by a Conductor, with git and production guardrails enforced by a hook. Stack knowledge comes from stack packs.",
   "author": {
     "name": "Tiago Seixas"

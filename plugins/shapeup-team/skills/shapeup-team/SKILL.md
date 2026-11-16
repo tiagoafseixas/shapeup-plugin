@@ -39,7 +39,7 @@ No pack for a stack yet: run `/stack new <name>` before kickoff. Missing packs f
 Installed as the shapeup-team plugin, the team adds commands `/shape`, `/kickoff`, `/round`, `/gate` and `/stack`, one agent per role
 (spawn by role name; the user can also call a role directly), and a hook that blocks what the Git rules and Production access
 tables forbid: file edits outside a role's area, force-push, merge, push to the base branch, deploys, managed-database writes (`gcloud sql`, `aws rds`),
-non-read-only DB URLs and `.env` writes. A production backup asks the user before it runs.
+non-read-only DB URLs and `.env` writes. Any production connection or backup asks the user before it runs.
 
 ## Fixed vs free
 
@@ -248,16 +248,21 @@ shaping files (pitch, log, betting pack, `team.md`, `ideas.md`) stay uncommitted
 
 ## Production access
 
-Production (and staging) is off-limits except for the two rows below. Each row is the whole permission. Nothing is implied beyond it.
+Production (and staging) is off-limits. No agent connects to it on its own: not in setup, not in a gate, not to check a hunch.
+Each row below is the whole permission. Nothing is implied beyond it.
 
 | Who | May do | Only like this |
 |---|---|---|
-| Any role | Read-only queries | 1. Ask for a read-only DB user with a `HUMAN` row: the query, why it's needed, and what waits on it. 2. Use the credentials the user puts in the session environment (`READONLY_DATABASE_URL`); never write them to the repo, the board, log.md or a commit. 3. Before the first query, run the database pack's read-only check (Postgres: `SELECT current_user, current_setting('transaction_read_only');`). It must show the read-only user and read-only mode, or stop and write a `BLOCK`. 4. Prefer a read replica, set `statement_timeout`, never `SELECT *` on a large table without `LIMIT`. |
+| Backend role, DBA | Learn a production fact: table volumes, a query plan, statement statistics | 1. Read `team.md` › Table volumes first. 2. Not there: a `HUMAN` row with the fact needed, why, what waits on it, and three options: **(a)** the user states it, **(b)** the user runs a read-only query you attach and pastes the output, **(c)** the user lets you connect read-only for this one question. Recommend (a) or (b). 3. Connect only after the user explicitly picks (c): through `READONLY_DATABASE_URL` from the session environment, after the credential sweep and the database pack's read-only check; one question, then stop. The hook asks the user again before the connection runs. 4. Write the answer to `team.md` › Table volumes (with the date and "user" or "read-only query" as source), so nobody asks twice. |
 | DBA | On-demand backups, nothing else | 1. Before: a `HUMAN` row with the exact command, instance, reason, and expected duration (the database pack's backup command). Wait for the user's explicit go. 2. Run exactly that command, once. 3. After: confirm the backup id and status (the pack's confirm command) in an `ANSWER` row and a log.md `action`. |
+| PO, QA, frontend roles, Conductor | Nothing in production | Need a production fact: `ASK` the backend role or the DBA |
 | Everyone | Anything else: DDL, DML, migrations, backfills, restores, flags, config, deploys, user or grant changes | Never. Write it as a runbook step for the user. |
 
-**Credential sweep.** Any turn that involves production starts with this command:
-`env | grep -iE 'DATABASE_URL|PGPASSWORD|PGUSER|DB_' ; grep -rlE '(postgres(ql)?|mysql|mariadb|mongodb(\+srv)?)://' --include='.env*' --include='*.py' --include='*.toml' --include='*.yaml' . 2>/dev/null`.
+Credentials are never written to the repo, the board, log.md or a commit. A query you hand the user for option (b) is read-only and
+bounded (`LIMIT`, `statement_timeout`, a replica when there is one); the Conductor checks it before forwarding (Phase 4, step 4).
+
+**Credential sweep.** Only after the user picked option (c), before connecting:
+`env | grep -iE 'DATABASE_URL|PGPASSWORD|PGUSER|DB_' | cut -d= -f1 ; grep -rlE '(postgres(ql)?|mysql|mariadb|mongodb(\+srv)?)://' --include='.env*' --include='*.py' --include='*.toml' --include='*.yaml' . 2>/dev/null`.
 Every hit other than `READONLY_DATABASE_URL` and local/test hosts (`localhost`, `127.0.0.1`, `db`) is treated as write-capable. The agent
 doesn't use it, even for reads, and writes a `BLOCK` to the user naming the variable or the file path, never the value. A secret committed to the repo gets the same `BLOCK`.
 

@@ -110,11 +110,11 @@ def test_other_roles_cannot_take_backups(repo):
 
 def test_cloud_sql_writes_other_than_backups_are_blocked(repo):
     assert bash(repo, "gcloud sql instances patch pg --tier=db-custom-4", "shapeup-team:dba") == "deny"
-    assert bash(repo, "gcloud sql backups list --instance=pg", "shapeup-team:dba") == "allow"
+    assert bash(repo, "gcloud sql backups list --instance=pg", "shapeup-team:dba") == "ask"
 
 
-def test_only_the_read_only_database_url_is_usable(repo):
-    assert bash(repo, 'psql "$READONLY_DATABASE_URL" -c "select 1"') == "allow"
+def test_only_the_read_only_database_url_is_usable_and_it_asks_first(repo):
+    assert bash(repo, 'psql "$READONLY_DATABASE_URL" -c "select 1"') == "ask"
     assert bash(repo, 'psql "$DATABASE_URL" -c "select 1"') == "deny"
     assert bash(repo, "psql postgres://admin:pw@10.0.0.5:5432/app") == "deny"
     assert bash(repo, "psql postgres://u:p@localhost:5432/test") == "allow"
@@ -146,10 +146,28 @@ def test_older_team_files_with_path_keys_still_work(tmp_path):
 
 def test_aws_snapshot_asks_and_other_rds_writes_are_blocked(repo):
     assert bash(repo, "aws rds create-db-snapshot --db-instance-identifier app --db-snapshot-identifier pre-s4", "shapeup-team:dba") == "ask"
-    assert bash(repo, "aws rds describe-db-snapshots --db-instance-identifier app", "shapeup-team:dba") == "allow"
+    assert bash(repo, "aws rds describe-db-snapshots --db-instance-identifier app", "shapeup-team:dba") == "ask"
     assert bash(repo, "aws rds modify-db-instance --db-instance-identifier app --apply-immediately", "shapeup-team:dba") == "deny"
 
 
 def test_literal_mysql_and_mongo_urls_to_remote_hosts_are_blocked(repo):
     assert bash(repo, "mysql --url mysql://root:pw@10.0.0.9/app") == "deny"
     assert bash(repo, "mongosh mongodb+srv://u:p@cluster0.example.net/app") == "deny"
+
+
+def test_backend_and_dba_connections_to_production_ask_the_user(repo):
+    assert bash(repo, 'psql "$READONLY_DATABASE_URL" -c "select count(*) from deals_deal"', "shapeup-team:dba") == "ask"
+    assert bash(repo, 'psql "${READONLY_DATABASE_URL}" -c "select 1"', "shapeup-team:backend-dev") == "ask"
+    assert bash(repo, "cloud-sql-proxy proj:europe-west1:pg", "shapeup-team:dba") == "ask"
+
+
+def test_po_qa_and_frontend_have_no_production_access(repo):
+    assert bash(repo, 'psql "$READONLY_DATABASE_URL" -c "select 1"', "shapeup-team:qa-engineer") == "deny"
+    assert bash(repo, "gcloud sql instances list", "shapeup-team:frontend-dev") == "deny"
+    assert bash(repo, "cloud-sql-proxy proj:europe-west1:pg", "shapeup-team:product-owner") == "deny"
+
+
+def test_a_database_client_aimed_at_a_remote_host_asks_and_local_passes(repo):
+    assert bash(repo, "psql -h 10.20.0.3 -U agent_ro app -c 'select 1'", "shapeup-team:dba") == "ask"
+    assert bash(repo, "pg_dump --host=db.prod.internal app", "shapeup-team:backend-dev") == "ask"
+    assert bash(repo, "psql -h localhost -U app test_app -c 'select 1'", "shapeup-team:backend-dev") == "allow"

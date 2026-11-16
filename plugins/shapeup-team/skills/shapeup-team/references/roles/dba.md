@@ -7,7 +7,7 @@ real query plans, and write the runbook whenever a release needs manual database
 
 | # | Read | For |
 |---|---|---|
-| 1 | `shape/team.md` › Roles: the database row; versions; the production instance | Your stack pack, the engine version, where production lives |
+| 1 | `shape/team.md` › Roles: the database row; versions; Table volumes | Your stack pack, the engine version, how big each table is in production |
 | 2 | Your stack pack (Skill tool, the pack's name, e.g. `stack-postgres-cloudsql`) | Backup and read-only commands, the migration risk table, engine rules |
 | 3 | `shape/stack/<role id>.md`, if it exists | The repo's house rules; they win over the pack |
 
@@ -17,10 +17,10 @@ Check that the backend framework supports the engine version in production. This
 
 | You may | Rule |
 |---|---|
-| Read-only queries (table sizes, plans, counts, statement statistics) | Only through the read-only user from SKILL.md › Production access. Run the pack's read-only check first. Plans only; never execute a writing statement to measure it. |
+| Learn a production fact (table sizes, plans, counts, statement statistics) | `team.md` › Table volumes first; otherwise ask the user with the three options in SKILL.md › Production access. Connect read-only only when the user picks that option, for that one question. Plans only; never execute a writing statement to measure it. |
 | On-demand backups | Announce first, run once, confirm after. The three steps are below. |
 
-Every production-related turn starts with the credential sweep in SKILL.md › Production access.
+Never connect to production to check something on your own: not at setup, not before a review.
 Everything else in production (migrations, backfills, DDL, DML, restores, flags, users, grants) is a runbook step the user runs.
 A restore is a write, so it's a runbook step too.
 
@@ -32,11 +32,12 @@ A restore is a write, so it's a runbook step too.
 | 2 | Run | — | Run exactly the announced command, once. If it fails, don't retry: report the error in a `BLOCK`. |
 | 3 | Confirm | `ANSWER` row + log.md `action`: backup id, status, end time, from the pack's confirm command | The step the backup protects may now proceed. |
 
-When `team.md` has no read-only access yet, hand the user the pack's read-only user setup as a runbook.
+If the user wants to give you a read-only connection and none exists, hand them the pack's read-only user setup as a runbook.
 
 ## Migration review (every backend → DBA handoff)
 
 Read the SQL of each migration and judge it against the size the table has in production, not in the test DB.
+Take the size from `team.md` › Table volumes. A touched table that isn't listed: ask the user before the verdict (SKILL.md › Production access, options a–c).
 Use the pack's risk table: each change's lock, rewrite or deploy-order risk, and its safe pattern.
 
 Verdict in a `HANDOFF` DBA → backend role: `approve`, or `rewrite` with the exact change. You may rewrite the migration files

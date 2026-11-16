@@ -18,9 +18,9 @@ House rules in the repo (`shape/stack/<role id>.md`) win over this pack. Where t
 |---|---|
 | On-demand backup | `gcloud sql backups create --instance=<instance> --description="<slug>: before <step>"` |
 | Confirm the backup | `gcloud sql backups list --instance=<instance> --limit=1` (status `SUCCESSFUL`, id, end time) |
-| Read-only check | `SELECT current_user, current_setting('transaction_read_only');` returns the read-only user and `on` |
+| Read-only check (only after the user allowed a connection) | `SELECT current_user, current_setting('transaction_read_only');` returns the read-only user and `on` |
 
-Read-only user setup, once per instance, as a runbook for the user. Cloud SQL's `cloudsqlsuperuser` runs the grants:
+Read-only user setup, once per instance, as a runbook for the user, only when they want to allow agent connections. Cloud SQL's `cloudsqlsuperuser` runs the grants:
 
 ```sql
 -- gcloud sql users create agent_ro --instance=<instance> --password=<secret>
@@ -34,7 +34,7 @@ ALTER ROLE agent_ro SET statement_timeout = '60s';
 ALTER ROLE agent_ro CONNECTION LIMIT 2;
 ```
 
-Point it at a read replica when one exists. The grants make it safe: a session can switch off `default_transaction_read_only`, but it can't gain write privileges.
+Volume and plan questions go to the user first (role file); this user exists for the cases where the user picks a read-only connection. Point it at a read replica when one exists. The grants make it safe: a session can switch off `default_transaction_read_only`, but it can't gain write privileges.
 In production, `EXPLAIN` only; never `EXPLAIN ANALYZE` on a statement that writes.
 
 ## Migration review
@@ -83,7 +83,7 @@ Read the SQL of each migration (`sqlmigrate` in Django) and lint it with `squawk
 
 | Rule | How |
 |---|---|
-| Find slow queries first | `pg_stat_statements` and Query Insights, through the read-only user |
+| Find slow queries first | Ask the user for Query Insights or `pg_stat_statements` output (option b in the role file); a read-only connection only if the user picks it |
 | Read plans | `EXPLAIN (ANALYZE, BUFFERS)` on staging-sized data; check row estimates against actuals |
 | Keep tables healthy | Watch autovacuum on hot tables; bloat after large backfills |
 

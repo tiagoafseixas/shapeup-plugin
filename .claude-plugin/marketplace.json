@@ -9,7 +9,7 @@
       "name": "shapeup-team",
       "source": "./plugins/shapeup-team",
       "description": "The team: Conductor process, PO, backend and frontend developers, QA, DBA, commands and the guard hook.",
-      "version": "0.2.0"
+      "version": "0.2.1"
     },
     {
       "name": "stack-django-drf",
@@ -33,7 +33,7 @@
       "name": "stack-postgres-cloudsql",
       "source": "./plugins/stack-postgres-cloudsql",
       "description": "Stack pack: PostgreSQL on Google Cloud SQL, zero-downtime migrations, read-only access, backups.",
-      "version": "0.1.0"
+      "version": "0.1.1"
     }
   ]
 }

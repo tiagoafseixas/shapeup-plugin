@@ -13,8 +13,8 @@ A gate passes when every row is ✓. Whoever runs the gate appends the result to
 | 4 | Ponytail plugin installed | `/plugin install ponytail@ponytail` if missing |
 | 5 | `gh auth status` is OK, and the remote is reachable | run it |
 | 6 | A local or test database (same engine and major as production) can run the migrations | the migrations command in `team.md` |
-| 7 | A read-only DB user exists for prod (replica preferred), set up per the database pack. The way the user hands its URL to a session is written in `team.md`. | the pack's read-only check, as that user |
-| 8 | No write-capable prod credentials reachable from agent sessions (env, `.env`, config files) | grep the repo and the session env |
+| 7 | `team.md` › Table volumes lists the largest tables (rows, size), as the user gave them, or says "ask per pitch". No connection to production. | ask the user; never connect |
+| 8 | No production credentials in the repo (`.env*`, config files) | grep the repo for connection strings; report file paths, never values |
 
 ## Ready gate (PO, before a pitch goes to the betting table)
 

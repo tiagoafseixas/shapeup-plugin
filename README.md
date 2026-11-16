@@ -127,15 +127,17 @@ The guard runs before every `Write`, `Edit` and `Bash` call in a repo with `shap
 
 | Blocked | Asks the user first |
 |---|---|
-| Edits outside the role's area (Roles table) | `gcloud sql backups create`, `aws rds create-db-snapshot` (DBA only) |
-| `.env*` writes | `cloud-sql-proxy` |
+| Edits outside the role's area (Roles table) | Any production connection: `$READONLY_DATABASE_URL`, a database client aimed at a remote host, `cloud-sql-proxy`, `gcloud sql` / `aws rds` reads (backend role and DBA only) |
+| `.env*` writes | `gcloud sql backups create`, `aws rds create-db-snapshot` (DBA only) |
 | Force-push, push to `main`/`master`, merge, rebase, `gh pr merge`, `--no-verify` | |
 | Deploys: `gcloud app/run/functions deploy`, `gcloud builds submit`, `deploy.sh`, `terraform apply`, `kubectl apply` | |
-| Every other `gcloud sql` or `aws rds` write | |
+| Every other `gcloud sql` or `aws rds` write; any production access by the PO, QA or frontend roles | |
 | Any `…DATABASE_URL` other than `READONLY_DATABASE_URL`, `PGPASSWORD=`, `MYSQL_PWD=`, literal non-local database URLs, production settings | |
 
-Production access is read-only queries through a read-only user the user provides, plus on-demand backups by the DBA. Everything
-else becomes a runbook step for the user. Only the user merges.
+Production is off by default. When the backend role or the DBA needs a production fact (table volumes, a plan), it reads
+`team.md` › Table volumes, then asks you: state it, run a read-only query it hands you, or let it connect read-only for that one
+question. It connects only on that last answer, and the hook asks you again first. Backups by the DBA follow the same pattern.
+Everything else in production becomes a runbook step for you. Only you merge.
 
 ## Standards the team follows
 
@@ -152,7 +154,7 @@ Paths are under `plugins/shapeup-team/skills/shapeup-team/`.
 
 ```
 shape/
-  team.md                  roles and their stack packs, commands per role and size, versions, budgets, read-only DB access
+  team.md                  roles and their stack packs, commands per role and size, table volumes, versions, budgets
   stack/<role id>.md       house rules, when the repo differs from the pack
   ideas.md                 raw ideas, not a backlog
   decisions.md             conventions that outlive one pitch

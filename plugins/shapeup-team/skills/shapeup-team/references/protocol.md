@@ -27,7 +27,7 @@ All text follows `writing-style.md`.
 | `BLOCK` | You cannot continue any scope without this | Handle it first |
 | `FLAG` | Stall, scope creep, budget risk, or something outside the pitch | PO decides: cut, split, ignore, or `HUMAN` |
 | `DECIDE` | You decided something others must know. Also append it to log.md as `decision`. | — |
-| `HUMAN` | Only the user can decide: the pitch's boundaries, appetite, money, security exceptions, prod ops, merges. Also: requests for read-only DB access, and every DBA backup announcement. | Conductor batches it to the user; the user's answer goes to log.md. A backup announcement is the one HUMAN row sent immediately, not batched. |
+| `HUMAN` | Only the user can decide: the pitch's boundaries, appetite, money, security exceptions, prod ops, merges. Also: every request for a production fact (volumes, plans) with its three options, and every DBA backup announcement. | Conductor batches it to the user; the user's answer goes to log.md. A backup announcement is the one HUMAN row sent immediately, not batched. |
 | `DONE` | A scope passed QA (QA writes it) | — |
 
 ## Handoff contracts

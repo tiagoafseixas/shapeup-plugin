@@ -161,6 +161,17 @@ DEPLOY_DENY = [
 SQL_READ = r"\bgcloud\s+sql\s+(backups\s+(list|describe)|instances\s+(list|describe)|operations\s+(list|describe|wait)|databases\s+(list|describe)|users\s+list|flags\s+list|tiers\s+list)\b"
 
 
+NO_PROD_ROLES = ("po", "qa", "frontend")
+
+
+def prod_connection(role, what):
+    """Production is off by default: only the backend role and the DBA may connect, and only after the user approves."""
+    if role in NO_PROD_ROLES:
+        deny(f"{what}: this role has no production access. ASK the backend role or the DBA, who ask the user.")
+    ask(f"{what}. Approve only if you chose to let the agent connect read-only for this one question "
+        "(otherwise answer with the numbers or run the query yourself).")
+
+
 def check_bash(event, role):
     cmd = (event.get("tool_input") or {}).get("command") or ""
     repo = find_repo(event.get("cwd") or os.getcwd())
@@ -181,6 +192,7 @@ def check_bash(event, role):
             ask("production backup. Approve only if the DBA's HUMAN row named this exact command, instance and reason.")
         if not re.search(SQL_READ, cmd):
             deny("the only production write allowed is an on-demand backup by the DBA (SKILL.md › Production access).")
+        prod_connection(role, "gcloud sql reads production metadata")
 
     if re.search(r"\baws\s+rds\b", cmd):
         if re.search(r"\baws\s+rds\s+create-db-(cluster-)?snapshot\b", cmd):
@@ -189,9 +201,10 @@ def check_bash(event, role):
             ask("production snapshot. Approve only if the DBA's HUMAN row named this exact command, instance and reason.")
         if not re.search(r"\baws\s+rds\s+(describe|list)-", cmd):
             deny("the only production write allowed is an on-demand backup by the DBA (SKILL.md › Production access).")
+        prod_connection(role, "aws rds reads production metadata")
 
     if re.search(r"\bcloud[-_]sql[-_]proxy\b", cmd):
-        ask("Cloud SQL proxy opens a production connection. Approve only for the read-only user.")
+        prod_connection(role, "Cloud SQL proxy opens a production connection")
 
     if re.search(r"\$\{?(?!READONLY_)[A-Z0-9_]*DATABASE_URL\b", cmd) or re.search(r"\b(PGPASSWORD|MYSQL_PWD)=", cmd):
         deny("only READONLY_DATABASE_URL may be used against a shared database.")
@@ -199,6 +212,13 @@ def check_bash(event, role):
     for host in re.findall(r"(?:postgres(?:ql)?|mysql|mariadb|mongodb(?:\+srv)?)(?:\+\w+)?://[^@\s'\"]*@\[?([^:/\s'\"\]]+)", cmd):
         if host.lower() not in LOCAL_HOSTS:
             deny(f"connection string to {host}: use READONLY_DATABASE_URL from the environment, never a literal URL.")
+
+    if re.search(r"\$\{?READONLY_DATABASE_URL\b", cmd):
+        prod_connection(role, "this command connects to production with READONLY_DATABASE_URL")
+
+    for host in re.findall(r"\b(?:psql|pg_dump|pg_dumpall|mysql|mysqldump|mongosh|mongodump)\b[^;&|]*?(?:-h\s*|--host[= ])([^\s'\"]+)", cmd):
+        if host.lower() not in LOCAL_HOSTS:
+            prod_connection(role, f"this command connects to the database host {host}")
 
     if re.search(r"(--settings[= ]\S*(prod|prd|production)|DJANGO_SETTINGS_MODULE=\S*(prod|prd|production)|RAILS_ENV=production)", cmd, re.I):
         deny("commands against production settings are the user's (runbook step).")

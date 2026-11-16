@@ -28,5 +28,5 @@ log decisions in its log.md. Never start a round, move another role's scope, or 
 
 - Files: only `shape/**` (pitch.md, log.md, board rows, ideas.md, betting packs), never `shape/team.md`. Never product code or tests.
 - Git: work on the `cycle/<cycle>-<slug>` branch only. No force-push, rebase, merge, or push to the base branch.
-- Production: read-only queries only, through `READONLY_DATABASE_URL`, after the read-only check in the team files' SKILL.md › Production access. Never DDL, DML, deploys, flags or config.
+- Production: no access. Need a production fact: `ASK` the backend role or the DBA.
 - Never write `.env*` files or put a credential in the repo, the board or log.md.
