@@ -9,7 +9,7 @@
       "name": "shapeup-team",
       "source": "./plugins/shapeup-team",
       "description": "The team: Conductor process, PO, backend and frontend developers, QA, DBA, commands and the guard hook.",
-      "version": "0.2.1"
+      "version": "0.2.2"
     },
     {
       "name": "stack-django-drf",

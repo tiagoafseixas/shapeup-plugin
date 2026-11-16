@@ -56,13 +56,16 @@ Needs `python3` on the PATH (the guard hook) and `gh` (branches and draft PRs). 
 
 | # | Phase | Who | Output | Command |
 |---|---|---|---|---|
-| 0 | Setup (once per repo) | Conductor + user | `shape/team.md` filled, stack packs installed | `/gate setup` |
-| 1 | Shape | User + PO | `pitch.md` with status `ready`, `log.md` | `/shape` |
+| 0 | Setup (once per repo, offline) | Conductor + user | `shape/team.md` filled from the repo's files and your answers, stack packs installed | `/gate setup` |
+| 1 | Shape (offline) | User + PO | `pitch.md` with status `ready`, `log.md` | `/shape` |
 | 2 | Bet | Founders | Pitch status `bet` with a cycle id | — |
 | 3 | Kickoff | Conductor → all roles | Branch, draft PR, board with scopes, `tech.md` | `/kickoff` |
 | 4 | Build | Roles, in rounds | Scopes move over the hill to done | `/round` |
 | 5 | Ship | QA → Conductor | PR marked ready, runbook if ops are needed | `/gate ship` |
 | 6 | Cool-down | Conductor + PO | Retro; cut items in `shape/ideas.md` | `/round` (after the merge) |
+
+Setup and shaping are offline: the team reads files and asks you. No GitHub calls, no database connections (local or production),
+no test runs, no installs; the hook asks you before any of them while no pitch has a board. The kickoff is the first time anything runs.
 
 Appetite is a round budget, not a calendar: Small batch 8 rounds, Big batch 20 by default. At 75% the PO hammers scope; at 100%
 the build stops and the default is drop and re-shape. Only the user extends.
@@ -127,7 +130,8 @@ The guard runs before every `Write`, `Edit` and `Bash` call in a repo with `shap
 
 | Blocked | Asks the user first |
 |---|---|
-| Edits outside the role's area (Roles table) | Any production connection: `$READONLY_DATABASE_URL`, a database client aimed at a remote host, `cloud-sql-proxy`, `gcloud sql` / `aws rds` reads (backend role and DBA only) |
+| Edits outside the role's area (Roles table) | Before the first kickoff: any `gh` call, git remote call, install, database client, test run, container or `curl` |
+| | Any production connection: `$READONLY_DATABASE_URL`, a database client aimed at a remote host, `cloud-sql-proxy`, `gcloud sql` / `aws rds` reads (backend role and DBA only) |
 | `.env*` writes | `gcloud sql backups create`, `aws rds create-db-snapshot` (DBA only) |
 | Force-push, push to `main`/`master`, merge, rebase, `gh pr merge`, `--no-verify` | |
 | Deploys: `gcloud app/run/functions deploy`, `gcloud builds submit`, `deploy.sh`, `terraform apply`, `kubectl apply` | |

@@ -80,13 +80,19 @@ diagram captions, filler phrases). Diagram and wireframe rules: `references/diag
 
 | # | Phase | Who | Output | Exit gate (`references/gates.md`) |
 |---|---|---|---|---|
-| 0 | Setup (once per repo) | Conductor + user | `shape/team.md` filled | Setup gate |
+| 0 | Setup (once per repo, offline) | Conductor + user | `shape/team.md` filled | Setup gate |
 | 1 | Shape | User + PO (you take the PO role) | pitch.md `ready`, log.md | Ready gate |
 | 2 | Bet | Founders | Betting pack; pitch status `bet` + cycle id | Founders' decision |
 | 3 | Kickoff | Conductor → all roles | Branch, draft PR, board with scopes, tech.md | Kickoff gate |
 | 4 | Build | Roles, in rounds | Scopes move over the hill to done | Scope gate, per scope |
 | 5 | Ship | QA → Conductor | PR marked ready, runbook if ops are needed | Ship gate |
 | 6 | Cool-down | Conductor + PO | Retro, cut items in `shape/ideas.md` | — |
+
+**Offline until kickoff.** Setup (phase 0) and shaping (phase 1) only read files and talk to the user: no network calls
+(`gh`, `git fetch`/`push`/`pull`, installs), no database connections (local, test or production), no test runs, no servers.
+Tech checks read code; they don't run it. What can't be read from the repo is asked. The first external call is the kickoff's
+branch push, and the Kickoff gate is where the environment first runs. The plugin's hook asks the user before any such call
+while no pitch has a board.
 
 `python <skill>/scripts/scaffold.py status <repo>` shows each pitch's phase.
 
@@ -119,7 +125,9 @@ Pitches that weren't chosen stay `ready`. They are not queued, and can go to a l
 ## Phase 3: Kickoff
 
 1. Create the branch `cycle/<cycle>-<slug>` from the base branch. Run `scaffold.py kickoff <repo> <slug> --cycle <id>`
-   (it creates board.md, sets the pitch to `building` and logs it), then commit (`S0 Conductor: kickoff`), push, and open a
+   (it creates board.md, sets the pitch to `building` and logs it). The team is online from here: run the environment once
+   (Kickoff gate row 9: `gh auth status`, migrations on the local or test database, Small and Medium tests green); a failure is a `HUMAN` row.
+   Then commit (`S0 Conductor: kickoff`), push, and open a
    **draft** PR (`gh pr create --draft`, body from `assets/templates/pr.md`). Put the PR URL in the board header and log the `action`.
 2. **Orient** (parallel, read-only): spawn every developer role and the DBA with "read the pitch and the code it touches; write ≤3 `NOTE` rows".
 3. **Map scopes** (sequential, each one amends the Scopes table): backend roles draft → frontend roles amend → DBA marks the scopes that touch the schema →

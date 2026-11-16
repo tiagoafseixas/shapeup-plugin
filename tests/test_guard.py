@@ -22,6 +22,7 @@ def repo(tmp_path):
     (root / "backend" / "deals" / "migrations").mkdir(parents=True)
     (root / "backend" / "deals" / "tests").mkdir()
     (tmp_path / "web" / "src").mkdir(parents=True)
+    (root / "shape" / "pitches" / "win" / "board.md").write_text("# Board\n")  # a cycle has started
     return root
 
 
@@ -171,3 +172,35 @@ def test_a_database_client_aimed_at_a_remote_host_asks_and_local_passes(repo):
     assert bash(repo, "psql -h 10.20.0.3 -U agent_ro app -c 'select 1'", "shapeup-team:dba") == "ask"
     assert bash(repo, "pg_dump --host=db.prod.internal app", "shapeup-team:backend-dev") == "ask"
     assert bash(repo, "psql -h localhost -U app test_app -c 'select 1'", "shapeup-team:backend-dev") == "allow"
+
+
+@pytest.fixture
+def fresh_repo(repo):
+    (repo / "shape" / "pitches" / "win" / "board.md").unlink()  # setup or shaping: no cycle yet
+    return repo
+
+
+def test_before_the_first_kickoff_github_and_git_remote_calls_ask(fresh_repo):
+    assert bash(fresh_repo, "gh auth status") == "ask"
+    assert bash(fresh_repo, "git fetch origin") == "ask"
+    assert bash(fresh_repo, "git push origin cycle/2026-C1-win", "shapeup-team:backend-dev") == "ask"
+
+
+def test_before_the_first_kickoff_databases_tests_and_installs_ask(fresh_repo):
+    assert bash(fresh_repo, "psql -h localhost -U app test_app -c 'select 1'") == "ask"
+    assert bash(fresh_repo, "python manage.py migrate") == "ask"
+    assert bash(fresh_repo, "cd backend && pytest -q") == "ask"
+    assert bash(fresh_repo, "npm install") == "ask"
+    assert bash(fresh_repo, "docker compose up -d db") == "ask"
+
+
+def test_before_the_first_kickoff_reading_files_and_local_scripts_pass(fresh_repo):
+    assert bash(fresh_repo, "cat package.json requirements.txt") == "allow"
+    assert bash(fresh_repo, "grep -rlE 'postgres://' --include='*.py' .") == "allow"
+    assert bash(fresh_repo, "python3 scaffold.py init . --product Deals") == "allow"
+    assert bash(fresh_repo, "git status && git log --oneline -5") == "allow"
+
+
+def test_hard_blocks_still_win_before_the_first_kickoff(fresh_repo):
+    assert bash(fresh_repo, "git push --force origin main") == "deny"
+    assert bash(fresh_repo, 'psql "$READONLY_DATABASE_URL"', "shapeup-team:qa-engineer") == "deny"

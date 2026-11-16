@@ -3,18 +3,17 @@
 A gate passes when every row is ✓. Whoever runs the gate appends the result to the pitch's `log.md`
 (kind `gate`): `<Gate name>: pass`, or `<Gate name>: fail on rows 2, 5: <one clause each>`.
 
-## Setup gate (Conductor + user, once per repo)
+## Setup gate (Conductor + user, once per repo, offline)
+
+Setup only reads files and asks the user. No network, no database, no test runs, no installs (SKILL.md › Offline until kickoff).
 
 | # | Check | How |
 |---|---|---|
-| 1 | `shape/team.md` filled: no `<…>` left | read it |
+| 1 | `shape/team.md` filled: no `<…>` left | read the repo's files (`package.json`, `requirements*.txt`, `pyproject.toml`, settings, CI config); ask the user what files can't tell |
 | 2 | Every row in `team.md` › Roles names a stack pack that's installed (or written with `/stack new`) | load each pack with the Skill tool |
-| 3 | The Small, Medium and Large test commands in `team.md` run green on the base branch | run them |
-| 4 | Ponytail plugin installed | `/plugin install ponytail@ponytail` if missing |
-| 5 | `gh auth status` is OK, and the remote is reachable | run it |
-| 6 | A local or test database (same engine and major as production) can run the migrations | the migrations command in `team.md` |
-| 7 | `team.md` › Table volumes lists the largest tables (rows, size), as the user gave them, or says "ask per pitch". No connection to production. | ask the user; never connect |
-| 8 | No production credentials in the repo (`.env*`, config files) | grep the repo for connection strings; report file paths, never values |
+| 3 | `team.md` › Table volumes lists the largest tables (rows, size), as the user gave them, or says "ask per pitch" | ask the user |
+| 4 | No production credentials in the repo (`.env*`, config files) | grep the repo's files for connection strings; report file paths, never values |
+| 5 | Ponytail plugin installed | if missing, give the user the install command (`/plugin install ponytail@ponytail`); don't install it |
 
 ## Ready gate (PO, before a pitch goes to the betting table)
 
@@ -45,6 +44,7 @@ A gate passes when every row is ✓. Whoever runs the gate appends the result to
 | 6 | The first scope is the most core and the most unknown |
 | 7 | tech.md exists if any scope touches the schema (Entities) or adds an endpoint (Flows + API contract), with sections that don't apply deleted |
 | 8 | `scaffold.py lint <repo> <slug>` is clean |
+| 9 | First run of the environment, now that the cycle starts: `gh auth status` OK and the remote reachable; the local or test database (same engine and major as production) runs the migrations; the Small and Medium test commands in `team.md` run green on the base branch | run them; a failure is a `HUMAN` row, not a fix |
 
 ## Scope gate (QA, per scope)
 

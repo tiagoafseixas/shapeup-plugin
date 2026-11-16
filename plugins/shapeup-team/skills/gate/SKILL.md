@@ -18,6 +18,6 @@ metadata:
 | scope S<n> | spawn the `qa-engineer` agent with `Your turn: Scope gate S<n>` |
 | ship | spawn the `qa-engineer` agent with `Your turn: Ship gate`, then this session does the Conductor rows (PR body, `gh pr ready`, report) |
 
-3. Check every row; a row passes only with evidence (command output, file, board row).
+3. Check every row; a row passes only with evidence (command output, file, board row). The setup and ready gates are offline: evidence comes from files and the user's answers, never from running anything external.
 4. Append the result to the pitch's log.md (`scaffold.py log … --kind gate`): `<Gate>: pass`, or `<Gate>: fail on rows 2, 5: <one clause each>`.
 5. Reply with the result and, on a fail, the failing rows and who owns each fix.

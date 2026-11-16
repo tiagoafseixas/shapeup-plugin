@@ -172,6 +172,34 @@ def prod_connection(role, what):
         "(otherwise answer with the numbers or run the query yourself).")
 
 
+OFFLINE_ASK = [
+    (r"(^|[\s;&|(])gh\s", "a GitHub request"),
+    (r"\bgit\s+(push|fetch|pull|clone|ls-remote|remote\s+update|submodule\s+update)\b", "a call to the git remote"),
+    (r"\b(pip3?\s+install|uv\s+(pip\s+install|sync|add)|poetry\s+(install|add)|npm\s+(install|i|ci|add)\b|yarn(\s+(add|install))?\s*($|[;&|])|pnpm\s+(add|install|i)\b|brew\s+install|apt(-get)?\s+install)", "a package install"),
+    (r"\b(psql|pg_dump|pg_restore|mysql|mysqldump|mongosh|mongodump|redis-cli|cloud[-_]sql[-_]proxy)\b", "a database connection"),
+    (r"\bmanage\.py\s+(migrate|test|dbshell|shell|runserver|loaddata|flush|createsuperuser|showmigrations)\b", "a database connection (manage.py)"),
+    (r"\b(pytest|jest|vitest|cypress|playwright)\b|\b(npm|yarn|pnpm)\s+(run\s+)?(test|e2e|dev|start)\b", "a test run or a server"),
+    (r"\bdocker(\s+compose|-compose)?\s+(up|run|start|exec|pull|build)\b", "a container"),
+    (r"\b(curl|wget)\s", "a network request"),
+]
+
+
+def cycle_started(repo):
+    pitches = os.path.join(repo, "shape", "pitches")
+    try:
+        return any(os.path.isfile(os.path.join(pitches, d, "board.md")) for d in os.listdir(pitches))
+    except OSError:
+        return False
+
+
+def check_offline(cmd, repo):
+    """Before the first kickoff (no pitch has a board), setup and shaping stay offline: ask before anything external."""
+    for pattern, what in OFFLINE_ASK:
+        if re.search(pattern, cmd):
+            ask(f"no cycle has started, so setup and shaping stay offline (SKILL.md › Offline until kickoff). "
+                f"This is {what}. Approve only if you want it now.")
+
+
 def check_bash(event, role):
     cmd = (event.get("tool_input") or {}).get("command") or ""
     repo = find_repo(event.get("cwd") or os.getcwd())
@@ -182,6 +210,7 @@ def check_bash(event, role):
         if re.search(pattern, cmd):
             deny(f"{reason}. Write it as a HUMAN row or a runbook step.")
 
+    offline = repo is not None and not cycle_started(repo)
     if re.search(r"(>{1,2}|\btee\b[^|;&]*|\bsed\s+-i[^;&|]*|\bcp\b[^;&|]*|\bmv\b[^;&|]*)\s*\S*\.env\b", cmd):
         deny("env files are the user's; never write credentials.")
 
@@ -222,6 +251,9 @@ def check_bash(event, role):
 
     if re.search(r"(--settings[= ]\S*(prod|prd|production)|DJANGO_SETTINGS_MODULE=\S*(prod|prd|production)|RAILS_ENV=production)", cmd, re.I):
         deny("commands against production settings are the user's (runbook step).")
+
+    if offline:
+        check_offline(cmd, repo)
 
 
 def main():
