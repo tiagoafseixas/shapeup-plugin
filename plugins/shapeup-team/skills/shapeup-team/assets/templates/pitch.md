@@ -10,7 +10,7 @@ Status: draft → ready → bet → building → shipped | dropped
 <Baseline: what users already do. Workaround: where it breaks and what they do instead. Cost: what the workaround costs them (time, money, risk). ≤5 lines, no solution words.>
 
 ## Appetite
-<One imperative sentence: what this bet builds. Size and rounds live in the header table. No justification, no other pitches.>
+<One imperative sentence: what this bet builds. Size lives in the header table. No justification, no other pitches.>
 
 ## Solution
 <The elements, at fat-marker level: concrete enough to start, rough enough to leave design room.>

@@ -30,7 +30,7 @@ Run these six cuts on every sentence, in order. Example: the pitch appetite.
 |---|---|---|
 | 1 | Put the verb first. Anything the team must do is an imperative. | "The plan is that we build the reminder engine" → "We build the reminder engine" |
 | 2 | Drop the subject when it's us, the team or the product | "We build the reminder engine" → "Build the reminder engine" |
-| 3 | Drop what the context already says: the product name in its own repo, values in the header table, the section heading | "Big batch, 20 rounds. Build the Acme reminder engine" (size is in the header table) → "Build the reminder engine" |
+| 3 | Drop what the context already says: the product name in its own repo, values in the header table, the section heading | "Big batch, 6 reviews. Build the Acme reminder engine" (size is in the header table) → "Build the reminder engine" |
 | 4 | Positive form: say what is. Keep "not" for real denials (no-gos, rejections). | "Reminders are not sent unless the accountant confirms" → "Reminders are sent only after the accountant confirms" |
 | 5 | Definite form: imperative or "must" for requirements, "can" for options. Delete should, might, could, ideally, potentially. | "The job should ideally ask the accountant" → "The job asks the accountant" |
 | 6 | Delete conversation residue: qualifiers that restate the default or answer a question raised while shaping, not one a reader will ask ("with or without X", "X is optional" when nothing implied it wasn't, "as on the web", "regardless of") | "lists the same overdue invoices as the dashboard, with or without a client filter" → "lists the same overdue invoices as the dashboard" |

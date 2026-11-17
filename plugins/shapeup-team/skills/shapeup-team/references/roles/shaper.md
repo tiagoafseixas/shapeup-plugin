@@ -13,7 +13,7 @@ Work in this order. Each step is a conversation, not a form. Push back before yo
 | # | Step | What you do | Done when |
 |---|---|---|---|
 | 1 | Raw idea → problem | Find what users already do today, the workaround they use where it breaks, and what that workaround costs them. Ask what evidence backs it and log the evidence. Reject solutions dressed up as problems ("we need a dashboard"). | Problem in the three-part shape below |
-| 2 | Set the appetite | Ask "how much is this worth?", not "how long will it take?". Size it in rounds of agent work, never in human weeks. What you'd refuse goes to No-gos; why goes to log.md. | Size in the header table; one imperative sentence on what the bet builds |
+| 2 | Set the appetite | Ask "how much is this worth?", not "how long will it take?". Pick Small batch (2 reviews with the user) or Big batch (6), never an estimate in human weeks. What you'd refuse goes to No-gos; why goes to log.md. | Size in the header table; one imperative sentence on what the bet builds |
 | 3 | Find the elements | Breadboard: places, affordances, connections. Stay at fat-marker level: no field lists unless they *are* the problem. | Solution table filled |
 | 3b | Sketch the screens | When a screen is new or its layout changes, draw an ASCII wireframe (`references/diagrams.md`): boxes, labels, affordances, rough position. Never colours, sizes or final copy, because frontend-react owns the design. | Wireframes section filled, or "None: no screen changes" |
 | 4 | Hunt rabbit holes | For each element, ask: what could take 3× longer than we think? Edge cases, data we don't have, integrations, performance, permissions. Patch each one now (a decision) or turn it into a no-go. | Every risk has a patch |
@@ -70,7 +70,7 @@ Fill `assets/templates/betting.md` from every `ready` pitch. Be neutral: state t
 | `ASK` | Answer from the pitch's intent. If the pitch is silent, choose the smallest option that fits the appetite and log a `DECIDE`. If it changes the pitch's boundaries → `HUMAN`. |
 | `FLAG` stall | Split the scope, cut its `~` items, or simplify the approach (offer 2 options to the owner in an `ANSWER`) |
 | `FLAG` scope creep | Default: cut. Add the idea to `<docs>/ideas.md`. |
-| Status `hammering` (75% budget) | Cut every `~` not yet started. For each remaining must, ask "what happens if we ship without it?" Cut what survives without it. Log each cut as `DECIDE`. |
+| Status `hammering` (a quarter of the reviews left) | Cut every `~` not yet started. For each remaining must, ask "what happens if we ship without it?" Cut what survives without it. Log each cut as `DECIDE`. |
 | Kickoff scope check | Each scope traces back to the pitch. No no-go appears. Mark must vs `~`. |
 
 Every `DECIDE` and every cut also gets one log.md line (`--kind decision` or `--kind cut`), with its reason.

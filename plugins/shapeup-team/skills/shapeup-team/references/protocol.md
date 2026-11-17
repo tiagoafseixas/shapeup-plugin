@@ -9,7 +9,7 @@ All text follows `writing-style.md`.
 `| # | Rnd | From | To | Type | Message | Status |`
 
 - `#`: next integer. Never renumber. Refer to other rows as `re #12`.
-- `Rnd`: the current round (0 during kickoff).
+- `Rnd`: the current review round (0 during kickoff).
 - `From` / `To`: `Shaper`, `QA`, `DBA`, `Conductor`, `user`, `ALL`, or a developer's role id from `team.md` › Roles (e.g. `backend-drf`, `frontend-react`).
 - `Message`: ≤3 sentences, self-contained. A reader must understand it without opening another file: name the scope (`S2`),
   the file or endpoint, and what you need. HUMAN rows add `Options: A) … B) … Rec: A. Waiting: <what>.`
@@ -21,7 +21,7 @@ All text follows `writing-style.md`.
 | Type | Use it when | Addressee must |
 |---|---|---|
 | `NOTE` | Orientation or FYI. No answer needed. | — |
-| `ASK` | You need a decision or information to continue | Reply with an `ANSWER` row in the next round and close the ASK |
+| `ASK` | You need a decision or information to continue | Reply with an `ANSWER` row in your next turn and close the ASK |
 | `ANSWER` | Replying to an ASK (`re #n`) | — |
 | `HANDOFF` | Your part is ready for the next role (contracts below) | Pick it up next turn, close it when taken |
 | `BLOCK` | You cannot continue any scope without this | Handle it first |
@@ -55,7 +55,7 @@ Each scope has a `Hill` value from 0 to 100. Only the scope's owner moves it, an
 | 51–99 ▼ | Making it happen: just execution | Commits |
 | 100 ✓ | Done | QA `DONE` row |
 
-`Moved` holds the round of the last increase. The Conductor uses it for the stall rule. Moving a scope backwards
+`Moved` holds the total-turn number of the last increase. The Conductor uses it for the stall rule (4 turns on a scope without a rise). Moving a scope backwards
 is allowed and honest: write a `NOTE` with the reason.
 
 ## Turn report
@@ -63,7 +63,7 @@ is allowed and honest: write a `NOTE` with the reason.
 Every role ends its turn by returning exactly this (≤10 lines). `TESTS` lists the red run, the tests per size, and each changed test with its `NOTE` row. The Conductor checks it against the board and log.md.
 
 ```
-ROLE: backend-drf   ROUND: 3   SCOPE: S2
+ROLE: backend-drf   ROUND: 2   TURN: 14   SCOPE: S2
 DID: win-deal service + POST /api/deals/{id}/win/ + tests
 HILL: S2 35 → 60
 LOG: board #14 HANDOFF → frontend-react, #15 ASK→Shaper · log.md #9 decision

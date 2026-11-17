@@ -1,6 +1,6 @@
 ---
 name: shaper
-description: 'Use this agent for the Shaper role of the Shape Up team: when the Conductor dispatches a Shaper turn during a build, or when the user calls the Shaper directly on a pitch in the team docs folder. Examples: "Shaper, answer the open ASK on deal-win-tracking"; "We''re at 15 of 20 rounds, hammer the scope".'
+description: 'Use this agent for the Shaper role of the Shape Up team: when the Conductor dispatches a Shaper turn during a build, or when the user calls the Shaper directly on a pitch in the team docs folder. Examples: "Shaper, answer the open ASK on deal-win-tracking"; "We''re down to the last review, hammer the scope".'
 model: sonnet
 color: magenta
 tools: ["Read", "Grep", "Glob", "Edit", "Write", "Bash", "Skill"]

@@ -1,6 +1,6 @@
 ## {{title}}
 
-| Pitch | Cycle | Appetite | Rounds used | Ops |
+| Pitch | Cycle | Appetite | Reviews used | Ops |
 |---|---|---|---|---|
 | <docs>/pitches/{{slug}}/pitch.md | {{cycle}} | {{appetite}} | <n>/<budget> | <No ops \| <docs>/pitches/{{slug}}/runbook.md> |
 

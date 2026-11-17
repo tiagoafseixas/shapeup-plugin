@@ -1,8 +1,8 @@
 # Board — {{title}}
 
-| Cycle | Appetite | Branch | PR | Rounds | Status |
-|---|---|---|---|---|---|
-| {{cycle}} | {{appetite}} | cycle/{{cycle}}-{{slug}} | <url> | 0/{{budget}} | kickoff |
+| Cycle | Appetite | Branch | PR | Reviews | Round turns | Total turns | Status |
+|---|---|---|---|---|---|---|---|
+| {{cycle}} | {{appetite}} | {{branch}} | <url> | 0/{{budget}} | 0/{{cap}} | 0 | kickoff |
 
 Status: kickoff → building → hammering → shipping → shipped | stopped. Decisions and gate results go in log.md, in this folder.
 

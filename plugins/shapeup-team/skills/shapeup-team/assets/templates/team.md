@@ -47,13 +47,14 @@ when the user answers a volume question. Agents never connect to production to f
 | Versions | <runtime and framework majors per role, database engine and major> |
 | Prod DB instance | <identifier the database pack's commands take> |
 | Read-only DB access | <none, or: read-only user on <replica or primary>; the user sets READONLY_DATABASE_URL in the session when they allow a connection> |
-| Budget Small batch | 8 rounds |
+| Reviews Small batch | 2 |
 | Pitch word limit | 600 |
 | Scopes per pitch | 2–7 |
 | Small test time limit | 0.5 s |
 | PR tool | <gh, glab, or none (the user opens PRs)> |
 | Branch pattern | cycle/<cycle>-<slug> |
-| Budget Big batch | 20 rounds |
+| Reviews Big batch | 6 |
+| Turn cap per round | 30 |
 | Ponytail level | full |
 | Model: tech check, ideas, Shaper build, uphill dev turn, QA gates | sonnet |
 | Model: mechanical turn (downhill, fully specified) | haiku |

@@ -21,7 +21,7 @@ Bootstrap only reads files and asks the user. No network, no database, no test r
 | # | Check |
 |---|---|
 | 1 | Problem: baseline → workaround → cost, no solution words (`roles/shaper.md` › Writing the problem); its evidence is logged in log.md |
-| 2 | Appetite: size in the header table (rounds from `team.md`); one imperative sentence on what the bet builds |
+| 2 | Appetite: size in the header table (its review budget comes from `team.md`); one imperative sentence on what the bet builds |
 | 3 | Solution: the elements are concrete enough to start, rough enough to leave design room |
 | 4 | Wireframes: present when a screen is new or changes layout, at fat-marker level |
 | 5 | Every rabbit hole has a patch, or has become a no-go |

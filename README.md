@@ -29,8 +29,8 @@ Then the crew walks up the hill.
 
 **The DBA** carries the database like it's fragile, because it is. In production: backups. Only backups. And asks first.
 
-Somewhere below, the Conductor counts rounds. At 75% of the budget, the scope gets hammered. At 100%, the build stops.
-Nobody extends it but you.
+Every so often they stop and show you what works. Two reviews for a small batch, six for a big one. Near the end, the scope gets hammered.
+When the reviews run out, the build stops. Nobody extends it but you.
 
 They don't do standups. They write one row on the board and get back to work.
 
@@ -69,8 +69,8 @@ A pitch goes through seven steps. You start each one; the team does the work and
 | 1 | Shape a pitch | `/shape <idea>`, later `/shape <slug>` | `pitch.md` with status `ready`, `log.md` | Shape it with the Shaper |
 | 2 | Bet | "Prepare the betting table", then "We bet on `<slug>` for cycle `<id>`" | `shape/betting/<date>.md`; the pitch at status `bet` | Decide at your betting table |
 | 3 | Kick off | `/kickoff <slug> <cycle>` | A branch, a draft PR, a board with scopes, `tech.md` | Answer questions about the environment |
-| 4 | Build | `/round <slug> [count]` | Commits, tests and an updated board after every round | Answer the questions batched at the end of each round |
-| 5 | Ship | Starts by itself when every must scope is done (or `/gate ship`) | The PR marked ready, a runbook if needed, a 5-line summary | Review and merge the PR; run the runbook |
+| 4 | Build | `/round <slug>` | Working scopes to review at the end of each round | Review each round's scopes: accept or give findings |
+| 5 | Ship | Starts by itself when you've accepted every must scope (or `/gate ship`) | The full suite green, a final review, the PR marked ready, a runbook if needed | Sign off the final review; merge the PR; run the runbook |
 | 6 | Cool down | "I merged `<slug>`" | Status `shipped`; cut items in `shape/ideas.md`; a retro; the next betting table offered | Small fixes, if any; the next bets |
 
 Steps 0 to 2 are offline: the team reads files and asks you. No GitHub calls, no database connections (local or production),
@@ -97,7 +97,7 @@ Shaping is a conversation between you and the Shaper (the main session, best on 
 | You say | The Shaper does | Expected result |
 |---|---|---|
 | `/shape send payment reminders for overdue invoices` | Proposes a title and slug for you to confirm, then asks who has the problem, what they do today, and what that costs, until the problem holds up without the solution | `shape/pitches/<slug>/pitch.md` (status `draft`) and `log.md` |
-| — | Proposes the appetite: Small batch (8 rounds) or Big batch (20) | The header table and a one-line Appetite |
+| — | Proposes the appetite: Small batch (2 reviews with you) or Big batch (6) | The header table and a one-line Appetite |
 | — | Sketches the solution as a breadboard (places, affordances, where each leads) and fat-marker wireframes | Solution and Wireframes sections |
 | — | Hunts rabbit holes. For technical ones it asks the backend, frontend or DBA agent for a read-only tech check of the code. | Rabbit holes, each with its patch; No-gos |
 | — | Writes what "done" looks like from the user's side | Works when |
@@ -127,40 +127,48 @@ Every decision and its reason goes into `log.md`; the pitch states only the deci
 
 Done when the Kickoff gate passes. You get a 5-line summary: branch, PR, scopes, first scope, open questions.
 
-### 4. Build: `/round <slug> [count]`
+### 4. Build: `/round <slug>`
 
-A round gives each role at most one turn, in order: Shaper → DBA → backend roles → designer → frontend roles → QA.
+A round runs from a goal to a review with you. The Conductor and the Shaper pick the scopes to finish this round; the team works
+on them with no fixed order and no waiting: a handoff, a question or a QA finding is acted on as soon as it's on the board.
 
-| Role | Does in its turn |
+| Role | Does |
 |---|---|
 | Designer | Lays out the scope's screens first (affordances, copy, states) against the API contract, then does the visual pass once data is wired |
 | Backend / frontend | Writes the Small and Medium tests first and commits them failing (`red`), then the code until they pass; hands the API contract to the frontend and migrations to the DBA |
 | DBA | Reviews each migration against the table sizes in `team.md`: approve, or rewrite it safely |
-| QA | Writes the Large tests for the scope's journeys and runs the Scope gate: tests by size, tests written first, no change-detector tests, every "Done when" check. Findings are nice-to-haves (`~`) unless they break a promise of the scope, as in Shape Up. |
-| Shaper | Answers questions, cuts scope when the budget runs low, guards the no-gos |
+| QA | Writes the Large tests for the scope's journeys and runs the Scope gate as soon as a scope is handed over: tests by size, tests written first, no change-detector tests, every "Done when" check. Findings are nice-to-haves (`~`) unless they break a promise of the scope, as in Shape Up. |
+| Shaper | Answers questions, cuts scope when the reviews run low, guards the no-gos |
 
-| Expected after each round | Where |
+| A round ends when | You get |
 |---|---|
-| One commit per turn (`S<n> <role>: …`), pushed | The cycle branch and the draft PR |
-| Each scope's hill position (0–50 figuring it out, 50–100 making it) and a `DONE` row when QA passes it | `board.md` |
-| One message with every question for you, with options and a recommendation | The chat |
+| Every scope of the round's goal has passed QA | **A review**: per scope, what it does, how to try it, screenshots when possible, what was cut. You accept each scope or give findings; findings become the next round's work. |
+| A question blocks everything left | The question, at once, with options and a recommendation. The round continues after your answer. |
+| The turn cap is reached (30 agent turns by default) | A status report instead of a demo. You choose: continue (it counts as a review) or hammer now. |
 
-The team stops and asks you when only you can decide, at 75% of the round budget (the Shaper cuts the nice-to-haves), and at 100%
-(default: drop and re-shape; only you extend). `count` runs several rounds until one of those happens.
+| Along the way | Where |
+|---|---|
+| One commit per turn (`S<n> <role>: …`), pushed at each review | The cycle branch and the draft PR |
+| Each scope's hill position (0–50 figuring it out, 50–100 making it), `DONE` when QA passes it, accepted when you do | `board.md` |
+| Questions that don't block anything | Collected for the review |
+
+When a quarter of the reviews is left (Small: before review 2; Big: before review 5), the Shaper hammers the scope. When the last
+review is done and must scopes remain, the build stops; the default is drop and re-shape, and only you extend.
 
 ### 5. Ship
 
-Starts when every must scope is `DONE`. QA runs the full suite, Large tests included, and the Ship gate. The DBA writes `runbook.md`
-if the release needs manual steps (a backfill, an ordered deploy). The Conductor updates the PR description and marks it ready.
+Starts when you've accepted every must scope. QA runs the full suite, Large tests included, and the Ship gate. The DBA writes `runbook.md`
+if the release needs manual steps (a backfill, an ordered deploy). Then a **final review** with you: each "Works when" line of the pitch
+with its evidence, the cut list and the runbook. It doesn't use the review budget.
 
-Expected: the PR ready for your review and a 5-line summary of what shipped, what was cut and what the runbook says.
+Expected: after your sign-off, the PR marked ready and a 5-line summary of what shipped, what was cut and what the runbook says.
 Only you merge, and you run the runbook.
 
 ### 6. Cool down
 
 Tell the team you merged. As in Shape Up, cool-down is the break between cycles: no scheduled work, and the time for the next betting table.
 
-Expected: status `shipped` (or `stopped`), rounds and hours logged, cut items and shortcuts copied to `shape/ideas.md` (nothing carries over),
+Expected: status `shipped` (or `stopped`), reviews, turns and hours logged, cut items and shortcuts copied to `shape/ideas.md` (nothing carries over),
 three retro rows on the board (keep, change, try), and an offer to prepare the next betting table. Small fixes you ask for meanwhile get their own branch and PR.
 
 ### Gates
@@ -174,6 +182,8 @@ runs one again by hand, and every result goes into `log.md`.
 | Ready | Shaper | 1 |
 | Kickoff | Conductor | 3 |
 | Scope (one per scope) | QA | Each scope in 4 |
+| Review (one per round) | You | Each round in 4 |
+| Final review | You | 5, before the PR is marked ready |
 | Ship | QA, then the Conductor | 5 |
 
 ### Talking to one role
@@ -183,8 +193,9 @@ Name the role and the pitch: "DBA, review migration 0008 on deal-win-tracking", 
 
 ### Appetite
 
-Appetite is a round budget, not a calendar: Small batch 8 rounds, Big batch 20 by default (change them in `team.md`).
-At 75% the Shaper hammers scope; at 100% the build stops and the default is drop and re-shape. Only you extend.
+Shape Up sizes work as a small batch (1–2 weeks) or a big batch (6 weeks). Agents don't work in weeks, so this plugin counts reviews
+with you, about one per human week: **Small batch 2 reviews** (mid-way and near the end), **Big batch 6**. A turn cap per round (30)
+bounds the agent work between reviews. All three numbers live in `team.md`.
 
 ## Shape Up, and what this plugin adds
 
@@ -195,11 +206,11 @@ The method is Basecamp's [Shape Up](https://basecamp.com/shapeup). What agents n
 | Shaping by senior people: appetite, breadboards, fat-marker sketches, rabbit holes, no-gos | The user and the Shaper (`/shape`); designer and developers do read-only checks |
 | A pitch: problem, appetite, solution, rabbit holes, no-gos | `pitch.md` with those five, plus wireframes and **Works when** (addition) |
 | Betting table, no backlog | The betting pack and your bet; unchosen pitches stay `ready`, nothing is queued |
-| Six-week cycle; small batch 1–2 weeks | **Rounds** (addition): agents work faster than weeks, so appetite is a round budget (Big 20, Small 8 by default) |
+| Six-week cycle; small batch 1–2 weeks | **Review rounds** (addition): about one review with you per human week, so Small batch 2 reviews and Big batch 6; a turn cap bounds each round |
 | A team of a designer and one or two programmers, QA later in the cycle | Designer, backend and frontend developers, QA; plus a **DBA** (addition, optional) |
 | Scopes, hill charts, get one piece done | Scopes on the board with a hill position; the first scope is the most core and most unknown |
-| Scope hammering, must-haves and `~` nice-to-haves; QA issues are nice-to-haves unless the team decides otherwise | The same; the Shaper hammers at 75% of the budget |
-| Circuit breaker; rare extensions | At 100% the build stops; the default is drop and re-shape; only you extend |
+| Scope hammering, must-haves and `~` nice-to-haves; QA issues are nice-to-haves unless the team decides otherwise | The same; the Shaper hammers when a quarter of the reviews is left |
+| Circuit breaker; rare extensions | When the reviews run out the build stops; the default is drop and re-shape; only you extend |
 | Cool-down: no scheduled work, the next betting table | The same, plus a short retro and cut items moved to `ideas.md` |
 | — | **Additions for agents**: the Conductor, gates, "Done when" checks per scope, `log.md`, the board's message protocol, the testing and writing standards, stack packs, production and git guardrails, offline until kickoff |
 
@@ -209,7 +220,7 @@ The method is Basecamp's [Shape Up](https://basecamp.com/shapeup). What agents n
 |---|---|
 | `/shape [idea or slug]` | Shapes a pitch with the user; role agents run read-only tech checks; Ready gate |
 | `/kickoff <slug> <cycle>` | Checks the stack packs, then the cycle branch, draft PR, board, scope map, `tech.md`, Kickoff gate |
-| `/round <slug> [count]` | Runs build rounds (Shaper → DBA → backend roles → designer → frontend roles → QA), applies the circuit breaker, batches questions for the user |
+| `/round <slug>` | Runs one review round: the team works on the round's scopes with no fixed order until there's something to review with you; applies the circuit breaker |
 | `/bootstrap` | Once per repo: you pick the docs folder; fills `team.md` from the repo's files and your answers; offline |
 | `/gate <ready / kickoff / scope S<n> / ship> <slug>` | Runs one gate again by hand and logs the result |
 | `/stack [list / new <name> / house <role id> / lint <dir>]` | Lists the project's packs, writes a new pack from the stack's official docs, adds house rules |

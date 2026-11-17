@@ -51,7 +51,7 @@ non-read-only DB URLs and `.env` writes. Any production connection or backup ask
 | Every decision and action goes into the pitch's `log.md` | Tools and libraries already in the repo, test design |
 | Test sizes, tests before code, tests change only when a source proves them wrong (`references/testing.md`) | Which cases to test, at which size |
 | The docs that exist, their formats, and `references/writing-style.md` | Wording within the style rules |
-| Appetite and the round budget (circuit breaker) | How to cut scope to fit the appetite |
+| Appetite, the review budget and the turn cap (circuit breaker) | How to cut scope to fit the appetite |
 | Git rules | Commit granularity inside a turn |
 
 When a role wants to bend something in the left column, it writes a `HUMAN` row. It does not bend it.
@@ -89,7 +89,7 @@ diagram captions, filler phrases). Diagram and wireframe rules: `references/diag
 | 1 | Shape | User + Shaper (you take the Shaper role) | pitch.md `ready`, log.md | Ready gate |
 | 2 | Bet | Betting table | Betting pack; pitch status `bet` + cycle id | The betting table's decision |
 | 3 | Kickoff | Conductor → all roles | Branch, draft PR, board with scopes, tech.md | Kickoff gate |
-| 4 | Build | Roles, in rounds | Scopes move over the hill to done | Scope gate, per scope |
+| 4 | Build | Roles, in review rounds | Scopes move over the hill to done, reviewed with the user | Scope gate per scope, then the user's review |
 | 5 | Ship | QA → Conductor | PR marked ready, runbook if ops are needed | Ship gate |
 | 6 | Cool-down | Conductor + Shaper | Retro, cut items in `<docs>/ideas.md` | — |
 
@@ -145,23 +145,24 @@ Pitches that weren't chosen stay `ready`. They are not queued, and can go to a l
 Scopes are **vertical slices** named in domain language, in ≤5 words ("Win a deal", not "API" or "UI"). Details go in "Done when".
 Order: the first scope is the most core and the most unknown. Get one piece done end to end first.
 
-## Phase 4: Build in rounds
+## Phase 4: Build in review rounds
 
-A **round** is one pass of this loop:
+A **round** runs from a goal to a review with the user. Inside it, the work is event-driven: no fixed order, no waiting for a
+boundary. A row on the board is acted on as soon as it's written.
 
-1. Read the board. Collect open Log rows and scopes that are not done.
-2. Dispatch in this order, at most one turn per role per round: **Shaper → DBA → backend roles → designer → frontend roles → QA**. A role gets a turn if
-   it has open rows addressed to it, or owns a scope that is not done and isn't waiting on someone else.
-   Turns are sequential, because roles share the working tree and the board.
-3. After each turn, check the turn report against the board: rows added, hill updated, commit made (a dev turn with code has its red commit first), log.md updated
-   for every DECIDE. Run `scaffold.py lint <repo> <slug>`: it checks the writing limits. If something is missing or lint fails,
-   send the role back once with the gap. If it's still missing, write a `FLAG` row and move on.
-4. End of round: increment `Rounds` in the board header, push the branch, apply the breaker, then send all open
-   `HUMAN` rows to the user in one message (question, options, recommendation). Other scopes keep moving while HUMAN rows wait.
-   Exception: a DBA backup announcement goes to the user at once. After his explicit go, the DBA gets a turn to run it and confirm it.
-   A HUMAN row that asks the user to **run** something (SQL, a cloud CLI command, anything against prod) is never forwarded on trust:
-   read it against the role's rules (e.g. `dba.md`). If anything looks wrong, hold it and send it back to its author as a
-   `BLOCK` with the defect named; it goes to the user next round. The user runs exactly what he receives.
+| # | Step | Detail |
+|---|---|---|
+| 1 | Set the round's goal | With the Shaper: the scopes to bring to a reviewable state this round (at least one; in round 1, the most core and most unknown scope, end to end). Write it as a `NOTE` to `ALL`: "Round <n> goal: S1, S3". |
+| 2 | Work loop | Pick the next turn with the Routing table and Turn priority below; spawn the role; check its turn report against the board (rows added, hill updated, commit made, a dev turn with code has its red commit first, log.md updated for every DECIDE) and run `scaffold.py lint <repo> <slug>`. A gap or lint failure: send the role back once; still missing: a `FLAG` row, move on. Act on new rows at once: a QA `must` goes straight back to the owner, a `HANDOFF` to the next role. Add 1 to the board's turn counters. One turn at a time per working copy, because roles share the files and the board. |
+| 3 | End the work loop | When every goal scope has a QA `DONE` row (go to 4); or a `HUMAN` row blocks everything left (ask the user now, then continue); or the turn cap is reached (`team.md` › Turn cap per round, default 30: stop and send a status report instead of a demo). |
+| 4 | Review with the user | Per goal scope: what it does (the "Done when" checks it passes), how to try it (commands, URL, test data), screenshots when a browser tool is available, what was cut. Add the open non-blocking `HUMAN` rows. The user accepts each scope or gives findings. |
+| 5 | After the review | Accepted: the scope stays `DONE`. Findings: one row each to the owner (`must` when they break a promise of the scope, otherwise `~`), and the scope's hill drops below 100. Log the review (`gate`: "Review <n>: S1 accepted, S3 2 findings"). Add 1 to Reviews, reset the round's turn counter, push the branch, apply the circuit breaker, start the next round. |
+
+Questions for the user: a `HUMAN` row that blocks all remaining work goes to the user at once; the rest wait for the review.
+A DBA backup announcement goes at once; after the user's explicit go, the DBA gets a turn to run it and confirm it.
+A HUMAN row that asks the user to **run** something (SQL, a cloud CLI command, anything against prod) is never forwarded on trust:
+read it against the role's rules (e.g. `dba.md`). If anything looks wrong, send it back to its author as a `BLOCK` with the defect named.
+The user runs exactly what he receives.
 
 **Routing** (open row → next turn):
 
@@ -175,36 +176,43 @@ A **round** is one pass of this loop:
 | `HANDOFF` dev→QA (scope ready) | QA |
 | QA finding, severity `must` | the scope's owner |
 | `FLAG` (stall, scope creep, budget) | Shaper |
-| `HUMAN` | the user, batched at the end of the round |
+| `HUMAN` | the user: at once if it blocks all remaining work, otherwise at the review |
 
 **Turn priority** (inside one role's turn): `BLOCK` rows → QA `must` findings → rows that unblock another role
 (an ASK addressed to it, a HANDOFF to pick up) → its next scope. Finishing beats starting: a scope near the bottom of the
 hill gets closed before an uphill scope is continued. A role may handle several small items in one turn and stops at a natural commit point.
 
-**Appetite is a round budget, not a calendar.** The team is agents: a Big batch is 20 rounds of agent work, not 6 human weeks.
-Budgets come from `team.md` (defaults: Small batch 8 rounds, Big batch 20). Each cool-down logs rounds used and wall-clock hours;
-recalibrate the budgets from those numbers, never from human estimates.
+**Appetite is a review budget, not a calendar.** In Shape Up a small batch is 1–2 weeks and a big batch 6 weeks. The team is
+agents, so time is counted in reviews with the user, about one per human week: **Small batch 2 reviews** (mid-way and near the end),
+**Big batch 6**. The turn cap bounds the agent work inside each round. Budgets come from `team.md`. Each cool-down logs reviews,
+turns and wall-clock hours; recalibrate from those numbers, never from human estimates.
 
 **Circuit breaker.**
 
 | Trigger | Action |
 |---|---|
-| A scope's hill value hasn't risen for 2 rounds in which it was worked | `FLAG` → Shaper hammers or splits it |
-| 75% of the budget used | Status `hammering`, logged. Shaper cuts every `~` not yet started and challenges each remaining must. |
-| 100% of the budget used | Stop all build turns. If all must scopes are done → Ship. Otherwise write a `HUMAN` row: the default is **drop and re-shape**. Never extend on your own. |
+| A scope's hill hasn't risen in 4 turns spent on it | `FLAG` → Shaper hammers or splits it |
+| The turn cap is reached inside a round | End the round early with a status report. The user picks: continue (it counts as a review) or hammer now. |
+| The remaining reviews are a quarter of the budget or less (Small: before review 2; Big: before review 5) | Status `hammering`, logged. Shaper cuts every `~` not yet started and challenges each remaining must. |
+| The last review is done and must scopes remain | Stop all build turns. Write a `HUMAN` row: the default is **drop and re-shape**. Never extend on your own. |
 
 ## Phase 5: Ship
 
-QA runs the Ship gate. DBA writes `runbook.md` (`scaffold.py add <repo> <slug> runbook`) if the release needs manual ops:
-a large backfill, a flag change, an ordered deploy. The Conductor updates the PR body from the board, marks it ready (`gh pr ready`, `glab mr update --ready`, or asks the user), logs the
-`action`, and tells the user in ≤5 lines: what shipped, what was cut, what the runbook says.
+Starts when the user has accepted every must scope.
+
+1. QA runs the Ship gate: the full suite, Large tests included.
+2. DBA writes `runbook.md` (`scaffold.py add <repo> <slug> runbook`) if the release needs manual ops: a large backfill, a flag change, an ordered deploy.
+3. **Final review with the user**: each "Works when" line of the pitch with its evidence (test, demo step, screenshot), the cut list, the runbook.
+   It doesn't use the review budget. Findings: `must` ones go back to their owners; `~` ones go to `<docs>/ideas.md`.
+4. After the user's sign-off, update the PR body from the board, mark it ready (`gh pr ready`, `glab mr update --ready`, or ask the user),
+   log the `action`, and tell the user in ≤5 lines: what shipped, what was cut, what the runbook says.
 
 ## Phase 6: Cool-down
 
 In Shape Up, cool-down is the break between cycles: no scheduled work, and the time when the next betting table meets.
 After the user reports the merge (or the stop):
 
-1. Close the cycle: set the status to `shipped` or `stopped`; log rounds used and wall-clock hours from kickoff to PR ready (`phase`).
+1. Close the cycle: set the status to `shipped` or `stopped`; log reviews used, total turns and wall-clock hours from kickoff to PR ready (`phase`).
 2. Copy the cut `~` items and the `shortcut:` comments (`/ponytail-debt`) into `<docs>/ideas.md`. Nothing carries over: anything left must be re-pitched.
 3. Write 3 retro rows on the board (keep / change / try).
 4. Take no scheduled work. Small fixes the user asks for during cool-down are fine, each on its own branch and PR, outside the pitch.
@@ -247,7 +255,7 @@ Each role starts cold, so the brief plus the board must be enough. That's also w
 
 ```
 Repo: <path>   Team config: <docs>/team.md   Pitch folder: <docs>/pitches/<slug>/
-Role id: <role id from team.md › Roles>   Phase: <phase>   Round: <n>/<budget>   Mode: <turn | tech check (read-only) | design check (read-only) | orient (read-only)>
+Role id: <role id from team.md › Roles>   Phase: <phase>   Round: <n>/<review budget>   Turn: <t>/<cap>   Mode: <turn | tech check (read-only) | design check (read-only) | orient (read-only)>
 Your turn: <the routed Log rows, copied verbatim, or "continue scope S<n>">
 Ponytail: level <level>
 Finish by updating the board (and log.md for any decision), committing per the git rules, and returning the turn report from protocol.md.

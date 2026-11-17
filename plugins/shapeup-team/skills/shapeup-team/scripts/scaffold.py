@@ -21,7 +21,8 @@ import sys
 from pathlib import Path
 
 TEMPLATES = Path(__file__).resolve().parent.parent / "assets" / "templates"
-DEFAULT_BUDGET = {"small": 8, "big": 20}
+DEFAULT_BUDGET = {"small": 2, "big": 6}   # reviews with the user
+DEFAULT_TURN_CAP = 30                     # agent turns per review round
 KINDS = ("decision", "cut", "phase", "gate", "action")
 TODAY = dt.date.today().isoformat()
 CONFIG = ".shapeup.json"
@@ -101,7 +102,7 @@ def budget(repo: Path, appetite: str) -> int:
     size = "big" if "big" in appetite.lower() else "small"
     team = docs(repo) / "team.md"
     if team.exists():
-        m = re.search(rf"\|\s*Budget {size} batch\s*\|\s*(\d+)", team.read_text(), re.I)
+        m = re.search(rf"\|\s*Reviews {size} batch\s*\|\s*(\d+)", team.read_text(), re.I)
         if m:
             return int(m.group(1))
     return DEFAULT_BUDGET[size]
@@ -137,14 +138,22 @@ def cmd_kickoff(repo: Path, slug: str, cycle: str) -> None:
     appetite = row[1]
     if "<" in appetite:
         sys.exit("pitch has no appetite set")
-    rounds = budget(repo, appetite)
-    write_new(d / "board.md", render("board.md", title=title, slug=slug, cycle=cycle,
-                                     appetite=appetite, budget=str(rounds)))
+    reviews = budget(repo, appetite)
+    cap = setting(repo, "Turn cap per round", DEFAULT_TURN_CAP)
+    branch = "cycle/{cycle}-{slug}"
+    team = docs(repo) / "team.md"
+    if team.exists():
+        m = re.search(r"\|\s*Branch pattern\s*\|\s*([^|<]+?)\s*\|", team.read_text())
+        if m:
+            branch = m.group(1).strip("` ")
+    branch = branch.replace("<cycle>", cycle).replace("<slug>", slug).replace("{cycle}", cycle).replace("{slug}", slug)
+    write_new(d / "board.md", render("board.md", title=title, slug=slug, cycle=cycle, branch=branch,
+                                     appetite=appetite, budget=str(reviews), cap=str(cap)))
     pitch = (d / "pitch.md").read_text()
     old = "| " + " | ".join(row) + " |"
     new = "| " + " | ".join(["building", row[1], row[2], cycle, TODAY]) + " |"
     (d / "pitch.md").write_text(pitch.replace(old, new, 1))
-    append_log(d, "Conductor", "phase", f"Kickoff: cycle {cycle}, status building, budget {rounds} rounds",
+    append_log(d, "Conductor", "phase", f"Kickoff: cycle {cycle}, status building, budget {reviews} reviews, {cap} turns per round",
                f"The betting table bet on it; {appetite} budget from team.md")
 
 
@@ -156,7 +165,7 @@ def cmd_add(repo: Path, slug: str, doc: str) -> None:
 
 
 def cmd_status(repo: Path) -> None:
-    print("| Pitch | Status | Appetite | Cycle | Rounds | Board status | Log entries |")
+    print("| Pitch | Status | Appetite | Cycle | Reviews | Board status | Log entries |")
     print("|---|---|---|---|---|---|---|")
     for p in sorted((docs(repo) / "pitches").glob("*/pitch.md")):
         d = p.parent
@@ -164,7 +173,9 @@ def cmd_status(repo: Path) -> None:
         rounds = bstatus = "—"
         if (d / "board.md").exists():
             b = row_after((d / "board.md").read_text(), "Cycle")
-            if len(b) >= 6:
+            if len(b) >= 8:
+                rounds, bstatus = b[4], b[7]
+            elif len(b) >= 6:
                 rounds, bstatus = b[4], b[5]
         n = len(re.findall(r"^\| \d+ \|", (d / "log.md").read_text(), re.M)) if (d / "log.md").exists() else 0
         print(f"| {d.name} | {row[0]} | {row[1]} | {row[3]} | {rounds} | {bstatus} | {n} |")
@@ -211,7 +222,7 @@ def cmd_lint(repo: Path, slug: str) -> None:
         body = [l for l in appetite.group(1).splitlines() if l.strip()]
         if len(body) > 1:
             issues.append(("pitch.md", "Appetite: one imperative sentence on what the bet builds"))
-        if re.search(r"\b(batch|rounds?)\b", appetite.group(1), re.I):
+        if re.search(r"\b(batch|rounds?|reviews?)\b", appetite.group(1), re.I):
             issues.append(("pitch.md", "Appetite repeats the size; it lives in the header table"))
     prose = re.sub(r"```.*?```", "", pitch, flags=re.S)
     for i, line in enumerate(prose.splitlines(), 1):
