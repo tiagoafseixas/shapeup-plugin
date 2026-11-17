@@ -52,23 +52,128 @@ The repo is a plugin marketplace: the team, plus one plugin per stack pack. Inst
 
 Needs `python3` on the PATH (the guard hook) and `gh` (branches and draft PRs). The [Ponytail](https://github.com/DietrichGebert/ponytail) plugin is recommended for code review.
 
-## How a pitch moves
+## How to use
 
-| # | Phase | Who | Output | Command |
+A pitch goes through seven steps. You start each one; the team does the work and stops when it needs you.
+
+| # | Step | You run | You get | Your part |
 |---|---|---|---|---|
-| 0 | Setup (once per repo, offline) | Conductor + user | `shape/team.md` filled from the repo's files and your answers, stack packs installed | `/gate setup` |
-| 1 | Shape (offline) | User + PO | `pitch.md` with status `ready`, `log.md` | `/shape` |
-| 2 | Bet | Founders | Pitch status `bet` with a cycle id | — |
-| 3 | Kickoff | Conductor → all roles | Branch, draft PR, board with scopes, `tech.md` | `/kickoff` |
-| 4 | Build | Roles, in rounds | Scopes move over the hill to done | `/round` |
-| 5 | Ship | QA → Conductor | PR marked ready, runbook if ops are needed | `/gate ship` |
-| 6 | Cool-down | Conductor + PO | Retro; cut items in `shape/ideas.md` | `/round` (after the merge) |
+| 0 | Set up the repo (once) | `/gate setup` | `shape/team.md` | Answer what the repo can't tell |
+| 1 | Shape a pitch | `/shape <idea>`, later `/shape <slug>` | `pitch.md` with status `ready`, `log.md` | Shape it with the PO |
+| 2 | Bet | "Prepare the betting table", then "The founders bet on `<slug>` for cycle `<id>`" | `shape/betting/<date>.md`; the pitch at status `bet` | Decide with the founders |
+| 3 | Kick off | `/kickoff <slug> <cycle>` | A branch, a draft PR, a board with scopes, `tech.md` | Answer questions about the environment |
+| 4 | Build | `/round <slug> [count]` | Commits, tests and an updated board after every round | Answer the questions batched at the end of each round |
+| 5 | Ship | Starts by itself when every must scope is done (or `/gate ship`) | The PR marked ready, a runbook if needed, a 5-line summary | Review and merge the PR; run the runbook |
+| 6 | Cool down | "I merged `<slug>`" | Retro on the board; cut items in `shape/ideas.md`; status `shipped` | — |
 
-Setup and shaping are offline: the team reads files and asks you. No GitHub calls, no database connections (local or production),
+Steps 0 to 2 are offline: the team reads files and asks you. No GitHub calls, no database connections (local or production),
 no test runs, no installs; the hook asks you before any of them while no pitch has a board. The kickoff is the first time anything runs.
 
-Appetite is a round budget, not a calendar: Small batch 8 rounds, Big batch 20 by default. At 75% the PO hammers scope; at 100%
-the build stops and the default is drop and re-shape. Only the user extends.
+### 0. Set up the repo: `/gate setup`
+
+Run it once per repo, in the repo's root.
+
+| What happens | Expected result |
+|---|---|
+| The Conductor creates `shape/` and fills `team.md` from the repo's files: `package.json`, requirements, settings, CI config | `shape/team.md`, `shape/ideas.md`, `shape/decisions.md`, empty `shape/pitches/` and `shape/betting/` |
+| It asks you what files can't tell: the base branch, production database instance, the largest tables and their size (or "ask per pitch") | The Table volumes section filled with your numbers |
+| It maps each developer role to a stack pack (`backend-drf` → `stack-django-drf`, …) and checks the packs are installed | The Roles table; a list of packs to install, if any are missing |
+| It looks for credentials in the repo's files | File paths with a connection string, if any; never their values |
+
+Done when the Setup gate passes. The team doesn't commit before a kickoff: commit `shape/` yourself.
+
+### 1. Shape a pitch: `/shape`
+
+Shaping is a conversation between you and the PO (the main session, best on Opus). It ends when the pitch is ready for the betting table.
+
+| You say | The PO does | Expected result |
+|---|---|---|
+| `/shape agents can read company insights from an AI chat` | Asks who has the problem, what they do today, and what that costs, until the problem holds up without the solution | `shape/pitches/<slug>/pitch.md` (status `draft`) and `log.md` |
+| — | Proposes the appetite: Small batch (8 rounds) or Big batch (20) | The header table and a one-line Appetite |
+| — | Sketches the solution as a breadboard (places, affordances, where each leads) and fat-marker wireframes | Solution and Wireframes sections |
+| — | Hunts rabbit holes. For technical ones it asks the backend, frontend or DBA agent for a read-only tech check of the code. | Rabbit holes, each with its patch; No-gos |
+| — | Writes what "done" looks like from the user's side | Works when |
+| `/shape <slug>` | Picks up where you left off, from `log.md` | — |
+
+Every decision and its reason goes into `log.md`; the pitch states only the decisions. Done when the Ready gate passes
+(problem, appetite, solution, rabbit holes, no-gos, ≤600 words, lint clean): the status becomes `ready`.
+
+### 2. Bet
+
+| You say | Expected result |
+|---|---|
+| "Prepare the betting table" | `shape/betting/<date>.md`: one row per `ready` pitch with its appetite, one-line problem and biggest remaining risk. It recommends nothing. |
+| "The founders bet on `<slug>` for cycle `2026-C1`" | That pitch's status becomes `bet`, logged. Pitches not chosen stay `ready` for a later table; nothing is queued. |
+
+### 3. Kick off: `/kickoff <slug> <cycle>`
+
+| What happens | Expected result |
+|---|---|
+| Checks each role's stack pack is installed | Stops with the missing packs, if any |
+| Creates the branch `cycle/<cycle>-<slug>` and the board | `shape/pitches/<slug>/board.md`; status `building` |
+| Runs the environment for the first time: `gh auth status`, migrations on the local or test database, Small and Medium tests | Green, or a question to you; the team doesn't fix your environment |
+| Commits, pushes, opens a draft PR | The PR link in the board header |
+| Each developer role and the DBA read the pitch and the code it touches | ≤3 notes each on the board |
+| The backend roles draft the scopes, frontend roles amend them, the DBA marks the ones that touch the schema, QA writes "Done when", the PO checks them against the pitch | 2–7 scopes on the board: vertical slices named in domain words, each with an owner, must or `~` (nice to have) and checks |
+| The DBA and the backend role draw the structure | `tech.md`: Mermaid entity, class and sequence diagrams and the API contract |
+
+Done when the Kickoff gate passes. You get a 5-line summary: branch, PR, scopes, first scope, open questions.
+
+### 4. Build: `/round <slug> [count]`
+
+A round gives each role at most one turn, in order: PO → DBA → backend roles → frontend roles → QA.
+
+| Role | Does in its turn |
+|---|---|
+| Backend / frontend | Writes the Small and Medium tests first and commits them failing (`red`), then the code until they pass; hands the API contract to the frontend and migrations to the DBA |
+| DBA | Reviews each migration against the table sizes in `team.md`: approve, or rewrite it safely |
+| QA | Writes the Large tests for the scope's journeys and runs the Scope gate: tests by size, tests written first, no change-detector tests, every "Done when" check |
+| PO | Answers questions, cuts scope when the budget runs low, guards the no-gos |
+
+| Expected after each round | Where |
+|---|---|
+| One commit per turn (`S<n> <role>: …`), pushed | The cycle branch and the draft PR |
+| Each scope's hill position (0–50 figuring it out, 50–100 making it) and a `DONE` row when QA passes it | `board.md` |
+| One message with every question for you, with options and a recommendation | The chat |
+
+The team stops and asks you when only you can decide, at 75% of the round budget (the PO cuts the nice-to-haves), and at 100%
+(default: drop and re-shape; only you extend). `count` runs several rounds until one of those happens.
+
+### 5. Ship
+
+Starts when every must scope is `DONE`. QA runs the full suite, Large tests included, and the Ship gate. The DBA writes `runbook.md`
+if the release needs manual steps (a backfill, an ordered deploy). The Conductor updates the PR description and marks it ready.
+
+Expected: the PR ready for your review and a 5-line summary of what shipped, what was cut and what the runbook says.
+Only you merge, and you run the runbook.
+
+### 6. Cool down
+
+Tell the team you merged. Expected: three retro rows on the board (keep, change, try), rounds and hours logged, cut items and shortcuts
+copied to `shape/ideas.md`, status `shipped`. Nothing carries over: the next cycle starts at the betting table.
+
+### Gates
+
+A gate is the checklist a step must pass before the next one starts. The commands above run them for you; `/gate <name> <slug>`
+runs one again by hand, and every result goes into `log.md`.
+
+| Gate | Checked by | Ends step |
+|---|---|---|
+| Setup | Conductor, with you | 0 |
+| Ready | PO | 1 |
+| Kickoff | Conductor | 3 |
+| Scope (one per scope) | QA | Each scope in 4 |
+| Ship | QA, then the Conductor | 5 |
+
+### Talking to one role
+
+Name the role and the pitch: "DBA, review migration 0008 on deal-win-tracking", "frontend-react, pick up the handoff on S1",
+"QA, run the scope gate on S2". The role works on the same board and log, but never starts a round or passes another role's gate.
+
+### Appetite
+
+Appetite is a round budget, not a calendar: Small batch 8 rounds, Big batch 20 by default (change them in `team.md`).
+At 75% the PO hammers scope; at 100% the build stops and the default is drop and re-shape. Only you extend.
 
 ## Commands
 
