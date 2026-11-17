@@ -19,8 +19,8 @@ A block is a table row, a log entry, a paragraph, a list item or a diagram. Read
 | 10 | Prefer a diagram to a paragraph that describes structure or order (`references/diagrams.md`) | 8 sentences on who calls whom | one `sequenceDiagram` |
 | 11 | Don't restate. If a fact lives in one doc, other docs don't copy it, and don't point to it unless the reader needs it to act. | the pitch's no-gos copied into the board | QA's "Done when" checks a no-go in one line |
 | 12 | Write only what the reader can't get from the code, the tests or git | a doc listing every model field | the one field whose meaning isn't obvious |
-| 13 | One doc, one subject: a pitch never mentions another pitch | "Big batch: it ships the connector that 'Review from your AI chat' reuses." | "Build the connector for agentic operations, starting with these first operations." |
-| 14 | Explain only what the reader would get wrong without it | "…as on the web", "(link to fiveraise.com)", "so clients ask the user first" | cut it, unless removing it changes how the team builds |
+| 13 | One doc, one subject: a pitch never mentions another pitch | "Big batch: it ships the reminder engine that 'SMS reminders' reuses." | "Send payment reminders by email, starting with overdue invoices." |
+| 14 | Explain only what the reader would get wrong without it | "…as in the mobile app", "(link to our website)", "so clients ask the accountant first" | cut it, unless removing it changes how the team builds |
 
 ## Direct and affirmative: the sentence edit
 
@@ -28,17 +28,17 @@ Run these six cuts on every sentence, in order. Example: the pitch appetite.
 
 | # | Cut | Before → after |
 |---|---|---|
-| 1 | Put the verb first. Anything the team must do is an imperative. | "The plan is that we build the connector" → "We build the connector" |
-| 2 | Drop the subject when it's us, the team or the product | "We build the connector" → "Build the connector" |
-| 3 | Drop what the context already says: the product name in its own repo, values in the header table, the section heading | "Big batch, 20 rounds. Build the Fiveraise connector" (size is in the header table) → "Build the connector" |
-| 4 | Positive form: say what is. Keep "not" for real denials (no-gos, rejections). | "Credits are not spent unless the user confirms" → "Credits are spent only after the user confirms" |
-| 5 | Definite form: imperative or "must" for requirements, "can" for options. Delete should, might, could, ideally, potentially. | "The tool should ideally ask the user" → "The tool asks the user" |
-| 6 | Delete conversation residue: qualifiers that restate the default or answer a question raised while shaping, not one a reader will ask ("with or without X", "X is optional" when nothing implied it wasn't, "as on the web", "regardless of") | "returns the same named top 10 as the web, with or without a sector" → "returns the same named top 10 as the web" |
+| 1 | Put the verb first. Anything the team must do is an imperative. | "The plan is that we build the reminder engine" → "We build the reminder engine" |
+| 2 | Drop the subject when it's us, the team or the product | "We build the reminder engine" → "Build the reminder engine" |
+| 3 | Drop what the context already says: the product name in its own repo, values in the header table, the section heading | "Big batch, 20 rounds. Build the Acme reminder engine" (size is in the header table) → "Build the reminder engine" |
+| 4 | Positive form: say what is. Keep "not" for real denials (no-gos, rejections). | "Reminders are not sent unless the accountant confirms" → "Reminders are sent only after the accountant confirms" |
+| 5 | Definite form: imperative or "must" for requirements, "can" for options. Delete should, might, could, ideally, potentially. | "The job should ideally ask the accountant" → "The job asks the accountant" |
+| 6 | Delete conversation residue: qualifiers that restate the default or answer a question raised while shaping, not one a reader will ask ("with or without X", "X is optional" when nothing implied it wasn't, "as on the web", "regardless of") | "lists the same overdue invoices as the dashboard, with or without a client filter" → "lists the same overdue invoices as the dashboard" |
 
 Also turn hidden verbs back into verbs: "make a decision" → "decide", "perform a review of" → "review".
-Descriptions of the world stay declarative, with the actor named ("Users already use AI chats…"). Only instructions and decisions go imperative.
+Descriptions of the world stay declarative, with the actor named ("Accountants already chase overdue invoices by hand…"). Only instructions and decisions go imperative.
 
-Result: "Build the connector for agentic operations, starting with these first operations."
+Result: "Send payment reminders by email, starting with overdue invoices."
 
 ## Limits
 
@@ -49,27 +49,27 @@ Result: "Build the connector for agentic operations, starting with these first o
 | Table cell | 2 sentences (lists inside a cell use ` · `) |
 | Log row message | 3 sentences. A HUMAN row adds options as `A) … B) … Rec: A.` |
 | Scope name | 5 words, domain language ("Win a deal") |
-| Pitch | 1 page: ≤600 words outside code blocks, plus wireframes |
+| Pitch | 1 page: within `team.md` › Pitch word limit (default 600) outside code blocks, plus wireframes |
 | Turn report | 10 lines |
 
 ## Before → after
 
 **Log row**
-> Bloated: "Hi PO, while I was looking into S2 I noticed that the pitch mentions a fixed list of lost reasons but it doesn't actually specify what they are, so I was wondering whether you could let me know which reasons we should use, since frontend-react will need them for the picker and I also need them for the choices on the model."
+> Bloated: "Hi Shaper, while I was looking into S2 I noticed that the pitch mentions a fixed list of lost reasons but it doesn't actually specify what they are, so I was wondering whether you could let me know which reasons we should use, since frontend-react will need them for the picker and I also need them for the choices on the model."
 >
 > Direct: "S2: the pitch fixes a lost-reason list but names no values. I need the values for `Deal.lost_reason` choices; frontend-react needs the labels."
 
 **Runbook step**
 > Bloated: "Before proceeding, it's important to make sure that a backup has been taken, because the next steps modify a large amount of data and we want to be able to recover if anything goes wrong."
 >
-> Direct: `| 1 | Back up | gcloud sql backups create --instance=fiveraise-pg | "Created backup" | Stop. Do not run step 2. |`
+> Direct: `| 1 | Back up | gcloud sql backups create --instance=app-db | "Created backup" | Stop. Do not run step 2. |`
 
 **Pitch problem** (baseline → workaround → cost)
 > Bloated: "Sales managers often face significant challenges in keeping track of their team's pipeline, which can lead to inefficiencies and frustration across the organisation."
 >
-> Feature-first, still wrong: "A seller asks an AI chat 'I need a big deal'. Fiveraise ranks companies for that goal, but only on fiveraise.com."
+> Feature-first, still wrong: "An accountant clicks 'Remind' on an overdue invoice and the app emails the client."
 >
-> Direct: "Fiveraise users already use AI chats to research prospects and clients. To use Fiveraise's data there, they leave the chat for fiveraise.com, or give an AI agent their password. That gives the agent full account access, nobody can tell agent from user, and the only revoke is a password change."
+> Direct: "Accountants already chase overdue invoices by hand: each Monday they export the list, then write every email in their mail app. That takes about two hours a week, and invoices slip when someone is away."
 
 ## Final check (run it before saving)
 

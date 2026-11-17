@@ -1,27 +1,29 @@
 <p align="center">
-  <img src="docs/logo.svg" width="600" alt="Five round characters on a hill chart: the frontend dev with a paintbrush and the backend dev with a gear climbing, the PO holding a flag at the top, QA with a magnifier and the DBA carrying a database coming down.">
+  <img src="docs/logo.svg" width="600" alt="Six round characters on a hill chart: the designer with a paintbrush, the frontend dev with a code tag and the backend dev with a gear climbing, the Shaper holding a flag at the top, QA with a magnifier and the DBA carrying a database coming down.">
 </p>
 
 <h1 align="center">shapeup-team</h1>
 
-<p align="center"><em>Five agents. One hill. Work gets done.</em></p>
+<p align="center"><em>Six agents. One hill. Work gets done.</em></p>
 
 ---
 
 You have an idea. Everyone has an idea.
 
-The PO reads it, asks what people do today instead, and cuts it in half. Then cuts the half.
+The Shaper reads it, asks what people do today instead, and cuts it in half. Then cuts the half.
 What's left fits on one page and says, in writing, what it won't do.
 
-The founders bet on it. Or they don't, and it waits. Nothing carries over.
+The betting table bets on it. Or it doesn't, and the pitch waits. Nothing carries over.
 
 Then the crew walks up the hill.
 
-**The frontend dev** goes first, paintbrush in hand. Queries by role, never by CSS class. Has opinions about empty states.
+**The designer** goes first, paintbrush in hand. Affordances before pixels. Has opinions about empty states.
 
-**The backend dev** follows with a gear. Thin handlers, fat models, a service for anything with a side effect. Writes the failing test first, every time, and commits it so you can check.
+**The frontend dev** follows with a code tag. Wires the screens to real data. Queries by role, never by CSS class.
 
-**The PO** stands at the top holding the flag. Not to celebrate. To mark the line: past it, nothing new gets figured out. It only gets made.
+**The backend dev** comes next with a gear. Thin handlers, fat models, a service for anything with a side effect. Writes the failing test first, every time, and commits it so you can check.
+
+**The Shaper** stands at the top holding the flag. Not to celebrate. To mark the line: past it, nothing new gets figured out. It only gets made.
 
 **QA** comes down the other side with a magnifier. Wrote "Done when" before anyone wrote code. Will not let you change a test to make it pass.
 
@@ -50,7 +52,12 @@ The repo is a plugin marketplace: the team, plus one plugin per stack pack. Inst
 | Claude Code | `/plugin marketplace add tiagoafseixas/shapeup-plugin`, then `/plugin install shapeup-team@shapeup` and each pack, e.g. `/plugin install stack-react-mui@shapeup` |
 | Claude app | Build each `.plugin` file (`cd plugins/<name> && zip -r ../../<name>.plugin . -x '*.DS_Store'`) and upload it |
 
-Needs `python3` on the PATH (the guard hook) and `gh` (branches and draft PRs). The [Ponytail](https://github.com/DietrichGebert/ponytail) plugin is recommended for code review.
+| Needs | For |
+|---|---|
+| `python3` on the PATH | The plugin's own tools: the guard hook and the doc scaffolder. Your project can be in any language. |
+| `gh` or `glab` (optional) | Draft PRs and marking them ready; set `PR tool` in `team.md`, or `none` to open PRs yourself |
+| Anthropic's `frontend-design` skill (recommended) | The designer's visual judgment. Built into the Claude app; in Claude Code: `npx -y skills add anthropics/skills --skill frontend-design --agent claude-code` |
+| [Ponytail](https://github.com/DietrichGebert/ponytail) (recommended) | Code review |
 
 ## How to use
 
@@ -59,12 +66,12 @@ A pitch goes through seven steps. You start each one; the team does the work and
 | # | Step | You run | You get | Your part |
 |---|---|---|---|---|
 | 0 | Bootstrap the repo (once) | `/bootstrap` | The docs folder you choose (default `shape/`), `team.md` | Pick the docs folder; answer what the repo can't tell |
-| 1 | Shape a pitch | `/shape <idea>`, later `/shape <slug>` | `pitch.md` with status `ready`, `log.md` | Shape it with the PO |
-| 2 | Bet | "Prepare the betting table", then "The founders bet on `<slug>` for cycle `<id>`" | `shape/betting/<date>.md`; the pitch at status `bet` | Decide with the founders |
+| 1 | Shape a pitch | `/shape <idea>`, later `/shape <slug>` | `pitch.md` with status `ready`, `log.md` | Shape it with the Shaper |
+| 2 | Bet | "Prepare the betting table", then "We bet on `<slug>` for cycle `<id>`" | `shape/betting/<date>.md`; the pitch at status `bet` | Decide at your betting table |
 | 3 | Kick off | `/kickoff <slug> <cycle>` | A branch, a draft PR, a board with scopes, `tech.md` | Answer questions about the environment |
 | 4 | Build | `/round <slug> [count]` | Commits, tests and an updated board after every round | Answer the questions batched at the end of each round |
 | 5 | Ship | Starts by itself when every must scope is done (or `/gate ship`) | The PR marked ready, a runbook if needed, a 5-line summary | Review and merge the PR; run the runbook |
-| 6 | Cool down | "I merged `<slug>`" | Retro on the board; cut items in `shape/ideas.md`; status `shipped` | — |
+| 6 | Cool down | "I merged `<slug>`" | Status `shipped`; cut items in `shape/ideas.md`; a retro; the next betting table offered | Small fixes, if any; the next bets |
 
 Steps 0 to 2 are offline: the team reads files and asks you. No GitHub calls, no database connections (local or production),
 no test runs, no installs; the hook asks you before any of them while no pitch has a board. The kickoff is the first time anything runs.
@@ -85,11 +92,11 @@ Done when the Bootstrap gate passes. The team doesn't commit before a kickoff: c
 
 ### 1. Shape a pitch: `/shape`
 
-Shaping is a conversation between you and the PO (the main session, best on Opus). It ends when the pitch is ready for the betting table.
+Shaping is a conversation between you and the Shaper (the main session, best on Opus). It ends when the pitch is ready for the betting table.
 
-| You say | The PO does | Expected result |
+| You say | The Shaper does | Expected result |
 |---|---|---|
-| `/shape agents can read company insights from an AI chat` | Proposes a title and slug for you to confirm, then asks who has the problem, what they do today, and what that costs, until the problem holds up without the solution | `shape/pitches/<slug>/pitch.md` (status `draft`) and `log.md` |
+| `/shape send payment reminders for overdue invoices` | Proposes a title and slug for you to confirm, then asks who has the problem, what they do today, and what that costs, until the problem holds up without the solution | `shape/pitches/<slug>/pitch.md` (status `draft`) and `log.md` |
 | — | Proposes the appetite: Small batch (8 rounds) or Big batch (20) | The header table and a one-line Appetite |
 | — | Sketches the solution as a breadboard (places, affordances, where each leads) and fat-marker wireframes | Solution and Wireframes sections |
 | — | Hunts rabbit holes. For technical ones it asks the backend, frontend or DBA agent for a read-only tech check of the code. | Rabbit holes, each with its patch; No-gos |
@@ -104,7 +111,7 @@ Every decision and its reason goes into `log.md`; the pitch states only the deci
 | You say | Expected result |
 |---|---|
 | "Prepare the betting table" | `shape/betting/<date>.md`: one row per `ready` pitch with its appetite, one-line problem and biggest remaining risk. It recommends nothing. |
-| "The founders bet on `<slug>` for cycle `2026-C1`" | That pitch's status becomes `bet`, logged. Pitches not chosen stay `ready` for a later table; nothing is queued. |
+| "We bet on `<slug>` for cycle `2026-C1`" | That pitch's status becomes `bet`, logged. Pitches not chosen stay `ready` for a later table; nothing is queued. |
 
 ### 3. Kick off: `/kickoff <slug> <cycle>`
 
@@ -115,21 +122,22 @@ Every decision and its reason goes into `log.md`; the pitch states only the deci
 | Runs the environment for the first time: `gh auth status`, migrations on the local or test database, Small and Medium tests | Green, or a question to you; the team doesn't fix your environment |
 | Commits, pushes, opens a draft PR | The PR link in the board header |
 | Each developer role and the DBA read the pitch and the code it touches | ≤3 notes each on the board |
-| The backend roles draft the scopes, frontend roles amend them, the DBA marks the ones that touch the schema, QA writes "Done when", the PO checks them against the pitch | 2–7 scopes on the board: vertical slices named in domain words, each with an owner, must or `~` (nice to have) and checks |
+| The backend roles draft the scopes, frontend roles amend them, the DBA marks the ones that touch the schema, QA writes "Done when", the Shaper checks them against the pitch | 2–7 scopes on the board: vertical slices named in domain words, each with an owner, must or `~` (nice to have) and checks |
 | The DBA and the backend role draw the structure | `tech.md`: Mermaid entity, class and sequence diagrams and the API contract |
 
 Done when the Kickoff gate passes. You get a 5-line summary: branch, PR, scopes, first scope, open questions.
 
 ### 4. Build: `/round <slug> [count]`
 
-A round gives each role at most one turn, in order: PO → DBA → backend roles → frontend roles → QA.
+A round gives each role at most one turn, in order: Shaper → DBA → backend roles → designer → frontend roles → QA.
 
 | Role | Does in its turn |
 |---|---|
+| Designer | Lays out the scope's screens first (affordances, copy, states) against the API contract, then does the visual pass once data is wired |
 | Backend / frontend | Writes the Small and Medium tests first and commits them failing (`red`), then the code until they pass; hands the API contract to the frontend and migrations to the DBA |
 | DBA | Reviews each migration against the table sizes in `team.md`: approve, or rewrite it safely |
-| QA | Writes the Large tests for the scope's journeys and runs the Scope gate: tests by size, tests written first, no change-detector tests, every "Done when" check |
-| PO | Answers questions, cuts scope when the budget runs low, guards the no-gos |
+| QA | Writes the Large tests for the scope's journeys and runs the Scope gate: tests by size, tests written first, no change-detector tests, every "Done when" check. Findings are nice-to-haves (`~`) unless they break a promise of the scope, as in Shape Up. |
+| Shaper | Answers questions, cuts scope when the budget runs low, guards the no-gos |
 
 | Expected after each round | Where |
 |---|---|
@@ -137,7 +145,7 @@ A round gives each role at most one turn, in order: PO → DBA → backend roles
 | Each scope's hill position (0–50 figuring it out, 50–100 making it) and a `DONE` row when QA passes it | `board.md` |
 | One message with every question for you, with options and a recommendation | The chat |
 
-The team stops and asks you when only you can decide, at 75% of the round budget (the PO cuts the nice-to-haves), and at 100%
+The team stops and asks you when only you can decide, at 75% of the round budget (the Shaper cuts the nice-to-haves), and at 100%
 (default: drop and re-shape; only you extend). `count` runs several rounds until one of those happens.
 
 ### 5. Ship
@@ -150,8 +158,10 @@ Only you merge, and you run the runbook.
 
 ### 6. Cool down
 
-Tell the team you merged. Expected: three retro rows on the board (keep, change, try), rounds and hours logged, cut items and shortcuts
-copied to `shape/ideas.md`, status `shipped`. Nothing carries over: the next cycle starts at the betting table.
+Tell the team you merged. As in Shape Up, cool-down is the break between cycles: no scheduled work, and the time for the next betting table.
+
+Expected: status `shipped` (or `stopped`), rounds and hours logged, cut items and shortcuts copied to `shape/ideas.md` (nothing carries over),
+three retro rows on the board (keep, change, try), and an offer to prepare the next betting table. Small fixes you ask for meanwhile get their own branch and PR.
 
 ### Gates
 
@@ -161,7 +171,7 @@ runs one again by hand, and every result goes into `log.md`.
 | Gate | Checked by | Ends step |
 |---|---|---|
 | Bootstrap | Conductor, with you | 0 |
-| Ready | PO | 1 |
+| Ready | Shaper | 1 |
 | Kickoff | Conductor | 3 |
 | Scope (one per scope) | QA | Each scope in 4 |
 | Ship | QA, then the Conductor | 5 |
@@ -174,15 +184,32 @@ Name the role and the pitch: "DBA, review migration 0008 on deal-win-tracking", 
 ### Appetite
 
 Appetite is a round budget, not a calendar: Small batch 8 rounds, Big batch 20 by default (change them in `team.md`).
-At 75% the PO hammers scope; at 100% the build stops and the default is drop and re-shape. Only you extend.
+At 75% the Shaper hammers scope; at 100% the build stops and the default is drop and re-shape. Only you extend.
+
+## Shape Up, and what this plugin adds
+
+The method is Basecamp's [Shape Up](https://basecamp.com/shapeup). What agents need on top of it is marked as an addition.
+
+| Shape Up | In this plugin |
+|---|---|
+| Shaping by senior people: appetite, breadboards, fat-marker sketches, rabbit holes, no-gos | The user and the Shaper (`/shape`); designer and developers do read-only checks |
+| A pitch: problem, appetite, solution, rabbit holes, no-gos | `pitch.md` with those five, plus wireframes and **Works when** (addition) |
+| Betting table, no backlog | The betting pack and your bet; unchosen pitches stay `ready`, nothing is queued |
+| Six-week cycle; small batch 1–2 weeks | **Rounds** (addition): agents work faster than weeks, so appetite is a round budget (Big 20, Small 8 by default) |
+| A team of a designer and one or two programmers, QA later in the cycle | Designer, backend and frontend developers, QA; plus a **DBA** (addition, optional) |
+| Scopes, hill charts, get one piece done | Scopes on the board with a hill position; the first scope is the most core and most unknown |
+| Scope hammering, must-haves and `~` nice-to-haves; QA issues are nice-to-haves unless the team decides otherwise | The same; the Shaper hammers at 75% of the budget |
+| Circuit breaker; rare extensions | At 100% the build stops; the default is drop and re-shape; only you extend |
+| Cool-down: no scheduled work, the next betting table | The same, plus a short retro and cut items moved to `ideas.md` |
+| — | **Additions for agents**: the Conductor, gates, "Done when" checks per scope, `log.md`, the board's message protocol, the testing and writing standards, stack packs, production and git guardrails, offline until kickoff |
 
 ## Commands
 
 | Command | Does |
 |---|---|
 | `/shape [idea or slug]` | Shapes a pitch with the user; role agents run read-only tech checks; Ready gate |
-| `/kickoff <slug> <cycle>` | Checks the stack packs, then branch `cycle/<cycle>-<slug>`, draft PR, board, scope map, `tech.md`, Kickoff gate |
-| `/round <slug> [count]` | Runs build rounds (PO → DBA → backend roles → frontend roles → QA), applies the circuit breaker, batches questions for the user |
+| `/kickoff <slug> <cycle>` | Checks the stack packs, then the cycle branch, draft PR, board, scope map, `tech.md`, Kickoff gate |
+| `/round <slug> [count]` | Runs build rounds (Shaper → DBA → backend roles → designer → frontend roles → QA), applies the circuit breaker, batches questions for the user |
 | `/bootstrap` | Once per repo: you pick the docs folder; fills `team.md` from the repo's files and your answers; offline |
 | `/gate <ready / kickoff / scope S<n> / ship> <slug>` | Runs one gate again by hand and logs the result |
 | `/stack [list / new <name> / house <role id> / lint <dir>]` | Lists the project's packs, writes a new pack from the stack's official docs, adds house rules |
@@ -191,9 +218,10 @@ At 75% the PO hammers scope; at 100% the build stops and the default is drop and
 
 | Agent | Role | Default model | May edit (hook-enforced) |
 |---|---|---|---|
-| `product-owner` | PO: answers questions during the build, hammers scope, guards no-gos | Sonnet | `shape/**` except `team.md` |
+| `shaper` | Shaper: answers questions during the build, hammers scope, guards no-gos | Sonnet | `shape/**` except `team.md` |
 | `backend-dev` | Backend developer, any stack: domain, services, APIs, migrations | Sonnet | Its role's path from `team.md` › Roles; the pitch's `tech.md`, `board.md`, `log.md` |
-| `frontend-dev` | Frontend developer, any stack: screens, components | Sonnet | Its role's path; the pitch's `tech.md`, `board.md`, `log.md` |
+| `designer` | Designer (optional): affordances, layout, copy and visual design; breadboards and wireframes while shaping. Uses Anthropic's `frontend-design` skill. | Sonnet | The UI path, except tests; the pitch's `board.md`, `log.md` |
+| `frontend-dev` | Frontend developer, any stack: data, state, logic and tests of the screens (and their design when there's no designer) | Sonnet | Its role's path; the pitch's `tech.md`, `board.md`, `log.md` |
 | `qa-engineer` | QA: "Done when" checks, Scope and Ship gates, Large tests | Sonnet | Test files; the pitch's `board.md`, `log.md` |
 | `dba` | DBA, any database: migration review, indexes, runbooks, backups | Opus | Migrations; the pitch's `tech.md`, `runbook.md`, `board.md`, `log.md` |
 
@@ -240,9 +268,9 @@ The guard runs before every `Write`, `Edit` and `Bash` call in a repo with `shap
 | Edits outside the role's area (Roles table) | Before the first kickoff: any `gh` call, git remote call, install, database client, test run, container or `curl` |
 | | Any production connection: `$READONLY_DATABASE_URL`, a database client aimed at a remote host, `cloud-sql-proxy`, `gcloud sql` / `aws rds` reads (backend role and DBA only) |
 | `.env*` writes | `gcloud sql backups create`, `aws rds create-db-snapshot` (DBA only) |
-| Force-push, push to `main`/`master`, merge, rebase, `gh pr merge`, `--no-verify` | |
-| Deploys: `gcloud app/run/functions deploy`, `gcloud builds submit`, `deploy.sh`, `terraform apply`, `kubectl apply` | |
-| Every other `gcloud sql` or `aws rds` write; any production access by the PO, QA or frontend roles | |
+| Force-push, push to `main`/`master`, merge, rebase, `gh pr merge`, `glab mr merge`, `--no-verify` | |
+| Deploys and infrastructure changes, e.g. `deploy.sh`, `terraform apply`, `kubectl apply`, `helm upgrade`, `fly deploy`, `vercel --prod`, `gcloud app deploy`; migrations against shared databases (`flyway migrate`, `liquibase update`) | |
+| Every other `gcloud sql` or `aws rds` write; any production access by the Shaper, designer, QA or frontend roles | |
 | Any `…DATABASE_URL` other than `READONLY_DATABASE_URL`, `PGPASSWORD=`, `MYSQL_PWD=`, literal non-local database URLs, production settings | |
 
 Production is off by default. When the backend role or the DBA needs a production fact (table volumes, a plan), it reads
@@ -270,7 +298,7 @@ shape/                     or the folder you chose
   stack/<role id>.md       house rules, when the repo differs from the pack
   ideas.md                 raw ideas, not a backlog
   decisions.md             conventions that outlive one pitch
-  betting/<date>.md        betting pack for the founders
+  betting/<date>.md        betting pack for the betting table
   pitches/<slug>/
     pitch.md               one page plus wireframes
     log.md                 audit trail: every decision and action

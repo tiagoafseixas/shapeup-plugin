@@ -1,6 +1,6 @@
 ---
 name: shapeup-team
-description: Runs a Shape Up product team of agents (Product Owner, backend and frontend developers, QA, DBA) for any stack, with the stack knowledge in installable stack packs (Django/DRF, Next.js/Chakra UI, React/MUI, Postgres/Cloud SQL), a fixed way of working, a board-based message protocol, an audit log per pitch and minimal, direct, table-first docs with Mermaid diagrams and wireframes. Use whenever the user wants to shape or refine a pitch, prepare the betting table, hand a bet over to the team, kick off or continue a cycle, map scopes, update hill charts, route questions between roles, hammer scope, hit the circuit breaker, ship a PR or run cool-down — and whenever they mention the PO, QA or DBA agents, the backend or frontend devs (BE, FE, or a role id like backend-drf), a stack pack, "the team", a pitch, appetite, rabbit holes, no-gos, or the team docs folder (shape/ by default), even if they don't say "Shape Up".
+description: Runs a Shape Up product team of agents (Shaper, designer, backend and frontend developers, QA, DBA) for any stack, with the stack knowledge in installable stack packs (for example Django/DRF, React/MUI, Postgres), a fixed way of working, a board-based message protocol, an audit log per pitch and minimal, direct, table-first docs with Mermaid diagrams and wireframes. Use whenever the user wants to shape or refine a pitch, prepare the betting table, hand a bet over to the team, kick off or continue a cycle, map scopes, update hill charts, route questions between roles, hammer scope, hit the circuit breaker, ship a PR or run cool-down — and whenever they mention the Shaper, designer, QA or DBA agents, the backend or frontend devs (BE, FE, or a role id like backend-drf), a stack pack, "the team", a pitch, appetite, rabbit holes, no-gos, or the team docs folder (shape/ by default), even if they don't say "Shape Up".
 ---
 
 # Shape Up team
@@ -12,11 +12,12 @@ product or technical calls for a role. The process is fixed. How each role solve
 
 | Who | Kind | Mandate | Instructions | May edit |
 |---|---|---|---|---|
-| User | human | Shapes pitches with the PO, answers HUMAN rows, merges PRs | — | anything |
-| Founders | humans | Betting table: decide what gets built next | — | — |
+| User | human | Shapes pitches with the Shaper, answers HUMAN rows, merges PRs | — | anything |
+| Betting table | humans | The people who decide what gets built next cycle (in Shape Up: a few senior stakeholders). Often just the user. | — | — |
 | Conductor | this session | Runs phases, spawns roles, routes Log rows, enforces gates and git rules, logs phase changes | this file | board header, log.md, scaffolding |
-| PO | agent | Shapes with the user; during the build answers ASKs, hammers scope, guards no-gos | `references/roles/po.md` | pitch.md, log.md, board rows |
+| Shaper | agent | Shapes with the user; during the build answers ASKs, hammers scope, guards no-gos | `references/roles/shaper.md` | pitch.md, log.md, board rows |
 | Backend role (e.g. `backend-drf`) | agent `backend-dev` | Domain, services, APIs, migrations, Small and Medium tests written first; tech.md Classes, Flows, API | `references/roles/backend.md` + its stack pack | its path, tech.md, board rows |
+| Designer (role id `designer`, optional) | agent `designer` | Affordances, layout, copy and visual design of each scope's screens; breadboards and wireframes for the Shaper | `references/roles/designer.md` + the frontend stack pack + the `frontend-design` skill | the UI path, board rows |
 | Frontend role (e.g. `frontend-react`) | agent `frontend-dev` | Screens, components, Small and Medium tests written first; UI flows in tech.md when needed | `references/roles/frontend.md` + its stack pack | its path, tech.md, board rows |
 | QA | agent | Writes "Done when" checks, gates each scope and the ship, owns Large (end-to-end) tests | `references/roles/qa.md` | tests, board rows |
 | DBA | agent `dba` | Reviews every migration, indexes, query plans; tech.md Entities; runbooks; backups | `references/roles/dba.md` + its stack pack | migrations (rewrite only), tech.md, runbook.md, board rows |
@@ -85,12 +86,12 @@ diagram captions, filler phrases). Diagram and wireframe rules: `references/diag
 | # | Phase | Who | Output | Exit gate (`references/gates.md`) |
 |---|---|---|---|---|
 | 0 | Bootstrap (once per repo, offline) | Conductor + user | `.shapeup.json`, `<docs>/team.md` filled | Bootstrap gate |
-| 1 | Shape | User + PO (you take the PO role) | pitch.md `ready`, log.md | Ready gate |
-| 2 | Bet | Founders | Betting pack; pitch status `bet` + cycle id | Founders' decision |
+| 1 | Shape | User + Shaper (you take the Shaper role) | pitch.md `ready`, log.md | Ready gate |
+| 2 | Bet | Betting table | Betting pack; pitch status `bet` + cycle id | The betting table's decision |
 | 3 | Kickoff | Conductor → all roles | Branch, draft PR, board with scopes, tech.md | Kickoff gate |
 | 4 | Build | Roles, in rounds | Scopes move over the hill to done | Scope gate, per scope |
 | 5 | Ship | QA → Conductor | PR marked ready, runbook if ops are needed | Ship gate |
-| 6 | Cool-down | Conductor + PO | Retro, cut items in `<docs>/ideas.md` | — |
+| 6 | Cool-down | Conductor + Shaper | Retro, cut items in `<docs>/ideas.md` | — |
 
 **Offline until kickoff.** Bootstrap (phase 0) and shaping (phase 1) only read files and talk to the user: no network calls
 (`gh`, `git fetch`/`push`/`pull`, installs), no database connections (local, test or production), no test runs, no servers.
@@ -107,8 +108,8 @@ Append with `scaffold.py log <repo> <slug> --by <who> --kind <kind> --entry "<wh
 
 | Kind | Written by | When |
 |---|---|---|
-| `decision` | whoever decides (PO, user, a role) | Every shaping call, every `DECIDE` row, every HUMAN answer |
-| `cut` | PO | Every scope or `~` item cut |
+| `decision` | whoever decides (Shaper, user, a role) | Every shaping call, every `DECIDE` row, every HUMAN answer |
+| `cut` | Shaper | Every scope or `~` item cut |
 | `phase` | Conductor | Each phase change, the bet, status changes, budget triggers |
 | `gate` | whoever runs the gate | Each gate result: pass, or fail with the failing rows |
 | `action` | Conductor | Branch created, PR opened or marked ready, runbook handed over, merge reported by the user |
@@ -117,25 +118,26 @@ The board's Log is the conversation. log.md is the record. A decision lives on t
 
 ## Phase 1: Shape (interactive with the user)
 
-Read `references/roles/po.md` and act as the PO yourself. Shaping is a conversation, so don't spawn it out.
+Read `references/roles/shaper.md` and act as the Shaper yourself. Shaping is a conversation, so don't spawn it out.
 `scaffold.py pitch` creates `pitch.md` and `log.md`. Challenge, then write. Log each shaping decision.
 When a rabbit hole is technical, spawn the backend, frontend or DBA role for a **tech check**: read-only, returns risks with a proposed patch.
+When the screens are the risk, spawn the designer for a **design check**: read-only, returns a breadboard and fat-marker wireframes.
 Risks that survive become Rabbit holes rows; log the check and its findings in log.md. The pitch has no tech-check section. Several checks can run in parallel. Mark the pitch `ready` only after the Ready gate passes.
 
-For the betting table, the PO builds `<docs>/betting/<date>.md` from every `ready` pitch. Never place bets.
-When the user reports the founders' bets, set each chosen pitch's status to `bet` and log it (`phase`).
+For the betting table, the Shaper builds `<docs>/betting/<date>.md` from every `ready` pitch. Never place bets.
+When the user reports the betting table's bets, set each chosen pitch's status to `bet` and log it (`phase`).
 Pitches that weren't chosen stay `ready`. They are not queued, and can go to a later betting table.
 
 ## Phase 3: Kickoff
 
-1. Create the branch `cycle/<cycle>-<slug>` from the base branch. Run `scaffold.py kickoff <repo> <slug> --cycle <id>`
+1. Create the branch from the base branch, named by `team.md` › Branch pattern (default `cycle/<cycle>-<slug>`; below, "the cycle branch"). Run `scaffold.py kickoff <repo> <slug> --cycle <id>`
    (it creates board.md, sets the pitch to `building` and logs it). The team is online from here: run the environment once
-   (Kickoff gate row 9: `gh auth status`, migrations on the local or test database, Small and Medium tests green); a failure is a `HUMAN` row.
+   (Kickoff gate row 9: the PR tool's auth check, migrations on the local or test database, Small and Medium tests green); a failure is a `HUMAN` row.
    Then commit (`S0 Conductor: kickoff`), push, and open a
-   **draft** PR (`gh pr create --draft`, body from `assets/templates/pr.md`). Put the PR URL in the board header and log the `action`.
-2. **Orient** (parallel, read-only): spawn every developer role and the DBA with "read the pitch and the code it touches; write ≤3 `NOTE` rows".
-3. **Map scopes** (sequential, each one amends the Scopes table): backend roles draft → frontend roles amend → DBA marks the scopes that touch the schema →
-   QA writes "Done when" → PO checks the scopes against the pitch and marks must vs `~`.
+   **draft** PR with `team.md` › PR tool (`gh pr create --draft`, `glab mr create --draft`; `none`: the user opens it), body from `assets/templates/pr.md`. Put the PR URL in the board header and log the `action`.
+2. **Orient** (parallel, read-only): spawn every developer role, the designer (if `team.md` has one) and the DBA with "read the pitch and the code it touches; write ≤3 `NOTE` rows".
+3. **Map scopes** (sequential, each one amends the Scopes table): backend roles draft → designer and frontend roles amend → DBA marks the scopes that touch the schema →
+   QA writes "Done when" → Shaper checks the scopes against the pitch and marks must vs `~`.
 4. **Tech doc** (only if a scope touches the schema or adds an endpoint): `scaffold.py add <repo> <slug> tech`. DBA draws
    Entities, the backend role draws Classes, Flows and the API contract. Each diagram answers one question (`references/diagrams.md`).
 5. Run the Kickoff gate, log it, and set the status to `building`.
@@ -148,7 +150,7 @@ Order: the first scope is the most core and the most unknown. Get one piece done
 A **round** is one pass of this loop:
 
 1. Read the board. Collect open Log rows and scopes that are not done.
-2. Dispatch in this order, at most one turn per role per round: **PO → DBA → backend roles → frontend roles → QA**. A role gets a turn if
+2. Dispatch in this order, at most one turn per role per round: **Shaper → DBA → backend roles → designer → frontend roles → QA**. A role gets a turn if
    it has open rows addressed to it, or owns a scope that is not done and isn't waiting on someone else.
    Turns are sequential, because roles share the working tree and the board.
 3. After each turn, check the turn report against the board: rows added, hill updated, commit made (a dev turn with code has its red commit first), log.md updated
@@ -167,10 +169,12 @@ A **round** is one pass of this loop:
 |---|---|
 | `ASK` / `BLOCK` to a role | that role |
 | `HANDOFF` backend → frontend (API contract ready) | that frontend role |
+| `HANDOFF` designer → frontend (screens laid out) | that frontend role |
+| `HANDOFF` frontend → designer (data wired, ready for the visual pass) | designer |
 | `HANDOFF` backend → DBA (migration ready) | DBA |
 | `HANDOFF` dev→QA (scope ready) | QA |
 | QA finding, severity `must` | the scope's owner |
-| `FLAG` (stall, scope creep, budget) | PO |
+| `FLAG` (stall, scope creep, budget) | Shaper |
 | `HUMAN` | the user, batched at the end of the round |
 
 **Turn priority** (inside one role's turn): `BLOCK` rows → QA `must` findings → rows that unblock another role
@@ -185,20 +189,26 @@ recalibrate the budgets from those numbers, never from human estimates.
 
 | Trigger | Action |
 |---|---|
-| A scope's hill value hasn't risen for 2 rounds in which it was worked | `FLAG` → PO hammers or splits it |
-| 75% of the budget used | Status `hammering`, logged. PO cuts every `~` not yet started and challenges each remaining must. |
+| A scope's hill value hasn't risen for 2 rounds in which it was worked | `FLAG` → Shaper hammers or splits it |
+| 75% of the budget used | Status `hammering`, logged. Shaper cuts every `~` not yet started and challenges each remaining must. |
 | 100% of the budget used | Stop all build turns. If all must scopes are done → Ship. Otherwise write a `HUMAN` row: the default is **drop and re-shape**. Never extend on your own. |
 
 ## Phase 5: Ship
 
 QA runs the Ship gate. DBA writes `runbook.md` (`scaffold.py add <repo> <slug> runbook`) if the release needs manual ops:
-a large backfill, a flag change, an ordered deploy. The Conductor updates the PR body from the board, runs `gh pr ready`, logs the
+a large backfill, a flag change, an ordered deploy. The Conductor updates the PR body from the board, marks it ready (`gh pr ready`, `glab mr update --ready`, or asks the user), logs the
 `action`, and tells the user in ≤5 lines: what shipped, what was cut, what the runbook says.
 
 ## Phase 6: Cool-down
 
-Write 3 retro rows on the board (keep / change / try). Log rounds used and wall-clock hours from kickoff to PR ready (`phase`). Copy the cut `~` items and the `shortcut:` comments (`/ponytail-debt`)
-into `<docs>/ideas.md`. Set the status to `shipped` or `stopped` and log it. Nothing carries over: the next cycle starts at the betting table.
+In Shape Up, cool-down is the break between cycles: no scheduled work, and the time when the next betting table meets.
+After the user reports the merge (or the stop):
+
+1. Close the cycle: set the status to `shipped` or `stopped`; log rounds used and wall-clock hours from kickoff to PR ready (`phase`).
+2. Copy the cut `~` items and the `shortcut:` comments (`/ponytail-debt`) into `<docs>/ideas.md`. Nothing carries over: anything left must be re-pitched.
+3. Write 3 retro rows on the board (keep / change / try).
+4. Take no scheduled work. Small fixes the user asks for during cool-down are fine, each on its own branch and PR, outside the pitch.
+5. Offer the next betting table: `ready` pitches, plus pitches the user wants to shape now.
 
 ## Models
 
@@ -207,11 +217,12 @@ Match the model to the judgment a turn needs, not to the role's seniority. Pass 
 
 | Work | Model | Why |
 |---|---|---|
-| Shaping with the user (PO in the main session) | the session's model: run shaping sessions on **Opus** | Pushback, rabbit-hole hunting and appetite calls are the highest-leverage judgment in the process |
+| Shaping with the user (Shaper in the main session) | the session's model: run shaping sessions on **Opus** | Pushback, rabbit-hole hunting and appetite calls are the highest-leverage judgment in the process |
 | Tech check during shaping (backend, frontend or DBA role, read-only) | **Sonnet** | Reads code and finds risks; no writes |
 | Ideas: betting pack, cool-down ideas, alternatives | **Sonnet** | Breadth over depth; the humans decide |
-| PO during the build (answers, hammering) | **Sonnet** | Bounded by the pitch and appetite already set |
+| Shaper during the build (answers, hammering) | **Sonnet** | Bounded by the pitch and appetite already set |
 | Backend / frontend role, uphill turn (scope Hill < 50) | **Sonnet** | Unknowns remain: design choices, reading the codebase |
+| Designer turn, design check | **Sonnet**; **Opus** for the first screen of a new visual pattern | Visual judgment matters most where nothing exists to copy |
 | Backend / frontend role / QA, mechanical turn | **Haiku** | Downhill (Hill ≥ 50) with a precise spec: a QA `must` with repro steps, applying a DBA rewrite, writing tests for given "Done when" checks, lint fixes |
 | DBA migration review, runbooks | **Opus** | Few turns, irreversible prod impact: locks, data loss, failed deploys |
 | QA scope and ship gates | **Sonnet** | Review needs judgment; `/ponytail-review` runs inside it |
@@ -227,7 +238,7 @@ Escalation, always one step up and logged as a `NOTE` row:
 
 ## Spawning a role
 
-Spawn each role with the Agent tool, `subagent_type` = its agent: `product-owner`, `backend-dev`, `frontend-dev`, `qa-engineer`, `dba`. Name the role id in the brief.
+Spawn each role with the Agent tool, `subagent_type` = its agent: `shaper`, `backend-dev`, `designer`, `frontend-dev`, `qa-engineer`, `dba`. Name the role id in the brief.
 These agents come with the shapeup-team plugin: each loads its role file, pins its default model and has its file and command
 guards enforced by the plugin's hooks. Override `model` only when the Models table says so for this turn (e.g. `haiku` for a mechanical turn).
 Without the plugin, use `general-purpose`, set `model` from the Models table, and add the three "Read first" lines below.
@@ -236,7 +247,7 @@ Each role starts cold, so the brief plus the board must be enough. That's also w
 
 ```
 Repo: <path>   Team config: <docs>/team.md   Pitch folder: <docs>/pitches/<slug>/
-Role id: <role id from team.md › Roles>   Phase: <phase>   Round: <n>/<budget>   Mode: <turn | tech check (read-only) | orient (read-only)>
+Role id: <role id from team.md › Roles>   Phase: <phase>   Round: <n>/<budget>   Mode: <turn | tech check (read-only) | design check (read-only) | orient (read-only)>
 Your turn: <the routed Log rows, copied verbatim, or "continue scope S<n>">
 Ponytail: level <level>
 Finish by updating the board (and log.md for any decision), committing per the git rules, and returning the turn report from protocol.md.
@@ -249,7 +260,7 @@ Without the plugin, prepend: `You are the <ROLE> of a Shape Up team. Read first:
 
 | Allowed | Never |
 |---|---|
-| Work on `cycle/<cycle>-<slug>` only | Commit or push to the base branch |
+| Work on the cycle branch only (`team.md` › Branch pattern). In cool-down, a fix the user asks for gets its own `fix/<name>` branch and PR. | Commit or push to the base branch |
 | Commit the failing tests first (`S<n> <ROLE>: red — <behaviour>`), then the code at the end of the turn (`S<n> <ROLE>: <what>`) | Force-push, rebase pushed commits, merge |
 | Push the cycle branch; open a draft PR; mark it ready at ship | Change CI, branch protection, secrets or `.env` |
 | Commit `<docs>/pitches/<slug>/*` on the cycle branch | Deploy |
@@ -267,7 +278,7 @@ Each row below is the whole permission. Nothing is implied beyond it.
 |---|---|---|
 | Backend role, DBA | Learn a production fact: table volumes, a query plan, statement statistics | 1. Read `team.md` › Table volumes first. 2. Not there: a `HUMAN` row with the fact needed, why, what waits on it, and three options: **(a)** the user states it, **(b)** the user runs a read-only query you attach and pastes the output, **(c)** the user lets you connect read-only for this one question. Recommend (a) or (b). 3. Connect only after the user explicitly picks (c): through `READONLY_DATABASE_URL` from the session environment, after the credential sweep and the database pack's read-only check; one question, then stop. The hook asks the user again before the connection runs. 4. Write the answer to `team.md` › Table volumes (with the date and "user" or "read-only query" as source), so nobody asks twice. |
 | DBA | On-demand backups, nothing else | 1. Before: a `HUMAN` row with the exact command, instance, reason, and expected duration (the database pack's backup command). Wait for the user's explicit go. 2. Run exactly that command, once. 3. After: confirm the backup id and status (the pack's confirm command) in an `ANSWER` row and a log.md `action`. |
-| PO, QA, frontend roles, Conductor | Nothing in production | Need a production fact: `ASK` the backend role or the DBA |
+| Shaper, QA, frontend roles, Conductor | Nothing in production | Need a production fact: `ASK` the backend role or the DBA |
 | Everyone | Anything else: DDL, DML, migrations, backfills, restores, flags, config, deploys, user or grant changes | Never. Write it as a runbook step for the user. |
 
 Credentials are never written to the repo, the board, log.md or a commit. A query you hand the user for option (b) is read-only and
@@ -281,7 +292,7 @@ doesn't use it, even for reads, and writes a `BLOCK` to the user naming the vari
 ## Rules for every role
 
 - Ponytail ladder before writing code: does it need to exist, is it already in the repo, stdlib or platform, an installed dependency, the minimum that works. Never cut validation, security, data safety or accessibility.
-- Stay inside the pitch. Anything outside it is a `FLAG` to the PO, not work.
+- Stay inside the pitch. Anything outside it is a `FLAG` to the Shaper, not work.
 - Write in the places listed above, following `references/writing-style.md`. Draw structure with Mermaid (`references/diagrams.md`); don't describe it in prose.
 - Every claim of "done" comes with evidence: a test, a command output, or a QA row.
 - Tests follow `references/testing.md`: Small and Medium written before the code, behaviour not implementation, DAMP. Never edit a test to make it pass.

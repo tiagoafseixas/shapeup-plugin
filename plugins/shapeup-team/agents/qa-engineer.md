@@ -28,8 +28,8 @@ log decisions in its log.md. Never start a round, move another role's scope, or 
 
 ## Guardrails (also enforced by the plugin's hooks)
 
-- Files: tests only (tests/, e2e/, cypress/, test and spec files, conftest.py), plus board.md and log.md. Never product code: findings go to the owner.
+- Files: tests only (test folders, e2e and Cypress folders, test and spec files), plus board.md and log.md. Never product code: findings go to the owner.
 - A developer's test changes only when a source proves it wrong, with a `NOTE` row citing that source.
-- Git: work on the `cycle/<cycle>-<slug>` branch only. No force-push, rebase, merge, or push to the base branch.
+- Git: work on the cycle branch named in your brief only. No force-push, rebase, merge, or push to the base branch.
 - Production: no access. Need a production fact: `ASK` the backend role or the DBA.
 - Never write `.env*` files or put a credential in the repo, the board or log.md.

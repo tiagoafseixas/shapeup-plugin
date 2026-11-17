@@ -10,11 +10,11 @@ All text follows `writing-style.md`.
 
 - `#`: next integer. Never renumber. Refer to other rows as `re #12`.
 - `Rnd`: the current round (0 during kickoff).
-- `From` / `To`: `PO`, `QA`, `DBA`, `Conductor`, `user`, `ALL`, or a developer's role id from `team.md` › Roles (e.g. `backend-drf`, `frontend-react`).
+- `From` / `To`: `Shaper`, `QA`, `DBA`, `Conductor`, `user`, `ALL`, or a developer's role id from `team.md` › Roles (e.g. `backend-drf`, `frontend-react`).
 - `Message`: ≤3 sentences, self-contained. A reader must understand it without opening another file: name the scope (`S2`),
   the file or endpoint, and what you need. HUMAN rows add `Options: A) … B) … Rec: A. Waiting: <what>.`
 - `Status`: `NOTE`, `ANSWER`, `DECIDE` and `DONE` rows are created `done`. `ASK`, `HANDOFF`, `BLOCK`, `FLAG` and `HUMAN` start `open`,
-  and are closed by their addressee (`done`) or by the PO (`dropped`, with the reason).
+  and are closed by their addressee (`done`) or by the Shaper (`dropped`, with the reason).
 
 ## Types
 
@@ -25,7 +25,7 @@ All text follows `writing-style.md`.
 | `ANSWER` | Replying to an ASK (`re #n`) | — |
 | `HANDOFF` | Your part is ready for the next role (contracts below) | Pick it up next turn, close it when taken |
 | `BLOCK` | You cannot continue any scope without this | Handle it first |
-| `FLAG` | Stall, scope creep, budget risk, or something outside the pitch | PO decides: cut, split, ignore, or `HUMAN` |
+| `FLAG` | Stall, scope creep, budget risk, or something outside the pitch | Shaper decides: cut, split, ignore, or `HUMAN` |
 | `DECIDE` | You decided something others must know. Also append it to log.md as `decision`. | — |
 | `HUMAN` | Only the user can decide: the pitch's boundaries, appetite, money, security exceptions, prod ops, merges. Also: every request for a production fact (volumes, plans) with its three options, and every DBA backup announcement. | Conductor batches it to the user; the user's answer goes to log.md. A backup announcement is the one HUMAN row sent immediately, not batched. |
 | `DONE` | A scope passed QA (QA writes it) | — |
@@ -41,7 +41,7 @@ A HANDOFF row without its contract is invalid, and the Conductor sends it back.
 | DBA → backend | Verdict: `approve`, or `rewrite` with the exact change (or the rewritten files). Whether a runbook is needed. |
 | Dev → QA | Scope, what changed (≤2 sentences), how to run it locally, commands already green |
 | QA → Dev | One QA table row per finding: severity, case, expected vs actual |
-| PO → anyone | The decision, and what is now cut or kept |
+| Shaper → anyone | The decision, and what is now cut or kept |
 | anyone → user | The question, options A/B(/C), a recommendation, and what waits on it |
 
 ## Hill chart
@@ -64,12 +64,12 @@ Every role ends its turn by returning exactly this (≤10 lines). `TESTS` lists 
 
 ```
 ROLE: backend-drf   ROUND: 3   SCOPE: S2
-DID: deal_win service + POST /api/deals/{id}/win/ + tests
+DID: win-deal service + POST /api/deals/{id}/win/ + tests
 HILL: S2 35 → 60
-LOG: board #14 HANDOFF → frontend-react, #15 ASK→PO · log.md #9 decision
+LOG: board #14 HANDOFF → frontend-react, #15 ASK→Shaper · log.md #9 decision
 COMMITS: 9f8e7d6 S2 backend-drf: red — owner wins open deal · a1b2c3d S2 backend-drf: win deal service and API
 TESTS: red 5 failing → green · small 6 · medium 12 · changed: none
-CHECKS: pytest backend/deals -q → 18 passed; ruff → clean
+CHECKS: backend-drf Small + Medium tests (team.md) → 18 passed; lint → clean
 RISK: none | <one line>
 ```
 
@@ -77,5 +77,5 @@ RISK: none | <one line>
 
 - Answer what you were asked, then stop. Follow the turn priority in SKILL.md.
 - Never edit another role's rows or scopes. Reply with a new row.
-- If the pitch is silent, ASK the PO. Don't invent product behaviour.
+- If the pitch is silent, ASK the Shaper. Don't invent product behaviour.
 - If your work needs a change in another role's files (e.g. the frontend needs a field), send an ASK. Don't make the change yourself.

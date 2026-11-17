@@ -21,7 +21,7 @@ Status: kickoff → building → hammering → shipping → shipped | stopped. D
 | # | Scope | Sev | Case | Expected | Actual | Owner | Status |
 |---|---|---|---|---|---|---|---|
 
-Sev: must (blocks the scope) · should (owner fixes or PO cuts) · nice (~)
+Sev: must (blocks the scope) · ~ (nice-to-have, the default; the owner may promote it with a DECIDE row)
 
 ## Retro (cool-down)
 

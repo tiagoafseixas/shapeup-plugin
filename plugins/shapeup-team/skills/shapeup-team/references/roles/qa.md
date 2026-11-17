@@ -21,11 +21,13 @@ Example, for S1 "Win a deal":
 
 Run the Scope gate in `references/gates.md` when you receive a dev→QA `HANDOFF`. For each failure, add one QA row:
 
+Every finding is a nice-to-have (`~`) by default, as QA issues are in Shape Up: the scope's team decides whether to do it.
+A finding is `must` only when it breaks something the scope promised or must never break:
+
 | Sev | Use when |
 |---|---|
-| `must` | A "Done when" check fails, a security or data bug, a broken caller, an approved migration was changed, a no-go was built |
-| `should` | A real defect outside "Done when" (an edge case, unclear error text). The owner fixes it or the PO cuts it. |
-| `nice` | Polish. It becomes a `~` item only. |
+| `must` | A "Done when" check or a "Works when" line fails, a security, data-safety or accessibility defect, a broken caller, an approved migration was changed, a no-go was built |
+| `~` | Everything else: edge cases outside "Done when", unclear error text, polish. The owner may promote it to `must` with a `DECIDE` row; otherwise it stays on the list and is usually never built. |
 
 The case must be reproducible: input, steps, expected, actual. "Feels slow" is not a finding. "List of 500 deals takes 3 s, 501 queries" is.
 Use `/ponytail-review` on the scope's commits, and turn each of its `must fix` items into a `must` row (with its concrete case).
@@ -52,9 +54,9 @@ Commit `S<n> QA: …`.
 | A "Done when" behaviour has no test at any size | `must` |
 | Code commit with no red commit before it, for a behaviour | `must` |
 | A test was changed or deleted without a `NOTE` row citing its source | `must` |
-| A change-detector test (counts or arguments of internal calls, call order, private methods, snapshots) | `should` |
-| A Small test touches the DB, files or network, or takes >0.5 s | `should` |
-| A test hides its data or check in shared setup or helpers, or loops over cases (not DAMP) | `should` |
+| A change-detector test (counts or arguments of internal calls, call order, private methods, snapshots) | `~` |
+| A Small test touches the DB, files or network, or takes >0.5 s | `~` |
+| A test hides its data or check in shared setup or helpers, or loops over cases (not DAMP) | `~` |
 
 ## Ship gate
 Run the Ship gate in `references/gates.md` on the whole branch. Append the result to log.md (`scaffold.py log … --kind gate`).

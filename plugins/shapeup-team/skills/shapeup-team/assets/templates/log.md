@@ -4,4 +4,4 @@ Append-only audit trail: every decision and action on this pitch. Never edit a p
 
 | # | Date | Who | Kind | Entry | Why |
 |---|---|---|---|---|---|
-| 1 | {{date}} | User + PO | phase | Pitch created, status draft | {{why}} |
+| 1 | {{date}} | User + Shaper | phase | Pitch created, status draft | {{why}} |

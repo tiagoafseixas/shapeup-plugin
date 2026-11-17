@@ -71,9 +71,9 @@ def test_dba_edits_migrations_and_runbook_only(repo):
 
 
 def test_po_edits_shape_docs_but_not_team_config_or_code(repo):
-    assert edit(repo, "shapeup-team:product-owner", "shape/pitches/win/pitch.md") == "allow"
-    assert edit(repo, "shapeup-team:product-owner", "shape/team.md") == "deny"
-    assert edit(repo, "shapeup-team:product-owner", "backend/deals/models.py") == "deny"
+    assert edit(repo, "shapeup-team:shaper", "shape/pitches/win/pitch.md") == "allow"
+    assert edit(repo, "shapeup-team:shaper", "shape/team.md") == "deny"
+    assert edit(repo, "shapeup-team:shaper", "backend/deals/models.py") == "deny"
 
 
 def test_main_session_has_no_file_limits_except_env_files(repo):
@@ -165,7 +165,7 @@ def test_backend_and_dba_connections_to_production_ask_the_user(repo):
 def test_po_qa_and_frontend_have_no_production_access(repo):
     assert bash(repo, 'psql "$READONLY_DATABASE_URL" -c "select 1"', "shapeup-team:qa-engineer") == "deny"
     assert bash(repo, "gcloud sql instances list", "shapeup-team:frontend-dev") == "deny"
-    assert bash(repo, "cloud-sql-proxy proj:europe-west1:pg", "shapeup-team:product-owner") == "deny"
+    assert bash(repo, "cloud-sql-proxy proj:europe-west1:pg", "shapeup-team:shaper") == "deny"
 
 
 def test_a_database_client_aimed_at_a_remote_host_asks_and_local_passes(repo):
@@ -214,10 +214,35 @@ def test_a_custom_docs_folder_from_bootstrap_is_respected(tmp_path):
     (docs / "team.md").write_text(
         "| Role id | Agent | Stack pack | Path |\n|---|---|---|---|\n| backend-drf | backend-dev | stack-django-drf | backend/ |\n"
     )
-    assert edit(root, "shapeup-team:product-owner", "docs/product/pitches/win/pitch.md") == "allow"
-    assert edit(root, "shapeup-team:product-owner", "docs/product/team.md") == "deny"
+    assert edit(root, "shapeup-team:shaper", "docs/product/pitches/win/pitch.md") == "allow"
+    assert edit(root, "shapeup-team:shaper", "docs/product/team.md") == "deny"
     assert edit(root, "shapeup-team:backend-dev", "docs/product/pitches/win/tech.md") == "allow"
     assert edit(root, "shapeup-team:backend-dev", "docs/product/pitches/win/pitch.md") == "deny"
     assert edit(root, "shapeup-team:backend-dev", "backend/deals/services.py") == "allow"
-    assert edit(root, "shapeup-team:product-owner", ".shapeup.json") == "deny"
+    assert edit(root, "shapeup-team:shaper", ".shapeup.json") == "deny"
     assert bash(root, "gh auth status") == "ask"  # no board yet: offline
+
+
+def test_the_designer_edits_ui_code_and_the_board_but_not_tests_or_backend(repo):
+    assert edit(repo, "shapeup-team:designer", "../web/src/ReminderSettings.jsx") == "allow"
+    assert edit(repo, "shapeup-team:designer", "shape/pitches/win/board.md") == "allow"
+    assert edit(repo, "shapeup-team:designer", "../web/src/ReminderSettings.test.jsx") == "deny"
+    assert edit(repo, "shapeup-team:designer", "backend/deals/services.py") == "deny"
+    assert bash(repo, 'psql "$READONLY_DATABASE_URL"', "shapeup-team:designer") == "deny"
+
+
+def test_other_ecosystems_are_covered(repo):
+    assert edit(repo, "shapeup-team:qa-engineer", "backend/src/test/java/app/InvoiceServiceTest.java") == "allow"
+    assert edit(repo, "shapeup-team:dba", "backend/src/main/resources/db/migration/V8__reminders.sql") == "allow"
+    assert bash(repo, "glab mr merge 12") == "deny"
+    assert bash(repo, "flyway migrate -url=jdbc:postgresql://prod/app") == "deny"
+    assert bash(repo, "helm upgrade app ./chart") == "deny"
+    assert bash(repo, "fly deploy") == "deny"
+
+
+def test_before_the_first_kickoff_java_go_and_ruby_builds_ask(fresh_repo):
+    assert bash(fresh_repo, "./mvnw test") == "ask"
+    assert bash(fresh_repo, "./gradlew bootRun") == "ask"
+    assert bash(fresh_repo, "go test ./...") == "ask"
+    assert bash(fresh_repo, "bundle exec rspec") == "ask"
+    assert bash(fresh_repo, "glab auth status") == "ask"

@@ -14,9 +14,9 @@ metadata:
 
 | Gate | Run by |
 |---|---|
-| ready, kickoff | this session (Conductor; PO for ready) |
+| ready, kickoff | this session (Conductor; Shaper for ready) |
 | scope S<n> | spawn the `qa-engineer` agent with `Your turn: Scope gate S<n>` |
-| ship | spawn the `qa-engineer` agent with `Your turn: Ship gate`, then this session does the Conductor rows (PR body, `gh pr ready`, report) |
+| ship | spawn the `qa-engineer` agent with `Your turn: Ship gate`, then this session does the Conductor rows (PR body, mark it ready with the PR tool, report) |
 
 3. Check every row; a row passes only with evidence (command output, file, board row). The ready gate is offline: evidence comes from files and the user's answers, never from running anything external.
 4. Append the result to the pitch's log.md (`scaffold.py log … --kind gate`): `<Gate>: pass`, or `<Gate>: fail on rows 2, 5: <one clause each>`.

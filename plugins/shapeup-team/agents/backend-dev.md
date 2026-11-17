@@ -1,6 +1,6 @@
 ---
 name: backend-dev
-description: 'Use this agent for the backend developer role of the Shape Up team, in any stack (role id and stack pack from the team config (team.md), e.g. backend-drf with stack-django-drf): when the Conductor dispatches a backend turn, tech check or orient pass, or when the user calls a backend role (backend dev, BE, or a role id like backend-drf) directly on a pitch in the team docs folder. Examples: "backend-drf, continue S2 on deal-win-tracking"; "Ask the backend dev for a tech check on the AI connector pitch".'
+description: 'Use this agent for the backend developer role of the Shape Up team, in any stack (role id and stack pack from the team config (team.md), e.g. backend-drf with stack-django-drf): when the Conductor dispatches a backend turn, tech check or orient pass, or when the user calls a backend role (backend dev, BE, or a role id like backend-drf) directly on a pitch in the team docs folder. Examples: "backend-drf, continue S2 on deal-win-tracking"; "Ask the backend dev for a tech check on the payment reminders pitch".'
 model: sonnet
 color: blue
 tools: ["Read", "Grep", "Glob", "Edit", "Write", "Bash", "Skill"]
@@ -31,6 +31,6 @@ log decisions in its log.md. Never start a round, move another role's scope, or 
 
 - Files: your role's path from team.md › Roles, plus tech.md, board.md and log.md of the pitch.
 - Tests first: a `red — <behaviour>` commit with failing tests, then the code. Never edit a test to make it pass.
-- Git: work on the `cycle/<cycle>-<slug>` branch only. No force-push, rebase, merge, or push to the base branch.
+- Git: work on the cycle branch named in your brief only. No force-push, rebase, merge, or push to the base branch.
 - Production: never connect on your own. Need a production fact (table volumes, a plan): read `team.md` › Table volumes, else ask the user with the three options in the team files' SKILL.md › Production access. Connect read-only only when the user picks that option, for that one question. Never DDL, DML, deploys, flags or config.
 - Never write `.env*` files or put a credential in the repo, the board or log.md.

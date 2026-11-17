@@ -48,21 +48,29 @@ def crew_svg():
     parts.append(f'<text x="200" y="300" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="15" fill="{INK}">figuring it out</text>')
     parts.append(f'<text x="480" y="300" text-anchor="middle" font-family="Inter, Helvetica, Arial, sans-serif" font-size="15" fill="{INK}">making it happen</text>')
 
-    # frontend-react: cyan, paintbrush
-    x, y = bez(P0, P1, P2, P3, 0.42)
-    b, by = body(x, y, r, "#15aabf")
+    # designer: pink, paintbrush, first up the hill
+    x, y = bez(P0, P1, P2, P3, 0.26)
+    b, by = body(x, y, r, "#e64980")
     brush = (f'<g transform="rotate(-35 {x + r:.1f} {by:.1f})">'
              f'<rect x="{x + r - 2:.1f}" y="{by - 26:.1f}" width="5" height="26" rx="2" fill="#a0522d"/>'
              f'<rect x="{x + r - 3:.1f}" y="{by - 30:.1f}" width="7" height="6" fill="#adb5bd"/>'
-             f'<path d="M{x + r - 3:.1f} {by - 30:.1f} q3.5 -12 7 0 z" fill="#e64980"/></g>')
+             f'<path d="M{x + r - 3:.1f} {by - 30:.1f} q3.5 -12 7 0 z" fill="#fcc419"/></g>')
     parts += [b, face(x, by, r, 1.5), brush]
 
-    # backend-drf: blue, gear
-    x, y = bez(P0, P1, P2, P3, 0.74)
+    # frontend dev: cyan, a code tag
+    x, y = bez(P0, P1, P2, P3, 0.52)
+    b, by = body(x, y, r, "#15aabf")
+    tag = (f'<rect x="{x + r - 1:.1f}" y="{by - 34:.1f}" width="30" height="18" rx="4" fill="#f1f3f5" stroke="{INK}" stroke-width="2"/>'
+           f'<text x="{x + r + 14:.1f}" y="{by - 21:.1f}" text-anchor="middle" font-family="Menlo, Consolas, monospace" font-size="11" '
+           f'font-weight="700" fill="#1f2430">&lt;/&gt;</text>')
+    parts += [b, face(x, by, r, 1.5), tag]
+
+    # backend dev: blue, gear
+    x, y = bez(P0, P1, P2, P3, 0.80)
     b, by = body(x, y, r, "#4c6ef5")
     parts += [b, face(x, by, r, 1.5), gear(x + r + 6, by - 14, 8, "#868e96")]
 
-    # PO: magenta, at the top holding the flag
+    # Shaper: magenta, at the top holding the flag
     x, y = P3
     b, by = body(x, y, r, "#be4bdb")
     flag = (f'<line x1="{x + r - 2:.1f}" y1="{by + 4:.1f}" x2="{x + r - 2:.1f}" y2="{by - 62:.1f}" stroke="#5b6472" stroke-width="3" stroke-linecap="round"/>'
@@ -88,7 +96,7 @@ def crew_svg():
     parts += [b, face(x, by, r, 1.5), db]
 
     return ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 -30 640 350" width="640" height="350" role="img" '
-            'aria-label="shapeup-team: five crew members on a hill chart; the PO holds the flag at the top">'
+            'aria-label="shapeup-team: six crew members on a hill chart; the Shaper holds the flag at the top">'
             + "".join(parts) + "</svg>\n")
 
 
@@ -98,7 +106,7 @@ def icon_svg():
             '<path d="M16 100 C44 100 46 40 64 40 C82 40 84 100 112 100" fill="none" stroke="#f8f9fa" stroke-width="7" stroke-linecap="round"/>'
             '<line x1="64" y1="40" x2="64" y2="12" stroke="#f8f9fa" stroke-width="4" stroke-linecap="round"/>'
             '<path d="M65 12 l20 6 l-20 6 z" fill="#f59f00"/>'
-            '<circle cx="34" cy="80" r="7" fill="#15aabf"/><circle cx="46" cy="58" r="7" fill="#4c6ef5"/>'
+            '<circle cx="27" cy="94" r="6.5" fill="#e64980"/><circle cx="38" cy="76" r="6.5" fill="#15aabf"/><circle cx="48" cy="56" r="6.5" fill="#4c6ef5"/>'
             '<circle cx="82" cy="58" r="7" fill="#fab005"/><circle cx="94" cy="80" r="7" fill="#f03e3e"/>'
             '<circle cx="64" cy="40" r="7" fill="#be4bdb"/>'
             '</svg>\n')

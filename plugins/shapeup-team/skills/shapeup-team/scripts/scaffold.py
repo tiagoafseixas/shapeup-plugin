@@ -7,7 +7,7 @@ The docs folder is chosen at bootstrap and recorded in <repo>/.shapeup.json ({"d
   scaffold.py pitch    <repo> <slug> --title "Title" [--why "reason"]
   scaffold.py kickoff  <repo> <slug> --cycle 2026-C1
   scaffold.py add      <repo> <slug> tech|runbook
-  scaffold.py log      <repo> <slug> --by PO --kind decision|cut|phase|gate|action --entry "..." --why "..."
+  scaffold.py log      <repo> <slug> --by Shaper --kind decision|cut|phase|gate|action --entry "..." --why "..."
   scaffold.py status   <repo>
   scaffold.py lint     <repo> <slug>      writing limits: pitch words, scope names, Log sentences, captions, filler
   scaffold.py pack     <out-dir> <name> --layer backend|frontend|database --tech "Django + DRF"   new stack pack plugin
@@ -87,6 +87,16 @@ def append_log(d: Path, by: str, kind: str, entry: str, why: str) -> None:
     print(f"logged: {line}")
 
 
+def setting(repo: Path, key: str, default: int) -> int:
+    """A number from team.md › Settings (e.g. `| Pitch word limit | 600 |`), or the default."""
+    team = docs(repo) / "team.md"
+    if team.exists():
+        m = re.search(rf"\|\s*{re.escape(key)}\s*\|\s*(\d+)", team.read_text(), re.I)
+        if m:
+            return int(m.group(1))
+    return default
+
+
 def budget(repo: Path, appetite: str) -> int:
     size = "big" if "big" in appetite.lower() else "small"
     team = docs(repo) / "team.md"
@@ -123,7 +133,7 @@ def cmd_kickoff(repo: Path, slug: str, cycle: str) -> None:
     d = folder(repo, slug)
     title, row = pitch_meta(d)
     if not row or row[0] != "bet":
-        sys.exit(f"pitch status is '{row[0] if row else '?'}'; kickoff needs 'bet' (set it only after the founders bet)")
+        sys.exit(f"pitch status is '{row[0] if row else '?'}'; kickoff needs 'bet' (set it only after the betting table bets)")
     appetite = row[1]
     if "<" in appetite:
         sys.exit("pitch has no appetite set")
@@ -135,7 +145,7 @@ def cmd_kickoff(repo: Path, slug: str, cycle: str) -> None:
     new = "| " + " | ".join(["building", row[1], row[2], cycle, TODAY]) + " |"
     (d / "pitch.md").write_text(pitch.replace(old, new, 1))
     append_log(d, "Conductor", "phase", f"Kickoff: cycle {cycle}, status building, budget {rounds} rounds",
-               f"Founders bet on it; {appetite} budget from team.md")
+               f"The betting table bet on it; {appetite} budget from team.md")
 
 
 def cmd_add(repo: Path, slug: str, doc: str) -> None:
@@ -188,8 +198,9 @@ def cmd_lint(repo: Path, slug: str) -> None:
     issues = []
     pitch = (d / "pitch.md").read_text()
     words = len(re.sub(r"```.*?```", "", pitch, flags=re.S).split())
-    if words > 600:
-        issues.append(("pitch.md", f"{words} words outside code blocks (max 600)"))
+    limit = setting(repo, "Pitch word limit", 600)
+    if words > limit:
+        issues.append(("pitch.md", f"{words} words outside code blocks (max {limit}, team.md › Pitch word limit)"))
     problem = re.search(r"^## Problem\n(.*?)(?=^## )", pitch, re.S | re.M)
     if problem:
         lines = [l for l in problem.group(1).splitlines() if l.strip()]

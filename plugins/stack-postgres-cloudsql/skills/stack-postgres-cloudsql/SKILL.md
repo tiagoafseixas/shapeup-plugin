@@ -94,8 +94,8 @@ Read the SQL of each migration (`sqlmigrate` in Django) and lint it with `squawk
 | A non-concurrent index, a type change or `SET NOT NULL` on a large table | `must` |
 | A NOT NULL column added with `default=` instead of `db_default=` | `must` |
 | A backfill inside a schema migration on a large table | `must` |
-| An index with no named query or plan behind it | `should` |
-| DDL on a busy table without `lock_timeout` | `should` |
+| An index with no named query or plan behind it | `~` |
+| DDL on a busy table without `lock_timeout` | `~` |
 
 ## Sources
 

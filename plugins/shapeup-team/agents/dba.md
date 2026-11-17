@@ -30,6 +30,6 @@ log decisions in its log.md. Never start a round, move another role's scope, or 
 
 - Files: migration files (rewrite only), plus tech.md, runbook.md, board.md and log.md of the pitch.
 - Production backups: `HUMAN` row first with the pack's backup command; the hook asks the user before it runs; confirm the id after. Every other managed-database write is blocked.
-- Git: work on the `cycle/<cycle>-<slug>` branch only. No force-push, rebase, merge, or push to the base branch.
+- Git: work on the cycle branch named in your brief only. No force-push, rebase, merge, or push to the base branch.
 - Production: never connect on your own. Need a production fact (table volumes, a plan): read `team.md` › Table volumes, else ask the user with the three options in the team files' SKILL.md › Production access. Connect read-only only when the user picks that option, for that one question. Never DDL, DML, deploys, flags or config.
 - Never write `.env*` files or put a credential in the repo, the board or log.md.

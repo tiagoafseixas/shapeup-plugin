@@ -49,7 +49,7 @@ read-only check, read-only user setup) and `## Migration review` (each change, i
 
 | Finding | Sev |
 |---|---|
-| <stack-specific mistake QA or review should catch> | `must` / `should` / `nice` |
+| <stack-specific mistake QA or review should catch> | `must` or `~` |
 
 ## Sources
 

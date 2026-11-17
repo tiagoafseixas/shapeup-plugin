@@ -104,6 +104,25 @@ class DealWinApi(APIView):
 | Constraints and custom querysets | Medium |
 | API: permissions (owner, other user, anonymous), contract shape, errors, query count flat from 1 to N rows | Medium |
 
+The testing standard's examples, in Django:
+
+```python
+# Change detector: breaks on any refactor, catches no bug
+def test_win_deal(self):
+    with patch("deals.services.Deal.save") as save, patch("deals.services.notify") as notify:
+        deal_win(deal=deal, by=owner)
+    save.assert_called_once()
+    notify.assert_called_once_with(deal.id, "won")
+
+# Behaviour, DAMP: the data this test depends on is in its body
+def test_owner_wins_open_deal(self):
+    deal = DealFactory(owner=owner, stage=Stage.OPEN)
+    deal_win(deal=deal, by=owner)
+    deal.refresh_from_db()
+    self.assertEqual(deal.stage, Stage.WON)
+    self.assertEqual(len(mail.outbox), 1)
+```
+
 ## Performance
 
 | Rule | How |
@@ -121,10 +140,10 @@ class DealWinApi(APIView):
 |---|---|
 | A queryset in a view or viewset not scoped to the user or tenant (BOLA) | `must` |
 | Ownership field read from the request body, or `fields = "__all__"` on a write serializer | `must` |
-| Business logic in a view, serializer `create`/`update`, signal or `save()` | `should` |
-| A side effect outside `transaction.on_commit` inside a transaction | `should` |
-| A list endpoint without pagination, or without a flat query-count test | `should` |
-| A pass-through service (`deal_get`) | `nice` |
+| Business logic in a view, serializer `create`/`update`, signal or `save()` | `~` |
+| A side effect outside `transaction.on_commit` inside a transaction | `~` |
+| A list endpoint without pagination, or without a flat query-count test | `~` |
+| A pass-through service (`deal_get`) | `~` |
 
 ## Sources
 

@@ -9,11 +9,11 @@ the code doesn't answer at a glance.
 | Diagram | Mermaid type | Draw it when | Owner | Lives in |
 |---|---|---|---|---|
 | Entity | `erDiagram` | A scope adds or changes tables, columns or relations | DBA | tech.md · Entities |
-| Class | `classDiagram` | A scope adds models with domain methods, services or QuerySets that work together | backend | tech.md · Classes |
+| Class | `classDiagram` | A scope adds models with domain methods, services or query objects that work together | backend | tech.md · Classes |
 | Sequence | `sequenceDiagram` | A use case crosses 3+ participants (UI → API → service → DB → task/external) | backend (frontend for UI-only flows) | tech.md · Flows |
 | Activity | `flowchart TD` (Mermaid has no activity type) | A process has branches, loops or retries: backfill, import, job | Owner of the process | tech.md · Processes |
 | State | `stateDiagram-v2` | An entity has a lifecycle with rules about which transitions are allowed | backend | tech.md · Processes |
-| Wireframe | ASCII in a ` ```text ` block | The pitch adds a screen or changes a screen's layout | PO + user | pitch.md · Wireframes |
+| Wireframe | ASCII in a ` ```text ` block | The pitch adds a screen or changes a screen's layout | Shaper + user | pitch.md · Wireframes |
 
 ## Rules
 
@@ -42,7 +42,7 @@ erDiagram
     }
 ```
 
-Class: how the model, QuerySet and service split the win logic
+Class: how the model, the queries and the service split the win logic
 ```mermaid
 classDiagram
     class Deal {
@@ -51,16 +51,16 @@ classDiagram
         +mark_won(at)
         +mark_lost(at, reason)
     }
-    class DealQuerySet {
+    class DealQueries {
         +open_for(user)
         +won_in_week(user, week)
     }
-    class services {
-        +deal_win(deal, by) Deal
-        +deal_lose(deal, by, reason) Deal
+    class DealService {
+        +win(deal, by) Deal
+        +lose(deal, by, reason) Deal
     }
-    services ..> Deal : calls mark_*
-    Deal --> DealQuerySet : objects
+    DealService ..> Deal : calls mark_*
+    DealService ..> DealQueries : reads
 ```
 
 Sequence: how a deal is won

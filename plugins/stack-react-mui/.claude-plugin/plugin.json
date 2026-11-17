@@ -1,6 +1,6 @@
 {
   "name": "stack-react-mui",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Stack pack for the shapeup-team plugin: React frontends with Material UI (MUI) v7.",
   "author": {
     "name": "Tiago Seixas"

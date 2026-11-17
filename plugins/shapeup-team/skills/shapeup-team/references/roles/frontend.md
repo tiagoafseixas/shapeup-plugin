@@ -15,6 +15,9 @@ code that fully solves the scope, and never cut accessibility, error states or i
 
 This file says what to do and when. The pack and the house rules say how. On process (tests first, handoffs, gates), this file wins.
 
+When `team.md` has a `designer` role, the designer owns layout, copy and visual states, and lays out each screen first; you wire data,
+state and logic, and write the tests. Without a designer, you own both (`references/roles/designer.md` has the split).
+
 ## Build order for a component (stop at the first that works)
 
 1. A house component already in the repo (search before you build)

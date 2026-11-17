@@ -18,7 +18,7 @@ Once per repo, before the first pitch. Offline: read files and ask the user; no 
    Never pick the folder without asking.
 4. Ask for the product name, then run `scaffold.py init <repo> --product "<name>" --docs <folder>`.
    It writes `.shapeup.json` and creates `<docs>/team.md`, `ideas.md`, `decisions.md`, `pitches/` and `betting/`.
-5. Fill `<docs>/team.md` from the repo's files: `package.json`, `requirements*.txt`, `pyproject.toml`, framework settings, CI config, `AGENTS.md` / `CLAUDE.md`.
+5. Fill `<docs>/team.md` from the repo's files: `package.json`, `pyproject.toml` / `requirements*.txt`, `pom.xml` / `build.gradle`, `go.mod`, `Gemfile`, `composer.json`, `*.csproj`, framework settings, CI config, `AGENTS.md` / `CLAUDE.md`.
    - Roles: one row per developer role (role id `<layer>-<stack>`), its agent, its stack pack and its path; one row for the database.
    - Commands: the Small, Medium and Large test commands, lint, build and migration checks per role, as the repo runs them. Write them down; don't run them.
    - Ask the user, in one message, what files can't tell: the base branch, the production database instance name, the largest tables and their size (or "ask per pitch"), PR reviewers.

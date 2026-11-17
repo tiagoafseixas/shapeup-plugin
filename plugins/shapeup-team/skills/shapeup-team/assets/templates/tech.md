@@ -14,7 +14,7 @@ erDiagram
 ```
 
 ## Classes (backend)
-<Caption: how models, QuerySets and services split the logic.>
+<Caption: how models, queries and services split the logic.>
 ```mermaid
 classDiagram
 ```

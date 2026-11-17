@@ -7,9 +7,10 @@ Add a row for each extra stack (a second backend, a mobile app). Paths are relat
 
 | Role id | Agent | Stack pack | Path |
 |---|---|---|---|
-| <backend-drf> | backend-dev | <stack-django-drf> | <backend/> |
-| <frontend-react> | frontend-dev | <stack-nextjs-chakra, stack-react-mui> | <frontend/, or ../<web-repo> when it's a separate repo> |
-| <database> | dba | <stack-postgres-cloudsql> | — |
+| <backend-<stack>: backend-drf, backend-spring, …> | backend-dev | <stack-<name>: stack-django-drf, …> | <backend/> |
+| designer | designer | <the frontend role's pack> | <the frontend path> (optional row: without it, the frontend role designs) |
+| <frontend-<stack>: frontend-react, …> | frontend-dev | <stack-<name>: stack-react-mui, stack-nextjs-chakra, …> | <frontend/, or ../<web-repo> when it's a separate repo> |
+| <database> | dba | <stack-<name>: stack-postgres-cloudsql, …> | — |
 
 House rules per role, when the repo has its own conventions: `<docs>/stack/<role id>.md`.
 
@@ -17,15 +18,15 @@ House rules per role, when the repo has its own conventions: `<docs>/stack/<role
 
 | Command | Run |
 |---|---|
-| <backend-drf> Small tests | <cd backend && pytest -q */tests/small --durations=10> |
-| <backend-drf> Medium tests | <cd backend && pytest -q */tests/medium> |
-| <backend-drf> lint | <cd backend && ruff check .> |
-| <backend-drf> migrations check | <cd backend && python manage.py makemigrations --check --dry-run> |
-| <frontend-react> Small tests | <cd frontend && npm test -- --run small> |
-| <frontend-react> Medium tests | <cd frontend && npm test -- --run medium> |
-| <frontend-react> lint + build | <cd frontend && npm run lint && npm run build> |
-| Large tests | <cd frontend && npx playwright test> · <API journeys command> |
-| Local DB | <docker compose up -d db> |
+| <backend role id> Small tests | <the command that runs this role's Small tests, as the repo runs them> |
+| <backend role id> Medium tests | <…> |
+| <backend role id> lint | <…> |
+| <backend role id> migrations check | <the command that fails when a model change has no migration> |
+| <frontend role id> Small tests | <…> |
+| <frontend role id> Medium tests | <…> |
+| <frontend role id> lint + build | <…> |
+| Large tests | <the e2e command> · <API journeys command> |
+| Local DB | <how a local database runs> |
 
 ## Table volumes
 
@@ -47,9 +48,14 @@ when the user answers a volume question. Agents never connect to production to f
 | Prod DB instance | <identifier the database pack's commands take> |
 | Read-only DB access | <none, or: read-only user on <replica or primary>; the user sets READONLY_DATABASE_URL in the session when they allow a connection> |
 | Budget Small batch | 8 rounds |
+| Pitch word limit | 600 |
+| Scopes per pitch | 2–7 |
+| Small test time limit | 0.5 s |
+| PR tool | <gh, glab, or none (the user opens PRs)> |
+| Branch pattern | cycle/<cycle>-<slug> |
 | Budget Big batch | 20 rounds |
 | Ponytail level | full |
-| Model: tech check, ideas, PO build, uphill dev turn, QA gates | sonnet |
+| Model: tech check, ideas, Shaper build, uphill dev turn, QA gates | sonnet |
 | Model: mechanical turn (downhill, fully specified) | haiku |
 | Model: DBA review and runbooks | opus |
 | PR reviewers | <github logins> |

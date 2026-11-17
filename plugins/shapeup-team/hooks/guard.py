@@ -11,9 +11,9 @@ import re
 import sys
 from fnmatch import fnmatch
 
-AGENT_ROLES = {"product-owner": "po", "qa-engineer": "qa", "backend-dev": "backend", "frontend-dev": "frontend", "dba": "dba"}
-LAYER_OF_AGENT = {"backend-dev": "backend", "frontend-dev": "frontend", "dba": "database"}
-MIGRATION_DIRS = ("/migrations/", "/migrate/", "/alembic/versions/", "/db/migrations/")
+AGENT_ROLES = {"shaper": "shaper", "qa-engineer": "qa", "backend-dev": "backend", "frontend-dev": "frontend", "designer": "designer", "dba": "dba"}
+LAYER_OF_AGENT = {"backend-dev": "backend", "frontend-dev": "frontend", "designer": "frontend", "dba": "database"}
+MIGRATION_DIRS = ("/migrations/", "/migrate/", "/alembic/versions/", "/db/migrations/", "/db/migration/", "/db/changelog/", "/changelog/")
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1", "db", "postgres", "mysql", "mongo", "host.docker.internal"}
 PITCH_DOCS = ("board.md", "log.md")
 
@@ -92,10 +92,11 @@ def role_of(event):
 def is_test_file(rel):
     parts = rel.split("/")
     name = parts[-1]
-    if any(p in ("tests", "test", "e2e", "cypress", "__tests__") for p in parts[:-1]):
+    if any(p in ("tests", "test", "spec", "e2e", "cypress", "__tests__", "testdata") for p in parts[:-1]):
         return True
-    return (fnmatch(name, "test_*.py") or fnmatch(name, "*_test.py") or name == "conftest.py"
-            or fnmatch(name, "*.test.*") or fnmatch(name, "*.spec.*") or fnmatch(name, "cypress.config.*"))
+    patterns = ("test_*.py", "*_test.py", "conftest.py", "*.test.*", "*.spec.*", "cypress.config.*", "playwright.config.*",
+                "*Test.java", "*Tests.java", "*IT.java", "*Test.kt", "*_test.go", "*_spec.rb", "*Test.php", "*Tests.cs")
+    return any(fnmatch(name, p) for p in patterns)
 
 
 def pitch_doc(rel, names, docs="shape"):
@@ -133,17 +134,20 @@ def check_file(event, role):
         "backend": PITCH_DOCS + ("tech.md",),
         "frontend": PITCH_DOCS + ("tech.md",),
         "qa": PITCH_DOCS,
+        "designer": PITCH_DOCS,
         "dba": PITCH_DOCS + ("tech.md", "runbook.md"),
     }
     docs = docs_folder(repo)
     if rel.startswith(docs + "/"):
-        ok = rel != f"{docs}/team.md" if role == "po" else pitch_doc(rel, shape_docs[role], docs)
+        ok = rel != f"{docs}/team.md" if role == "shaper" else pitch_doc(rel, shape_docs[role], docs)
     elif rel == ".shapeup.json":
         ok = False
-    elif role == "po":
+    elif role == "shaper":
         ok = False
     elif role in ("backend", "frontend"):
         ok = inside_any(path, paths[role]) is not None
+    elif role == "designer":
+        ok = inside_any(path, paths["frontend"]) is not None and not is_test_file(rel)
     elif role == "qa":
         root = inside_any(path, paths["backend"] + paths["frontend"] + [repo])
         ok = bool(root) and is_test_file(os.path.relpath(path, root).replace(os.sep, "/"))
@@ -153,7 +157,7 @@ def check_file(event, role):
     else:
         ok = True
     if not ok:
-        who = {"po": "the PO", "qa": "QA", "dba": "the DBA"}.get(role, f"a {role} role")
+        who = {"shaper": "the Shaper", "qa": "QA", "dba": "the DBA", "designer": "the designer"}.get(role, f"a {role} role")
         deny(f"{who} may not edit {rel}: it's outside the role's area in team.md › Roles. Write a row on the board for the owner instead.")
 
 
@@ -161,7 +165,7 @@ GIT_DENY = [
     (r"\bgit\s+push\b[^;&|]*(\s--force\b|\s-f\b|\s--force-with-lease\b|\s\+\S)", "force-push is never allowed"),
     (r"\bgit\s+push\b[^;&|]*\s(\S+:)?(refs/heads/)?(main|master|develop|production|prod)\b(?!-)", "push to the base branch is never allowed"),
     (r"\bgit\s+(merge|rebase)(?![-\w])(?![^;&|]*--(abort|continue|quit))", "merge and rebase are the user's"),
-    (r"\bgh\s+pr\s+merge\b", "only the user merges"),
+    (r"\bgh\s+pr\s+merge\b|\bglab\s+mr\s+merge\b", "only the user merges"),
     (r"\bgit\s+commit\b[^;&|]*--no-verify", "commits keep their hooks (--no-verify)"),
 ]
 DEPLOY_DENY = [
@@ -170,11 +174,15 @@ DEPLOY_DENY = [
     (r"(^|[\s/;&|])deploy\.sh\b", "deploys are the user's"),
     (r"\bterraform\s+(apply|destroy|import)\b", "infrastructure changes are the user's"),
     (r"\bkubectl\s+(apply|delete|edit|patch|scale|rollout)\b", "infrastructure changes are the user's"),
+    (r"\b(helm\s+(install|upgrade|uninstall|rollback)|pulumi\s+(up|destroy)|cdk\s+(deploy|destroy)|serverless\s+deploy|sls\s+deploy)\b", "infrastructure changes are the user's"),
+    (r"\b(fly(ctl)?\s+deploy|vercel\s+(deploy\s+)?--prod|netlify\s+deploy\s+--prod|eb\s+deploy|kamal\s+deploy|cap\s+\S+\s+deploy|heroku\s+(releases:rollback|container:release))\b", "deploys are the user's"),
+    (r"\bgit\s+push\s+heroku\b", "deploys are the user's"),
+    (r"\b(flyway\s+(migrate|clean|repair|undo)|liquibase\s+(update|rollback|drop-all))\b", "migrations against a shared database are the user's (runbook step)"),
 ]
 SQL_READ = r"\bgcloud\s+sql\s+(backups\s+(list|describe)|instances\s+(list|describe)|operations\s+(list|describe|wait)|databases\s+(list|describe)|users\s+list|flags\s+list|tiers\s+list)\b"
 
 
-NO_PROD_ROLES = ("po", "qa", "frontend")
+NO_PROD_ROLES = ("shaper", "qa", "frontend", "designer")
 
 
 def prod_connection(role, what):
@@ -186,12 +194,15 @@ def prod_connection(role, what):
 
 
 OFFLINE_ASK = [
-    (r"(^|[\s;&|(])gh\s", "a GitHub request"),
+    (r"(^|[\s;&|(])(gh|glab)\s", "a request to the code host"),
     (r"\bgit\s+(push|fetch|pull|clone|ls-remote|remote\s+update|submodule\s+update)\b", "a call to the git remote"),
-    (r"\b(pip3?\s+install|uv\s+(pip\s+install|sync|add)|poetry\s+(install|add)|npm\s+(install|i|ci|add)\b|yarn(\s+(add|install))?\s*($|[;&|])|pnpm\s+(add|install|i)\b|brew\s+install|apt(-get)?\s+install)", "a package install"),
+    (r"\b(pip3?\s+install|uv\s+(pip\s+install|sync|add)|poetry\s+(install|add)|npm\s+(install|i|ci|add)\b|yarn(\s+(add|install))?\s*($|[;&|])|pnpm\s+(add|install|i)\b"
+     r"|brew\s+install|apt(-get)?\s+install|bundle\s+install|gem\s+install|composer\s+(install|require|update)|go\s+(get|mod\s+download)|cargo\s+(add|fetch|install)|dotnet\s+(add|restore))", "a package install"),
     (r"\b(psql|pg_dump|pg_restore|mysql|mysqldump|mongosh|mongodump|redis-cli|cloud[-_]sql[-_]proxy)\b", "a database connection"),
     (r"\bmanage\.py\s+(migrate|test|dbshell|shell|runserver|loaddata|flush|createsuperuser|showmigrations)\b", "a database connection (manage.py)"),
-    (r"\b(pytest|jest|vitest|cypress|playwright)\b|\b(npm|yarn|pnpm)\s+(run\s+)?(test|e2e|dev|start)\b", "a test run or a server"),
+    (r"\b(pytest|jest|vitest|cypress|playwright|rspec|phpunit)\b|\b(npm|yarn|pnpm)\s+(run\s+)?(test|e2e|dev|start)\b"
+     r"|\b(mvn|mvnw|gradle|gradlew)\b[^;&|]*\b(test|verify|bootRun|run|install|build)\b|\b(go|cargo|dotnet|mix|swift)\s+(test|run)\b"
+     r"|\brails\s+(s|server|test|db:\w+)\b|\bbundle\s+exec\s+(rspec|rails|rake)\b", "a test run, a build or a server"),
     (r"\bdocker(\s+compose|-compose)?\s+(up|run|start|exec|pull|build)\b", "a container"),
     (r"\b(curl|wget)\s", "a network request"),
 ]

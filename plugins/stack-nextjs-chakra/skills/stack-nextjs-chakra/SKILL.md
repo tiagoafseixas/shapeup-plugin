@@ -73,10 +73,10 @@ Build order for a component, stop at the first that works:
 |---|---|
 | A secret or server-only module imported into a client component | `must` |
 | An input without a label, or an icon-only button without `aria-label` | `must` |
-| A Chakra v2 API (`sx`, `isDisabled`, `extendTheme`) in new code | `should` |
-| A hex colour, px spacing or font size in a component | `should` |
-| `'use client'` on a page or layout that only needs one interactive leaf | `should` |
-| `fetch` in `useEffect` in new code | `should` |
+| A Chakra v2 API (`sx`, `isDisabled`, `extendTheme`) in new code | `~` |
+| A hex colour, px spacing or font size in a component | `~` |
+| `'use client'` on a page or layout that only needs one interactive leaf | `~` |
+| `fetch` in `useEffect` in new code | `~` |
 
 ## Sources
 

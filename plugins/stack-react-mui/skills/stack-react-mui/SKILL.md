@@ -80,11 +80,11 @@ Snapshot tests are out (testing.md). In v9 MUI no longer checks `NODE_ENV === 't
 | Finding | Sev |
 |---|---|
 | An input without a label, an `IconButton` without `aria-label`, a `Dialog` without `aria-labelledby` | `must` |
-| A removed v9 API (`GridLegacy`, system props, `InputProps`, `PaperProps`, `components`, `disableEscapeKeyDown`) in new code | `must` on v9, `should` on v7 |
-| A hex colour, px font size or `theme.palette.mode` branch in a component | `should` |
-| A barrel import from `@mui/icons-material` | `should` |
-| A selector on a hashed `css-…` class, or a bare state class (`.Mui-disabled`) | `should` |
-| A client-side sorted `Table` over a server-paged dataset | `should` |
+| A removed v9 API (`GridLegacy`, system props, `InputProps`, `PaperProps`, `components`, `disableEscapeKeyDown`) in new code | `must` on v9, `~` on v7 |
+| A hex colour, px font size or `theme.palette.mode` branch in a component | `~` |
+| A barrel import from `@mui/icons-material` | `~` |
+| A selector on a hashed `css-…` class, or a bare state class (`.Mui-disabled`) | `~` |
+| A client-side sorted `Table` over a server-paged dataset | `~` |
 
 ## Sources
 

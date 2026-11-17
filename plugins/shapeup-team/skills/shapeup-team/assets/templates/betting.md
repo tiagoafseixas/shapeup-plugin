@@ -1,6 +1,6 @@
 # Betting table — {{date}}
 
-Ready pitches. The founders decide; this pack doesn't recommend bets.
+Ready pitches. The betting table decides; this pack doesn't recommend bets.
 
 | Pitch | Appetite | Problem (1 line) | Biggest risk left | Shaper's note |
 |---|---|---|---|---|

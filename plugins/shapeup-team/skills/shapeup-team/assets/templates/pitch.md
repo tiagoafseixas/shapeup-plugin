@@ -2,7 +2,7 @@
 
 | Status | Appetite | Shapers | Cycle | Updated |
 |---|---|---|---|---|
-| draft | <Small or Big batch> | User + PO | — | {{date}} |
+| draft | <Small or Big batch> | User + Shaper | — | {{date}} |
 
 Status: draft → ready → bet → building → shipped | dropped
 
