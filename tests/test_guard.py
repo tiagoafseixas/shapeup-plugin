@@ -204,3 +204,20 @@ def test_before_the_first_kickoff_reading_files_and_local_scripts_pass(fresh_rep
 def test_hard_blocks_still_win_before_the_first_kickoff(fresh_repo):
     assert bash(fresh_repo, "git push --force origin main") == "deny"
     assert bash(fresh_repo, 'psql "$READONLY_DATABASE_URL"', "shapeup-team:qa-engineer") == "deny"
+
+
+def test_a_custom_docs_folder_from_bootstrap_is_respected(tmp_path):
+    root = tmp_path / "app"
+    docs = root / "docs" / "product"
+    (docs / "pitches" / "win").mkdir(parents=True)
+    (root / ".shapeup.json").write_text('{"docs": "docs/product"}\n')
+    (docs / "team.md").write_text(
+        "| Role id | Agent | Stack pack | Path |\n|---|---|---|---|\n| backend-drf | backend-dev | stack-django-drf | backend/ |\n"
+    )
+    assert edit(root, "shapeup-team:product-owner", "docs/product/pitches/win/pitch.md") == "allow"
+    assert edit(root, "shapeup-team:product-owner", "docs/product/team.md") == "deny"
+    assert edit(root, "shapeup-team:backend-dev", "docs/product/pitches/win/tech.md") == "allow"
+    assert edit(root, "shapeup-team:backend-dev", "docs/product/pitches/win/pitch.md") == "deny"
+    assert edit(root, "shapeup-team:backend-dev", "backend/deals/services.py") == "allow"
+    assert edit(root, "shapeup-team:product-owner", ".shapeup.json") == "deny"
+    assert bash(root, "gh auth status") == "ask"  # no board yet: offline

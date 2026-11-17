@@ -1,6 +1,6 @@
 ---
 name: stack-django-drf
-description: Stack pack for the shapeup-team plugin — Django + Django REST Framework backends with thin views, fat models and a service layer. Loaded by the backend-dev agent when shape/team.md › Roles names stack-django-drf. Also use it when writing or reviewing Django or DRF code in a repo with a shape/ folder.
+description: Stack pack for the shapeup-team plugin — Django + Django REST Framework backends with thin views, fat models and a service layer. Loaded by the backend-dev agent when the team config (team.md) › Roles names stack-django-drf. Also use it when writing or reviewing Django or DRF code in a repo set up by the shapeup-team plugin.
 ---
 
 # Stack pack: Django + DRF
@@ -10,7 +10,7 @@ description: Stack pack for the shapeup-team plugin — Django + Django REST Fra
 | backend | Django 5.x–6.x, DRF 3.15+, pytest-django or the Django test runner | backend-dev |
 
 The role file says what to do and when (tests first, handoffs, gates); this pack says how, in this stack.
-House rules in the repo (`shape/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
+House rules in the repo (`<docs>/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
 
 ## Version notes
 

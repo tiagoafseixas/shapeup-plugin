@@ -3,13 +3,14 @@
 A gate passes when every row is ✓. Whoever runs the gate appends the result to the pitch's `log.md`
 (kind `gate`): `<Gate name>: pass`, or `<Gate name>: fail on rows 2, 5: <one clause each>`.
 
-## Setup gate (Conductor + user, once per repo, offline)
+## Bootstrap gate (Conductor + user, once per repo, offline)
 
-Setup only reads files and asks the user. No network, no database, no test runs, no installs (SKILL.md › Offline until kickoff).
+Bootstrap only reads files and asks the user. No network, no database, no test runs, no installs (SKILL.md › Offline until kickoff).
 
 | # | Check | How |
 |---|---|---|
-| 1 | `shape/team.md` filled: no `<…>` left | read the repo's files (`package.json`, `requirements*.txt`, `pyproject.toml`, settings, CI config); ask the user what files can't tell |
+| 0 | `.shapeup.json` names the docs folder the user confirmed | read it |
+| 1 | `<docs>/team.md` filled: no `<…>` left | read the repo's files (`package.json`, `requirements*.txt`, `pyproject.toml`, settings, CI config); ask the user what files can't tell |
 | 2 | Every row in `team.md` › Roles names a stack pack that's installed (or written with `/stack new`) | load each pack with the Skill tool |
 | 3 | `team.md` › Table volumes lists the largest tables (rows, size), as the user gave them, or says "ask per pitch" | ask the user |
 | 4 | No production credentials in the repo (`.env*`, config files) | grep the repo's files for connection strings; report file paths, never values |

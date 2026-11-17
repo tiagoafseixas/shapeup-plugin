@@ -1,6 +1,6 @@
 ---
 name: stack-{{slug}}
-description: Stack pack for the shapeup-team plugin — {{summary}}. Loaded by the {{agent}} agent when shape/team.md › Roles names stack-{{slug}}. Also use it when writing or reviewing {{tech}} code in a repo with a shape/ folder.
+description: Stack pack for the shapeup-team plugin — {{summary}}. Loaded by the {{agent}} agent when the team config (team.md) › Roles names stack-{{slug}}. Also use it when writing or reviewing {{tech}} code in a repo set up by the shapeup-team plugin.
 ---
 
 # Stack pack: {{tech}}
@@ -10,7 +10,7 @@ description: Stack pack for the shapeup-team plugin — {{summary}}. Loaded by t
 | {{layer}} | <versions this pack is written for, e.g. "Library 2.x–3.x"> | {{agent}} |
 
 The role file says what to do and when (tests first, handoffs, gates); this pack says how, in this stack.
-House rules in the repo (`shape/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
+House rules in the repo (`<docs>/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
 
 ## Version notes
 

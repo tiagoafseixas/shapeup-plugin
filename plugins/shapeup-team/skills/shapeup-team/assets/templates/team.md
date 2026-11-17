@@ -11,7 +11,7 @@ Add a row for each extra stack (a second backend, a mobile app). Paths are relat
 | <frontend-react> | frontend-dev | <stack-nextjs-chakra, stack-react-mui> | <frontend/, or ../<web-repo> when it's a separate repo> |
 | <database> | dba | <stack-postgres-cloudsql> | — |
 
-House rules per role, when the repo has its own conventions: `shape/stack/<role id>.md`.
+House rules per role, when the repo has its own conventions: `<docs>/stack/<role id>.md`.
 
 ## Commands
 

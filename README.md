@@ -58,7 +58,7 @@ A pitch goes through seven steps. You start each one; the team does the work and
 
 | # | Step | You run | You get | Your part |
 |---|---|---|---|---|
-| 0 | Set up the repo (once) | `/gate setup` | `shape/team.md` | Answer what the repo can't tell |
+| 0 | Bootstrap the repo (once) | `/bootstrap` | The docs folder you choose (default `shape/`), `team.md` | Pick the docs folder; answer what the repo can't tell |
 | 1 | Shape a pitch | `/shape <idea>`, later `/shape <slug>` | `pitch.md` with status `ready`, `log.md` | Shape it with the PO |
 | 2 | Bet | "Prepare the betting table", then "The founders bet on `<slug>` for cycle `<id>`" | `shape/betting/<date>.md`; the pitch at status `bet` | Decide with the founders |
 | 3 | Kick off | `/kickoff <slug> <cycle>` | A branch, a draft PR, a board with scopes, `tech.md` | Answer questions about the environment |
@@ -69,18 +69,19 @@ A pitch goes through seven steps. You start each one; the team does the work and
 Steps 0 to 2 are offline: the team reads files and asks you. No GitHub calls, no database connections (local or production),
 no test runs, no installs; the hook asks you before any of them while no pitch has a board. The kickoff is the first time anything runs.
 
-### 0. Set up the repo: `/gate setup`
+### 0. Bootstrap the repo: `/bootstrap`
 
 Run it once per repo, in the repo's root.
 
 | What happens | Expected result |
 |---|---|
-| The Conductor creates `shape/` and fills `team.md` from the repo's files: `package.json`, requirements, settings, CI config | `shape/team.md`, `shape/ideas.md`, `shape/decisions.md`, empty `shape/pitches/` and `shape/betting/` |
+| The Conductor asks where the team's docs should live: `shape/` (default), `docs/shape/` or your own folder | `.shapeup.json` at the repo root, recording the folder. Below, `shape/` stands for whatever you chose. |
+| It creates the folder and fills `team.md` from the repo's files: `package.json`, requirements, settings, CI config | `shape/team.md`, `shape/ideas.md`, `shape/decisions.md`, empty `shape/pitches/` and `shape/betting/` |
 | It asks you what files can't tell: the base branch, production database instance, the largest tables and their size (or "ask per pitch") | The Table volumes section filled with your numbers |
 | It maps each developer role to a stack pack (`backend-drf` → `stack-django-drf`, …) and checks the packs are installed | The Roles table; a list of packs to install, if any are missing |
 | It looks for credentials in the repo's files | File paths with a connection string, if any; never their values |
 
-Done when the Setup gate passes. The team doesn't commit before a kickoff: commit `shape/` yourself.
+Done when the Bootstrap gate passes. The team doesn't commit before a kickoff: commit `.shapeup.json` and the docs folder yourself.
 
 ### 1. Shape a pitch: `/shape`
 
@@ -88,7 +89,7 @@ Shaping is a conversation between you and the PO (the main session, best on Opus
 
 | You say | The PO does | Expected result |
 |---|---|---|
-| `/shape agents can read company insights from an AI chat` | Asks who has the problem, what they do today, and what that costs, until the problem holds up without the solution | `shape/pitches/<slug>/pitch.md` (status `draft`) and `log.md` |
+| `/shape agents can read company insights from an AI chat` | Proposes a title and slug for you to confirm, then asks who has the problem, what they do today, and what that costs, until the problem holds up without the solution | `shape/pitches/<slug>/pitch.md` (status `draft`) and `log.md` |
 | — | Proposes the appetite: Small batch (8 rounds) or Big batch (20) | The header table and a one-line Appetite |
 | — | Sketches the solution as a breadboard (places, affordances, where each leads) and fat-marker wireframes | Solution and Wireframes sections |
 | — | Hunts rabbit holes. For technical ones it asks the backend, frontend or DBA agent for a read-only tech check of the code. | Rabbit holes, each with its patch; No-gos |
@@ -159,7 +160,7 @@ runs one again by hand, and every result goes into `log.md`.
 
 | Gate | Checked by | Ends step |
 |---|---|---|
-| Setup | Conductor, with you | 0 |
+| Bootstrap | Conductor, with you | 0 |
 | Ready | PO | 1 |
 | Kickoff | Conductor | 3 |
 | Scope (one per scope) | QA | Each scope in 4 |
@@ -182,7 +183,8 @@ At 75% the PO hammers scope; at 100% the build stops and the default is drop and
 | `/shape [idea or slug]` | Shapes a pitch with the user; role agents run read-only tech checks; Ready gate |
 | `/kickoff <slug> <cycle>` | Checks the stack packs, then branch `cycle/<cycle>-<slug>`, draft PR, board, scope map, `tech.md`, Kickoff gate |
 | `/round <slug> [count]` | Runs build rounds (PO → DBA → backend roles → frontend roles → QA), applies the circuit breaker, batches questions for the user |
-| `/gate <setup / ready / kickoff / scope S<n> / ship> <slug>` | Runs one gate and logs the result |
+| `/bootstrap` | Once per repo: you pick the docs folder; fills `team.md` from the repo's files and your answers; offline |
+| `/gate <ready / kickoff / scope S<n> / ship> <slug>` | Runs one gate again by hand and logs the result |
 | `/stack [list / new <name> / house <role id> / lint <dir>]` | Lists the project's packs, writes a new pack from the stack's official docs, adds house rules |
 
 ## Roles
@@ -262,7 +264,8 @@ Paths are under `plugins/shapeup-team/skills/shapeup-team/`.
 ## What it creates in your repo
 
 ```
-shape/
+.shapeup.json              {"docs": "shape"}: the docs folder you chose at bootstrap
+shape/                     or the folder you chose
   team.md                  roles and their stack packs, commands per role and size, table volumes, versions, budgets
   stack/<role id>.md       house rules, when the repo differs from the pack
   ideas.md                 raw ideas, not a backlog

@@ -69,7 +69,7 @@ Fill `assets/templates/betting.md` from every `ready` pitch. Be neutral: state t
 |---|---|
 | `ASK` | Answer from the pitch's intent. If the pitch is silent, choose the smallest option that fits the appetite and log a `DECIDE`. If it changes the pitch's boundaries → `HUMAN`. |
 | `FLAG` stall | Split the scope, cut its `~` items, or simplify the approach (offer 2 options to the owner in an `ANSWER`) |
-| `FLAG` scope creep | Default: cut. Add the idea to `shape/ideas.md`. |
+| `FLAG` scope creep | Default: cut. Add the idea to `<docs>/ideas.md`. |
 | Status `hammering` (75% budget) | Cut every `~` not yet started. For each remaining must, ask "what happens if we ship without it?" Cut what survives without it. Log each cut as `DECIDE`. |
 | Kickoff scope check | Each scope traces back to the pitch. No no-go appears. Mark must vs `~`. |
 

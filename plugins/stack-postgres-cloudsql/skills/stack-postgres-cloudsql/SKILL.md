@@ -1,6 +1,6 @@
 ---
 name: stack-postgres-cloudsql
-description: Stack pack for the shapeup-team plugin — PostgreSQL on Google Cloud SQL, with zero-downtime migration patterns (Django operations included), read-only access and on-demand backups. Loaded by the dba agent when shape/team.md › Roles names stack-postgres-cloudsql. Also use it when reviewing migrations or query plans for Postgres in a repo with a shape/ folder.
+description: Stack pack for the shapeup-team plugin — PostgreSQL on Google Cloud SQL, with zero-downtime migration patterns (Django operations included), read-only access and on-demand backups. Loaded by the dba agent when the team config (team.md) › Roles names stack-postgres-cloudsql. Also use it when reviewing migrations or query plans for Postgres in a repo set up by the shapeup-team plugin.
 ---
 
 # Stack pack: PostgreSQL on GCP Cloud SQL
@@ -10,7 +10,7 @@ description: Stack pack for the shapeup-team plugin — PostgreSQL on Google Clo
 | database | PostgreSQL 13–18 on Cloud SQL (Enterprise and Enterprise Plus) | dba |
 
 The role file says what to do and when (review every migration, backups only, runbooks); this pack says how, in this stack.
-House rules in the repo (`shape/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
+House rules in the repo (`<docs>/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
 
 ## Commands the role file refers to
 

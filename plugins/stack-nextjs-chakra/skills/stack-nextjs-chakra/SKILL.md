@@ -1,6 +1,6 @@
 ---
 name: stack-nextjs-chakra
-description: Stack pack for the shapeup-team plugin — Next.js App Router frontends styled with Chakra UI v3. Loaded by the frontend-dev agent when shape/team.md › Roles names stack-nextjs-chakra. Also use it when writing or reviewing Next.js or Chakra UI code in a repo with a shape/ folder.
+description: Stack pack for the shapeup-team plugin — Next.js App Router frontends styled with Chakra UI v3. Loaded by the frontend-dev agent when the team config (team.md) › Roles names stack-nextjs-chakra. Also use it when writing or reviewing Next.js or Chakra UI code in a repo set up by the shapeup-team plugin.
 ---
 
 # Stack pack: Next.js App Router + Chakra UI v3
@@ -10,7 +10,7 @@ description: Stack pack for the shapeup-team plugin — Next.js App Router front
 | frontend | Next.js 14–16 (App Router), React 18–19, Chakra UI v3 | frontend-dev |
 
 The role file says what to do and when (tests first, handoffs, gates); this pack says how, in this stack.
-House rules in the repo (`shape/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
+House rules in the repo (`<docs>/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
 
 ## Version notes
 

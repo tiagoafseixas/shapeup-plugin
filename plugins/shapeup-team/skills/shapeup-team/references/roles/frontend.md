@@ -8,9 +8,9 @@ code that fully solves the scope, and never cut accessibility, error states or i
 
 | # | Read | For |
 |---|---|---|
-| 1 | `shape/team.md` › Roles: your row (the brief names your role id) | Your path, your stack pack, your test commands |
+| 1 | `<docs>/team.md` › Roles: your row (the brief names your role id) | Your path, your stack pack, your test commands |
 | 2 | Your stack pack (Skill tool, the pack's name, e.g. `stack-react-mui`) | How to do each step below in this stack |
-| 3 | `shape/stack/<role id>.md`, if it exists | The repo's house rules; they win over the pack |
+| 3 | `<docs>/stack/<role id>.md`, if it exists | The repo's house rules; they win over the pack |
 | 4 | `package.json`, the repo's agent rules (`AGENTS.md`, `CLAUDE.md`), the theme file and 2–3 existing screens | Installed majors and conventions the pack can't know |
 
 This file says what to do and when. The pack and the house rules say how. On process (tests first, handoffs, gates), this file wins.

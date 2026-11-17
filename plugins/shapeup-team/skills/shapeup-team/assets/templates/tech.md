@@ -2,7 +2,7 @@
 
 | Pitch | Cycle | Branch |
 |---|---|---|
-| shape/pitches/{{slug}}/pitch.md | {{cycle}} | cycle/{{cycle}}-{{slug}} |
+| <docs>/pitches/{{slug}}/pitch.md | {{cycle}} | cycle/{{cycle}}-{{slug}} |
 
 Keep only the sections that apply. Each diagram has a one-line caption saying what it answers.
 Update a diagram in the same commit as the code it shows.

@@ -1,6 +1,6 @@
 ---
 name: shapeup-team
-description: Runs a Shape Up product team of agents (Product Owner, backend and frontend developers, QA, DBA) for any stack, with the stack knowledge in installable stack packs (Django/DRF, Next.js/Chakra UI, React/MUI, Postgres/Cloud SQL), a fixed way of working, a board-based message protocol, an audit log per pitch and minimal, direct, table-first docs with Mermaid diagrams and wireframes. Use whenever the user wants to shape or refine a pitch, prepare the betting table, hand a bet over to the team, kick off or continue a cycle, map scopes, update hill charts, route questions between roles, hammer scope, hit the circuit breaker, ship a PR or run cool-down — and whenever they mention the PO, QA or DBA agents, the backend or frontend devs (BE, FE, or a role id like backend-drf), a stack pack, "the team", a pitch, appetite, rabbit holes, no-gos, or a `shape/` folder, even if they don't say "Shape Up".
+description: Runs a Shape Up product team of agents (Product Owner, backend and frontend developers, QA, DBA) for any stack, with the stack knowledge in installable stack packs (Django/DRF, Next.js/Chakra UI, React/MUI, Postgres/Cloud SQL), a fixed way of working, a board-based message protocol, an audit log per pitch and minimal, direct, table-first docs with Mermaid diagrams and wireframes. Use whenever the user wants to shape or refine a pitch, prepare the betting table, hand a bet over to the team, kick off or continue a cycle, map scopes, update hill charts, route questions between roles, hammer scope, hit the circuit breaker, ship a PR or run cool-down — and whenever they mention the PO, QA or DBA agents, the backend or frontend devs (BE, FE, or a role id like backend-drf), a stack pack, "the team", a pitch, appetite, rabbit holes, no-gos, or the team docs folder (shape/ by default), even if they don't say "Shape Up".
 ---
 
 # Shape Up team
@@ -23,16 +23,16 @@ product or technical calls for a role. The process is fixed. How each role solve
 
 ## Roles and stack packs
 
-The roles are stack-agnostic. `shape/team.md` › Roles lists the project's developer roles: a role id (`<layer>-<stack>`, e.g. `backend-drf`),
+The roles are stack-agnostic. `<docs>/team.md` › Roles lists the project's developer roles: a role id (`<layer>-<stack>`, e.g. `backend-drf`),
 the agent that plays it, the stack pack that tells it how, and its path. A project with two backends has two backend rows.
 
 | Layer | Knowledge | Wins when they disagree |
 |---|---|---|
 | Process: what and when | this skill and `references/roles/*.md` | always, on process (tests first, handoffs, gates, guardrails) |
 | Stack: how, in this stack | a stack pack, installed as its own plugin (`stack-django-drf`, `stack-nextjs-chakra`, `stack-react-mui`, `stack-postgres-cloudsql`, …) | over the generic role file, on how |
-| House rules: how, in this repo | `shape/stack/<role id>.md` | over the pack |
+| House rules: how, in this repo | `<docs>/stack/<role id>.md` | over the pack |
 
-No pack for a stack yet: run `/stack new <name>` before kickoff. Missing packs fail the Setup gate.
+No pack for a stack yet: run `/stack new <name>` before kickoff. Missing packs fail the Bootstrap gate.
 
 ## Plugin
 
@@ -57,12 +57,16 @@ When a role wants to bend something in the left column, it writes a `HUMAN` row.
 
 ## Where things live (in the product repo)
 
+`<docs>` is the docs folder the user chose at bootstrap, recorded in `.shapeup.json` at the repo root (`shape` when the file is absent).
+Never assume `shape/`: read `.shapeup.json`.
+
 ```
-shape/
+.shapeup.json            {"docs": "<folder>"}: written once by /bootstrap
+<docs>/
   team.md                  config: paths, commands, versions, budgets (one table)
   ideas.md                 raw ideas, not a backlog: anything built must be re-pitched
   decisions.md             conventions that outlive one pitch (one table, append-only)
-  betting/<date>.md        betting pack for the founders
+  betting/<date>.md        betting pack for the betting table
   pitches/<slug>/
     pitch.md               one page of text, plus wireframes
     log.md                 audit trail: every decision and action, append-only, from the first shaping call to the merge
@@ -80,15 +84,15 @@ diagram captions, filler phrases). Diagram and wireframe rules: `references/diag
 
 | # | Phase | Who | Output | Exit gate (`references/gates.md`) |
 |---|---|---|---|---|
-| 0 | Setup (once per repo, offline) | Conductor + user | `shape/team.md` filled | Setup gate |
+| 0 | Bootstrap (once per repo, offline) | Conductor + user | `.shapeup.json`, `<docs>/team.md` filled | Bootstrap gate |
 | 1 | Shape | User + PO (you take the PO role) | pitch.md `ready`, log.md | Ready gate |
 | 2 | Bet | Founders | Betting pack; pitch status `bet` + cycle id | Founders' decision |
 | 3 | Kickoff | Conductor → all roles | Branch, draft PR, board with scopes, tech.md | Kickoff gate |
 | 4 | Build | Roles, in rounds | Scopes move over the hill to done | Scope gate, per scope |
 | 5 | Ship | QA → Conductor | PR marked ready, runbook if ops are needed | Ship gate |
-| 6 | Cool-down | Conductor + PO | Retro, cut items in `shape/ideas.md` | — |
+| 6 | Cool-down | Conductor + PO | Retro, cut items in `<docs>/ideas.md` | — |
 
-**Offline until kickoff.** Setup (phase 0) and shaping (phase 1) only read files and talk to the user: no network calls
+**Offline until kickoff.** Bootstrap (phase 0) and shaping (phase 1) only read files and talk to the user: no network calls
 (`gh`, `git fetch`/`push`/`pull`, installs), no database connections (local, test or production), no test runs, no servers.
 Tech checks read code; they don't run it. What can't be read from the repo is asked. The first external call is the kickoff's
 branch push, and the Kickoff gate is where the environment first runs. The plugin's hook asks the user before any such call
@@ -118,7 +122,7 @@ Read `references/roles/po.md` and act as the PO yourself. Shaping is a conversat
 When a rabbit hole is technical, spawn the backend, frontend or DBA role for a **tech check**: read-only, returns risks with a proposed patch.
 Risks that survive become Rabbit holes rows; log the check and its findings in log.md. The pitch has no tech-check section. Several checks can run in parallel. Mark the pitch `ready` only after the Ready gate passes.
 
-For the betting table, the PO builds `shape/betting/<date>.md` from every `ready` pitch. Never place bets.
+For the betting table, the PO builds `<docs>/betting/<date>.md` from every `ready` pitch. Never place bets.
 When the user reports the founders' bets, set each chosen pitch's status to `bet` and log it (`phase`).
 Pitches that weren't chosen stay `ready`. They are not queued, and can go to a later betting table.
 
@@ -194,7 +198,7 @@ a large backfill, a flag change, an ordered deploy. The Conductor updates the PR
 ## Phase 6: Cool-down
 
 Write 3 retro rows on the board (keep / change / try). Log rounds used and wall-clock hours from kickoff to PR ready (`phase`). Copy the cut `~` items and the `shortcut:` comments (`/ponytail-debt`)
-into `shape/ideas.md`. Set the status to `shipped` or `stopped` and log it. Nothing carries over: the next cycle starts at the betting table.
+into `<docs>/ideas.md`. Set the status to `shipped` or `stopped` and log it. Nothing carries over: the next cycle starts at the betting table.
 
 ## Models
 
@@ -231,7 +235,7 @@ Without the plugin, use `general-purpose`, set `model` from the Models table, an
 Each role starts cold, so the brief plus the board must be enough. That's also what makes a smaller model viable: the spec is in the brief.
 
 ```
-Repo: <path>   Team config: shape/team.md   Pitch folder: shape/pitches/<slug>/
+Repo: <path>   Team config: <docs>/team.md   Pitch folder: <docs>/pitches/<slug>/
 Role id: <role id from team.md › Roles>   Phase: <phase>   Round: <n>/<budget>   Mode: <turn | tech check (read-only) | orient (read-only)>
 Your turn: <the routed Log rows, copied verbatim, or "continue scope S<n>">
 Ponytail: level <level>
@@ -248,7 +252,7 @@ Without the plugin, prepend: `You are the <ROLE> of a Shape Up team. Read first:
 | Work on `cycle/<cycle>-<slug>` only | Commit or push to the base branch |
 | Commit the failing tests first (`S<n> <ROLE>: red — <behaviour>`), then the code at the end of the turn (`S<n> <ROLE>: <what>`) | Force-push, rebase pushed commits, merge |
 | Push the cycle branch; open a draft PR; mark it ready at ship | Change CI, branch protection, secrets or `.env` |
-| Commit `shape/pitches/<slug>/*` on the cycle branch | Deploy |
+| Commit `<docs>/pitches/<slug>/*` on the cycle branch | Deploy |
 | Run migrations against the local or test DB | Touch production beyond the "Production access" table below |
 
 Only the user merges. If an action isn't in the "Allowed" column, write a `HUMAN` row. Before kickoff there is no cycle branch:
@@ -256,7 +260,7 @@ shaping files (pitch, log, betting pack, `team.md`, `ideas.md`) stay uncommitted
 
 ## Production access
 
-Production (and staging) is off-limits. No agent connects to it on its own: not in setup, not in a gate, not to check a hunch.
+Production (and staging) is off-limits. No agent connects to it on its own: not at bootstrap, not in a gate, not to check a hunch.
 Each row below is the whole permission. Nothing is implied beyond it.
 
 | Who | May do | Only like this |

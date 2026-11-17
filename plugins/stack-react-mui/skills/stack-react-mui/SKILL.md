@@ -1,6 +1,6 @@
 ---
 name: stack-react-mui
-description: Stack pack for the shapeup-team plugin — React frontends built with Material UI (MUI) v7 and v9, in Vite or Next.js. Loaded by the frontend-dev agent when shape/team.md › Roles names stack-react-mui. Also use it when writing or reviewing Material UI code (theme, sx, styled, slots, Grid, MUI X Data Grid) in a repo with a shape/ folder.
+description: Stack pack for the shapeup-team plugin — React frontends built with Material UI (MUI) v7 and v9, in Vite or Next.js. Loaded by the frontend-dev agent when the team config (team.md) › Roles names stack-react-mui. Also use it when writing or reviewing Material UI code (theme, sx, styled, slots, Grid, MUI X Data Grid) in a repo set up by the shapeup-team plugin.
 ---
 
 # Stack pack: React + Material UI
@@ -10,7 +10,7 @@ description: Stack pack for the shapeup-team plugin — React frontends built wi
 | frontend | React 18–19, Material UI v7 and v9 (`@mui/material`), MUI X v9, Vite or Next.js | frontend-dev |
 
 The role file says what to do and when (tests first, handoffs, gates); this pack says how, in this stack.
-House rules in the repo (`shape/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
+House rules in the repo (`<docs>/stack/<role id>.md`) win over this pack. Where this pack and the role file disagree on process, the role file wins.
 
 ## Version notes
 

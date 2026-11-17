@@ -2,7 +2,7 @@
 """PreToolUse guard for the shapeup-team plugin.
 
 Enforces the team's file, git and production rules on Write/Edit/Bash calls.
-Active only inside a repo that has shape/team.md, or when the caller is one of the team's agents.
+Active only inside a repo bootstrapped by the team (.shapeup.json, or a shape/team.md), or when the caller is one of the team's agents.
 Deny: exit 2 with the reason on stderr. Ask the human: permissionDecision "ask". Otherwise: exit 0, no output.
 """
 import json
@@ -32,12 +32,21 @@ def ask(reason):
     sys.exit(0)
 
 
+def docs_folder(repo):
+    """The docs folder chosen at bootstrap (.shapeup.json), relative to the repo root; `shape` when absent."""
+    try:
+        with open(os.path.join(repo, ".shapeup.json"), encoding="utf-8") as fh:
+            return json.load(fh).get("docs", "shape").strip("/") or "shape"
+    except (OSError, ValueError):
+        return "shape"
+
+
 def find_repo(start):
     d = os.path.abspath(start)
     if os.path.isfile(d):
         d = os.path.dirname(d)
     while True:
-        if os.path.isfile(os.path.join(d, "shape", "team.md")):
+        if os.path.isfile(os.path.join(d, ".shapeup.json")) or os.path.isfile(os.path.join(d, "shape", "team.md")):
             return d
         parent = os.path.dirname(d)
         if parent == d:
@@ -57,7 +66,7 @@ def team_paths(repo):
     Also reads the older single-row keys `Backend path` / `Frontend path`."""
     paths = {"backend": [], "frontend": [], "database": []}
     try:
-        lines = open(os.path.join(repo, "shape", "team.md"), encoding="utf-8").read().splitlines()
+        lines = open(os.path.join(repo, docs_folder(repo), "team.md"), encoding="utf-8").read().splitlines()
     except OSError:
         return paths
     for line in lines:
@@ -89,9 +98,10 @@ def is_test_file(rel):
             or fnmatch(name, "*.test.*") or fnmatch(name, "*.spec.*") or fnmatch(name, "cypress.config.*"))
 
 
-def pitch_doc(rel, names):
+def pitch_doc(rel, names, docs="shape"):
+    prefix = docs.split("/") + ["pitches"]
     parts = rel.split("/")
-    return len(parts) == 4 and parts[:2] == ["shape", "pitches"] and parts[3] in names
+    return len(parts) == len(prefix) + 2 and parts[:len(prefix)] == prefix and parts[-1] in names
 
 
 def inside(path, root):
@@ -125,8 +135,11 @@ def check_file(event, role):
         "qa": PITCH_DOCS,
         "dba": PITCH_DOCS + ("tech.md", "runbook.md"),
     }
-    if rel.startswith("shape/"):
-        ok = rel != "shape/team.md" if role == "po" else pitch_doc(rel, shape_docs[role])
+    docs = docs_folder(repo)
+    if rel.startswith(docs + "/"):
+        ok = rel != f"{docs}/team.md" if role == "po" else pitch_doc(rel, shape_docs[role], docs)
+    elif rel == ".shapeup.json":
+        ok = False
     elif role == "po":
         ok = False
     elif role in ("backend", "frontend"):
@@ -185,7 +198,7 @@ OFFLINE_ASK = [
 
 
 def cycle_started(repo):
-    pitches = os.path.join(repo, "shape", "pitches")
+    pitches = os.path.join(repo, docs_folder(repo), "pitches")
     try:
         return any(os.path.isfile(os.path.join(pitches, d, "board.md")) for d in os.listdir(pitches))
     except OSError:

@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Create and inspect the shape/ folder of a Shape Up team. Stdlib only. Never overwrites a file.
+"""Create and inspect the docs folder of a Shape Up team. Stdlib only. Never overwrites a file.
 
-  scaffold.py init     <repo> [--product NAME]
+The docs folder is chosen at bootstrap and recorded in <repo>/.shapeup.json ({"docs": "shape"}); `shape` when absent.
+
+  scaffold.py init     <repo> [--product NAME] [--docs FOLDER]
   scaffold.py pitch    <repo> <slug> --title "Title" [--why "reason"]
   scaffold.py kickoff  <repo> <slug> --cycle 2026-C1
   scaffold.py add      <repo> <slug> tech|runbook
@@ -9,7 +11,7 @@
   scaffold.py status   <repo>
   scaffold.py lint     <repo> <slug>      writing limits: pitch words, scope names, Log sentences, captions, filler
   scaffold.py pack     <out-dir> <name> --layer backend|frontend|database --tech "Django + DRF"   new stack pack plugin
-  scaffold.py house    <repo> <role-id> --pack stack-<name>   house rules for one role: shape/stack/<role-id>.md
+  scaffold.py house    <repo> <role-id> --pack stack-<name>   house rules for one role: <docs>/stack/<role-id>.md
   scaffold.py lint-pack <pack-dir>       required sections, Small/Medium/Large rows, sources, no placeholders
 """
 import argparse
@@ -22,6 +24,18 @@ TEMPLATES = Path(__file__).resolve().parent.parent / "assets" / "templates"
 DEFAULT_BUDGET = {"small": 8, "big": 20}
 KINDS = ("decision", "cut", "phase", "gate", "action")
 TODAY = dt.date.today().isoformat()
+CONFIG = ".shapeup.json"
+
+
+def docs(repo: Path) -> Path:
+    """The team's docs folder: from .shapeup.json at the repo root, else `shape`."""
+    import json
+    cfg = repo / CONFIG
+    if cfg.exists():
+        folder = json.loads(cfg.read_text()).get("docs", "shape")
+    else:
+        folder = "shape"
+    return repo / folder.strip("/")
 
 
 def render(name: str, **values: str) -> str:
@@ -50,7 +64,7 @@ def row_after(text: str, heading_cell: str) -> list[str]:
 
 
 def folder(repo: Path, slug: str) -> Path:
-    d = repo / "shape" / "pitches" / slug
+    d = docs(repo) / "pitches" / slug
     if not (d / "pitch.md").exists():
         sys.exit(f"no pitch: {d / 'pitch.md'}")
     return d
@@ -75,7 +89,7 @@ def append_log(d: Path, by: str, kind: str, entry: str, why: str) -> None:
 
 def budget(repo: Path, appetite: str) -> int:
     size = "big" if "big" in appetite.lower() else "small"
-    team = repo / "shape" / "team.md"
+    team = docs(repo) / "team.md"
     if team.exists():
         m = re.search(rf"\|\s*Budget {size} batch\s*\|\s*(\d+)", team.read_text(), re.I)
         if m:
@@ -83,8 +97,15 @@ def budget(repo: Path, appetite: str) -> int:
     return DEFAULT_BUDGET[size]
 
 
-def cmd_init(repo: Path, product: str) -> None:
-    shape = repo / "shape"
+def cmd_init(repo: Path, product: str, folder: str) -> None:
+    import json
+    folder = folder.strip("/") or "shape"
+    cfg = repo / CONFIG
+    if cfg.exists() and json.loads(cfg.read_text()).get("docs") != folder:
+        sys.exit(f"{cfg} already sets docs to {json.loads(cfg.read_text()).get('docs')!r}; edit it by hand to move the folder")
+    if not cfg.exists():
+        write_new(cfg, json.dumps({"docs": folder}, indent=2) + "\n")
+    shape = repo / folder
     for sub in ("pitches", "betting"):
         (shape / sub).mkdir(parents=True, exist_ok=True)
     write_new(shape / "team.md", render("team.md", product=product))
@@ -93,7 +114,7 @@ def cmd_init(repo: Path, product: str) -> None:
 
 
 def cmd_pitch(repo: Path, slug: str, title: str, why: str) -> None:
-    d = repo / "shape" / "pitches" / slug
+    d = docs(repo) / "pitches" / slug
     write_new(d / "pitch.md", render("pitch.md", title=title, date=TODAY))
     write_new(d / "log.md", render("log.md", title=title, date=TODAY, why=why))
 
@@ -127,7 +148,7 @@ def cmd_add(repo: Path, slug: str, doc: str) -> None:
 def cmd_status(repo: Path) -> None:
     print("| Pitch | Status | Appetite | Cycle | Rounds | Board status | Log entries |")
     print("|---|---|---|---|---|---|---|")
-    for p in sorted((repo / "shape" / "pitches").glob("*/pitch.md")):
+    for p in sorted((docs(repo) / "pitches").glob("*/pitch.md")):
         d = p.parent
         row = row_after(p.read_text(), "Status") + ["?"] * 5
         rounds = bstatus = "—"
@@ -190,7 +211,7 @@ def cmd_lint(repo: Path, slug: str) -> None:
             issues.append(("pitch.md", f"hedge '{hedge.group(1)}': use an imperative, must or can: {line.strip()[:60]}"))
     if re.search(r"^## Tech check", pitch, re.M):
         issues.append(("pitch.md", "'Tech check' section: move its risks to Rabbit holes and the check to log.md"))
-    for other in (repo / "shape" / "pitches").glob("*/pitch.md"):
+    for other in (docs(repo) / "pitches").glob("*/pitch.md"):
         if other.parent == d:
             continue
         title = other.read_text().splitlines()[0].lstrip("# ").strip()
@@ -259,7 +280,7 @@ def cmd_pack(out: Path, name: str, layer: str, tech: str) -> None:
 
 
 def cmd_house(repo: Path, role: str, pack: str) -> None:
-    write_new(repo / "shape" / "stack" / f"{role}.md", render("house-rules.md", role=role, pack=pack))
+    write_new(docs(repo) / "stack" / f"{role}.md", render("house-rules.md", role=role, pack=pack))
 
 
 def cmd_lint_pack(root: Path) -> None:
@@ -303,7 +324,7 @@ def cmd_lint_pack(root: Path) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("init"); s.add_argument("repo"); s.add_argument("--product", default="<product>")
+    s = sub.add_parser("init"); s.add_argument("repo"); s.add_argument("--product", default="<product>"); s.add_argument("--docs", default="shape")
     s = sub.add_parser("pitch"); s.add_argument("repo"); s.add_argument("slug")
     s.add_argument("--title", required=True); s.add_argument("--why", default="Raw idea brought to shaping")
     s = sub.add_parser("kickoff"); s.add_argument("repo"); s.add_argument("slug"); s.add_argument("--cycle", required=True)
@@ -320,7 +341,7 @@ def main() -> None:
     a = ap.parse_args()
     repo = Path(a.repo).resolve()
     if a.cmd == "init":
-        cmd_init(repo, a.product)
+        cmd_init(repo, a.product, a.docs)
     elif a.cmd == "pitch":
         cmd_pitch(repo, a.slug, a.title, a.why)
     elif a.cmd == "kickoff":

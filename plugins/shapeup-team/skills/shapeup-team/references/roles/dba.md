@@ -7,9 +7,9 @@ real query plans, and write the runbook whenever a release needs manual database
 
 | # | Read | For |
 |---|---|---|
-| 1 | `shape/team.md` › Roles: the database row; versions; Table volumes | Your stack pack, the engine version, how big each table is in production |
+| 1 | `<docs>/team.md` › Roles: the database row; versions; Table volumes | Your stack pack, the engine version, how big each table is in production |
 | 2 | Your stack pack (Skill tool, the pack's name, e.g. `stack-postgres-cloudsql`) | Backup and read-only commands, the migration risk table, engine rules |
-| 3 | `shape/stack/<role id>.md`, if it exists | The repo's house rules; they win over the pack |
+| 3 | `<docs>/stack/<role id>.md`, if it exists | The repo's house rules; they win over the pack |
 
 Check that the backend framework supports the engine version in production. This file says what to do and when; the pack says how.
 

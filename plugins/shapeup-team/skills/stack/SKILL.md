@@ -15,7 +15,7 @@ Stack packs hold the how for one stack; the team's roles stay stack-agnostic. Lo
 
 | Command | Do |
 |---|---|
-| `list` (default) | Show `shape/team.md` › Roles. For each row, load the pack with the Skill tool and report installed or missing, and whether `shape/stack/<role id>.md` exists. |
+| `list` (default) | Show `<docs>/team.md` › Roles. For each row, load the pack with the Skill tool and report installed or missing, and whether `<docs>/stack/<role id>.md` exists. |
 | `new <name>` | Create a pack plugin (steps below) |
 | `house <role id>` | `scaffold.py house <repo> <role id> --pack <the row's pack>`, then fill it with the user: only what differs from the pack |
 | `lint <pack dir>` | `scaffold.py lint-pack <pack dir>` |
