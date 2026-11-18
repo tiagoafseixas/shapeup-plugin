@@ -9,7 +9,9 @@ The docs folder is chosen at bootstrap and recorded in <repo>/.shapeup.json ({"d
   scaffold.py add      <repo> <slug> tech|runbook
   scaffold.py log      <repo> <slug> --by Shaper --kind decision|cut|phase|gate|action --entry "..." --why "..."
   scaffold.py status   <repo>
-  scaffold.py lint     <repo> <slug>      writing limits: pitch words, scope names, Log sentences, captions, filler
+  scaffold.py lint     <repo> <slug>      writing limits: pitch words, scope names, Log sentences, captions, filler; stale sketches
+  scaffold.py wireframe <repo> [<slug> [<name>]]   draw <docs>/pitches/<slug>/wireframes/*.txt as SVG sketches in the
+                                         app shell; with no slug, draw the shell alone (<docs>/shell.svg). Regenerates.
   scaffold.py pack     <out-dir> <name> --layer backend|frontend|database --tech "Django + DRF"   new stack pack plugin
   scaffold.py house    <repo> <role-id> --pack stack-<name>   house rules for one role: <docs>/stack/<role-id>.md
   scaffold.py lint-pack <pack-dir>       required sections, Small/Medium/Large rows, sources, no placeholders
@@ -19,6 +21,9 @@ import datetime as dt
 import re
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import wireframe  # noqa: E402  (sits next to this file)
 
 TEMPLATES = Path(__file__).resolve().parent.parent / "assets" / "templates"
 DEFAULT_BUDGET = {"small": 2, "big": 6}   # reviews with the user
@@ -122,6 +127,7 @@ def cmd_init(repo: Path, product: str, folder: str) -> None:
     write_new(shape / "team.md", render("team.md", product=product))
     write_new(shape / "decisions.md", render("decisions.md"))
     write_new(shape / "ideas.md", render("ideas.md"))
+    write_new(shape / "shell.txt", render("shell.txt"))
 
 
 def cmd_pitch(repo: Path, slug: str, title: str, why: str) -> None:
@@ -162,6 +168,52 @@ def cmd_add(repo: Path, slug: str, doc: str) -> None:
     title, row = pitch_meta(d)
     cycle = row[3] if len(row) > 3 else "—"
     write_new(d / f"{doc}.md", render(f"{doc}.md", title=title, slug=slug, cycle=cycle))
+
+
+def shell_text(repo: Path) -> str | None:
+    shell = docs(repo) / "shell.txt"
+    return shell.read_text() if shell.exists() else None
+
+
+def cmd_wireframe(repo: Path, slug: str | None, name: str | None) -> None:
+    shell = shell_text(repo)
+    if shell is None or not wireframe.parse_shell(shell):
+        print(f"note: {docs(repo) / 'shell.txt'} is missing or not filled in; sketches are drawn without the app shell")
+    if not slug:
+        out = docs(repo) / "shell.svg"
+        out.write_text(wireframe.render("title: App shell\n", shell, "shell"))
+        print(f"drawn: {out}")
+        return
+    sketches = folder(repo, slug) / "wireframes"
+    files = [sketches / f"{name}.txt"] if name else sorted(sketches.glob("*.txt"))
+    if not files or not files[0].exists():
+        sys.exit(f"no sketch: {sketches / ((name or '*') + '.txt')}")
+    for src in files:
+        out = src.with_suffix(".svg")
+        out.write_text(wireframe.render(src.read_text(), shell, src.stem))
+        title = wireframe.parse_sketch(src.read_text())[0].get("title", src.stem)
+        print(f"drawn: {out}   embed in pitch.md: ![{title}](wireframes/{out.name})")
+
+
+def wireframe_issues(repo: Path, d: Path, pitch: str) -> list[tuple[str, str]]:
+    issues = []
+    shell = shell_text(repo)
+    sketches = d / "wireframes"
+    for src in sorted(sketches.glob("*.txt")) if sketches.exists() else []:
+        svg = src.with_suffix(".svg")
+        rel = f"wireframes/{svg.name}"
+        if not svg.exists() or wireframe.svg_digest(svg.read_text()) != wireframe.digest(src.read_text(), shell):
+            issues.append((rel, f"stale or missing: run scaffold.py wireframe <repo> {d.name} {src.stem}"))
+        if rel not in pitch:
+            issues.append(("pitch.md", f"sketch {src.name} is not embedded: add ![…]({rel}) under Wireframes"))
+    for ref in re.findall(r"\]\((wireframes/[^)\s]+)\)", pitch):
+        if "<" not in ref and not (d / ref).exists():
+            issues.append(("pitch.md", f"embeds {ref}, which doesn't exist"))
+    for lang, block in re.findall(r"^```(\w*)\n(.*?)^```", pitch, re.S | re.M):
+        if lang in ("", "text") and re.search(r"^\s*[+┌╭][-─=]{3,}", block, re.M):
+            issues.append(("pitch.md", "ASCII wireframe: write it as wireframes/<name>.txt and run scaffold.py wireframe"))
+            break
+    return issues
 
 
 def cmd_status(repo: Path) -> None:
@@ -231,6 +283,7 @@ def cmd_lint(repo: Path, slug: str) -> None:
         hedge = re.search(r"\b(should|might|could|ideally|potentially|hopefully)\b", line, re.I)
         if hedge:
             issues.append(("pitch.md", f"hedge '{hedge.group(1)}': use an imperative, must or can: {line.strip()[:60]}"))
+    issues += wireframe_issues(repo, d, pitch)
     if re.search(r"^## Tech check", pitch, re.M):
         issues.append(("pitch.md", "'Tech check' section: move its risks to Rabbit holes and the check to log.md"))
     for other in (docs(repo) / "pitches").glob("*/pitch.md"):
@@ -356,6 +409,7 @@ def main() -> None:
     s.add_argument("--entry", required=True); s.add_argument("--why", required=True)
     s = sub.add_parser("status"); s.add_argument("repo")
     s = sub.add_parser("lint"); s.add_argument("repo"); s.add_argument("slug")
+    s = sub.add_parser("wireframe"); s.add_argument("repo"); s.add_argument("slug", nargs="?"); s.add_argument("name", nargs="?")
     s = sub.add_parser("pack"); s.add_argument("repo", metavar="out_dir"); s.add_argument("name")
     s.add_argument("--layer", required=True, choices=sorted(AGENT_FOR_LAYER)); s.add_argument("--tech", required=True)
     s = sub.add_parser("house"); s.add_argument("repo"); s.add_argument("role"); s.add_argument("--pack", required=True)
@@ -374,6 +428,8 @@ def main() -> None:
         append_log(folder(repo, a.slug), a.by, a.kind, a.entry, a.why)
     elif a.cmd == "lint":
         cmd_lint(repo, a.slug)
+    elif a.cmd == "wireframe":
+        cmd_wireframe(repo, a.slug, a.name)
     elif a.cmd == "pack":
         cmd_pack(repo, a.name, a.layer, a.tech)
     elif a.cmd == "house":

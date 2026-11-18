@@ -1,0 +1,12 @@
+title: Deals
+frame: dialog
+nav: Deals
+## Mark "Northwind renewal" as won
+{Final amount}^1
+{Won on}  (Reason ▾)
+[x] Notify the account owner
+{{Notes}}
+>> [Cancel]  [*Confirm win]^2
+notes:
+1 Prefilled with the deal amount.
+2 → Won this week, the deal highlighted.

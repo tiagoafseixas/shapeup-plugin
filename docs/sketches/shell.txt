@@ -1,0 +1,11 @@
+# App shell. Source: frontend/src/layouts/AppLayout.tsx
+layout: side+top
+brand: Acme CRM
+nav: Dashboard | Deals | Reports | Settings
+account: top-right
+search: yes
+mobile: bottom-tabs
+# Conventions
+lists: table
+forms: dialog
+page actions: top-right

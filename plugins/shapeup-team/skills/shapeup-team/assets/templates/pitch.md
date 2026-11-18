@@ -15,18 +15,23 @@ Status: draft → ready → bet → building → shipped | dropped
 ## Solution
 <The elements, at fat-marker level: concrete enough to start, rough enough to leave design room.>
 
-| Place (screen / endpoint / job) | Affordances (what the user can do there) | Leads to |
-|---|---|---|
-| | | |
+Breadboard: <the question it answers, e.g. "how a rep wins a deal and where the win shows up">
+```mermaid
+flowchart LR
+  subgraph PlaceA["<Place: screen, dialog, email, endpoint or job>"]
+    a1["<affordance: what the user can do there>"]
+  end
+  subgraph PlaceB["<Place>"]
+    b1["<affordance>"]
+  end
+  a1 --> PlaceB
+```
 
 ## Wireframes
-<Only when a screen is new or its layout changes. ASCII, fat-marker: boxes, labels, affordances, rough position. No colours or exact copy. Otherwise write "None: no screen changes.">
+<Only when a screen is new or its layout changes: one sketch per screen in wireframes/<screen>.txt, drawn in the app shell with
+`scaffold.py wireframe` (notation: references/diagrams.md › Sketches), embedded here. Otherwise write "None: no screen changes.">
 
-```text
-+------------------------------------------+
-|                                          |
-+------------------------------------------+
-```
+![<Screen>](wireframes/<screen>.svg)
 
 ## Rabbit holes
 

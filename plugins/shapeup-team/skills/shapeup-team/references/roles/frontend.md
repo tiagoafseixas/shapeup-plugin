@@ -42,7 +42,8 @@ state and logic, and write the tests. Without a designer, you own both (`referen
 
 ## tech.md and wireframes
 
-- The pitch's wireframes are fat-marker sketches: keep their places and affordances, and own the visual design.
+- The pitch's sketches are fat-marker: keep their places and affordances, and own the visual design.
+- With no `designer` row, you own `<docs>/shell.txt`: update it when a scope changes the nav or the layout.
 - Draw a `sequenceDiagram` in tech.md › Flows only for a UI flow with 3+ participants that the backend flow doesn't show
   (login → consent → redirect back; start job → poll → download). Draw a `stateDiagram-v2` for a component with
   non-trivial states (wizard, async job button). Rules: `references/diagrams.md`.

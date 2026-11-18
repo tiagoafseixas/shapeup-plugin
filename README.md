@@ -54,7 +54,7 @@ The repo is a plugin marketplace: the team, plus one plugin per stack pack. Inst
 
 | Needs | For |
 |---|---|
-| `python3` on the PATH | The plugin's own tools: the guard hook and the doc scaffolder. Your project can be in any language. |
+| `python3` on the PATH | The plugin's own tools: the guard hook, the doc scaffolder and the sketch renderer (standard library only). Your project can be in any language. |
 | `gh` or `glab` (optional) | Draft PRs and marking them ready; set `PR tool` in `team.md`, or `none` to open PRs yourself |
 | Anthropic's `frontend-design` skill (recommended) | The designer's visual judgment. Built into the Claude app; in Claude Code: `npx -y skills add anthropics/skills --skill frontend-design --agent claude-code` |
 | [Ponytail](https://github.com/DietrichGebert/ponytail) (recommended) | Code review |
@@ -86,6 +86,7 @@ Run it once per repo, in the repo's root.
 | It creates the folder and fills `team.md` from the repo's files: `package.json`, requirements, settings, CI config | `shape/team.md`, `shape/ideas.md`, `shape/decisions.md`, empty `shape/pitches/` and `shape/betting/` |
 | It asks you what files can't tell: the base branch, production database instance, the largest tables and their size (or "ask per pitch") | The Table volumes section filled with your numbers |
 | It maps each developer role to a stack pack (`backend-drf` → `stack-django-drf`, …) and checks the packs are installed | The Roles table; a list of packs to install, if any are missing |
+| It reads your UI's layout code (side nav or top bar, nav items, how lists and forms are built) and draws the app's frame for you to confirm | `shape/shell.txt` and a preview, `shape/shell.svg`: every sketch is drawn inside it |
 | It looks for credentials in the repo's files | File paths with a connection string, if any; never their values |
 
 Done when the Bootstrap gate passes. The team doesn't commit before a kickoff: commit `.shapeup.json` and the docs folder yourself.
@@ -98,10 +99,29 @@ Shaping is a conversation between you and the Shaper (the main session, best on 
 |---|---|---|
 | `/shape send payment reminders for overdue invoices` | Proposes a title and slug for you to confirm, then asks who has the problem, what they do today, and what that costs, until the problem holds up without the solution | `shape/pitches/<slug>/pitch.md` (status `draft`) and `log.md` |
 | — | Proposes the appetite: Small batch (2 reviews with you) or Big batch (6) | The header table and a one-line Appetite |
-| — | Sketches the solution as a breadboard (places, affordances, where each leads) and fat-marker wireframes | Solution and Wireframes sections |
+| — | Sketches the solution: a breadboard of places, affordances and where each leads (Mermaid), and a rough sketch of each new or changed screen inside your app's own frame | Solution with the breadboard; Wireframes with one SVG per screen |
 | — | Hunts rabbit holes. For technical ones it asks the backend, frontend or DBA agent for a read-only tech check of the code. | Rabbit holes, each with its patch; No-gos |
 | — | Writes what "done" looks like from the user's side | Works when |
 | `/shape <slug>` | Picks up where you left off, from `log.md` | — |
+
+A sketch is a few lines of text in `wireframes/<screen>.txt`; `scaffold.py wireframe` draws it in your app's shell, grey, with
+the pitch's parts in ink, numbered notes and extra states beside it. Rough on purpose: nobody reviews pixels.
+
+![Sketch of a Won this week page inside an app with a side nav](docs/sketches/won-this-week.svg)
+
+```text
+title: Won this week
+nav: Reports
+# Won this week  >>  [Export CSV]^1
+(Owner ▾)  (Region ▾)^2
+| Deal | Owner | Amount | Won on | x3 ^3
+>> [*Mark reviewed]^4
+state: Empty
+…
+notes:
+1 Downloads the rows shown, filters applied.
+…
+```
 
 Every decision and its reason goes into `log.md`; the pitch states only the decisions. Done when the Ready gate passes
 (problem, appetite, solution, rabbit holes, no-gos, ≤600 words, lint clean): the status becomes `ready`.
@@ -295,7 +315,7 @@ Everything else in production becomes a runbook step for you. Only you merge.
 |---|---|---|
 | Writing | Direct, affirmative, imperative; tables over prose; every block stands alone; decisions in docs, reasons in `log.md` | `references/writing-style.md` |
 | Testing | Small (≤0.5 s, memory only) and Medium written before the code in a `red` commit; QA owns Large; DAMP; behaviour, not implementation; a test changes only when a source proves it wrong | `references/testing.md` |
-| Diagrams | Mermaid: entity, class, sequence, state, activity; ASCII wireframes in pitches | `references/diagrams.md` |
+| Diagrams | Mermaid: entity, class, sequence, state, activity, and the pitch's breadboard; screen sketches drawn from text in the app's shell | `references/diagrams.md` |
 | Messages | Board Log rows: NOTE, ASK, ANSWER, HANDOFF, BLOCK, FLAG, DECIDE, HUMAN, DONE; fixed turn report | `references/protocol.md` |
 
 Paths are under `plugins/shapeup-team/skills/shapeup-team/`.
@@ -306,12 +326,14 @@ Paths are under `plugins/shapeup-team/skills/shapeup-team/`.
 .shapeup.json              {"docs": "shape"}: the docs folder you chose at bootstrap
 shape/                     or the folder you chose
   team.md                  roles and their stack packs, commands per role and size, table volumes, versions, budgets
+  shell.txt, shell.svg     your app's frame (nav, brand, conventions) and its preview: every sketch is drawn in it
   stack/<role id>.md       house rules, when the repo differs from the pack
   ideas.md                 raw ideas, not a backlog
   decisions.md             conventions that outlive one pitch
   betting/<date>.md        betting pack for the betting table
   pitches/<slug>/
-    pitch.md               one page plus wireframes
+    pitch.md               one page, a breadboard and the embedded sketches
+    wireframes/            <screen>.txt sketch sources and the <screen>.svg drawn from each
     log.md                 audit trail: every decision and action
     board.md               scopes, hill, message log, QA findings
     tech.md                Mermaid diagrams and API contract
@@ -323,16 +345,17 @@ shape/                     or the folder you chose
 | Path | Holds |
 |---|---|
 | `.claude-plugin/marketplace.json` | The `shapeup` marketplace: the team and the stack packs |
-| `plugins/shapeup-team/` | The team: Conductor skill (process, role files, gates, standards, templates, `scaffold.py`), the five commands, five agents, the guard hook |
+| `plugins/shapeup-team/` | The team: Conductor skill (process, role files, gates, standards, templates, `scaffold.py`), the six commands, six agents, the guard hook |
 | `plugins/stack-<name>/` | One stack pack each: `skills/stack-<name>/SKILL.md` and `references/sources.md` |
-| `docs/` | Logo and the script that draws it (`python3 docs/make_logo.py` redraws the logo and the icon) |
-| `tests/` | Guard behaviour tests |
+| `docs/` | Logo and the script that draws it (`python3 docs/make_logo.py` redraws the logo and the icon); `sketches/`, the sample sketches |
+| `tests/` | Guard, sketch renderer and lint behaviour tests |
 
 ## Develop
 
 | Task | Command |
 |---|---|
-| Run the guard tests | `pytest -q tests` |
+| Run the tests | `pytest -q tests` |
+| Redraw the sample sketches | `python3 plugins/shapeup-team/skills/shapeup-team/scripts/wireframe.py docs/sketches/<name>.txt --shell docs/sketches/shell.txt` |
 | Validate the marketplace and each plugin | `claude plugin validate .`, then `claude plugin validate plugins/<name>` |
 | Lint a stack pack | `python3 plugins/shapeup-team/skills/shapeup-team/scripts/scaffold.py lint-pack plugins/stack-<name>` |
 | Lint a pitch | `python3 plugins/shapeup-team/skills/shapeup-team/scripts/scaffold.py lint <repo> <slug>` |

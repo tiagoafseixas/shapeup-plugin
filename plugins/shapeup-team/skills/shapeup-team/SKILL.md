@@ -65,11 +65,13 @@ Never assume `shape/`: read `.shapeup.json`.
 .shapeup.json            {"docs": "<folder>"}: written once by /bootstrap
 <docs>/
   team.md                  config: paths, commands, versions, budgets (one table)
+  shell.txt                the app shell every sketch is drawn in, plus the app's screen conventions
   ideas.md                 raw ideas, not a backlog: anything built must be re-pitched
   decisions.md             conventions that outlive one pitch (one table, append-only)
   betting/<date>.md        betting pack for the betting table
   pitches/<slug>/
-    pitch.md               one page of text, plus wireframes
+    pitch.md               one page of text, plus a breadboard and sketches
+    wireframes/            <screen>.txt sketch sources and the <screen>.svg drawn from them (scaffold.py wireframe)
     log.md                 audit trail: every decision and action, append-only, from the first shaping call to the merge
     board.md               created at kickoff: scopes, hill, message Log, QA findings
     tech.md                when the change has structure: Mermaid diagrams + API contract
@@ -79,7 +81,7 @@ Never assume `shape/`: read `.shapeup.json`.
 No other docs. Create each one with `scripts/scaffold.py` (templates in `assets/templates/`).
 Everything written follows `references/writing-style.md`: direct statements, no fluff, every block self-explanatory,
 minimal references. `scaffold.py lint <repo> <slug>` checks the measurable limits (pitch length, scope names, Log row length,
-diagram captions, filler phrases). Diagram and wireframe rules: `references/diagrams.md`.
+diagram captions, filler phrases). Diagram, breadboard and sketch rules: `references/diagrams.md`.
 
 ## Phases
 
@@ -121,7 +123,7 @@ The board's Log is the conversation. log.md is the record. A decision lives on t
 Read `references/roles/shaper.md` and act as the Shaper yourself. Shaping is a conversation, so don't spawn it out.
 `scaffold.py pitch` creates `pitch.md` and `log.md`. Challenge, then write. Log each shaping decision.
 When a rabbit hole is technical, spawn the backend, frontend or DBA role for a **tech check**: read-only, returns risks with a proposed patch.
-When the screens are the risk, spawn the designer for a **design check**: read-only, returns a breadboard and fat-marker wireframes.
+When the screens are the risk, spawn the designer for a **design check**: read-only, returns a breadboard and sketch sources that follow the app's shell.
 Risks that survive become Rabbit holes rows; log the check and its findings in log.md. The pitch has no tech-check section. Several checks can run in parallel. Mark the pitch `ready` only after the Ready gate passes.
 
 For the betting table, the Shaper builds `<docs>/betting/<date>.md` from every `ready` pitch. Never place bets.

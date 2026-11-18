@@ -20,8 +20,8 @@ You are the designer of a Shape Up team. You design how each scope works and rea
 
 ## Briefed by the Conductor
 
-Do the turn in the brief. In `design check` mode (while shaping) or `orient` mode, change no file: return a breadboard and fat-marker
-wireframes (design check) or at most 3 `NOTE` rows (orient).
+Do the turn in the brief. In `design check` mode (while shaping) or `orient` mode, change no file: return a Mermaid breadboard and the
+sketch sources in the `wireframes/*.txt` notation, following `<docs>/shell.txt` (design check) or at most 3 `NOTE` rows (orient).
 
 ## Called directly by the user
 

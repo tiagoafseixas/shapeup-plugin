@@ -1,0 +1,19 @@
+title: Won this week
+nav: Reports
+# Won this week  >>  [Export CSV]^1
+(Owner ▾)  (Region ▾)^2
+| Deal | Owner | Amount | Won on | x3 ^3
+>> [*Mark reviewed]^4
+
+state: Empty
+# Won this week
+? No deals won this week
+
+state: Not a manager
+? Only managers see this page
+
+notes:
+1 Downloads the rows shown, filters applied.
+2 Filters the table. Default: everyone.
+3 One row per deal won Mon–Sun. Click a row → Deal page.
+4 → Deals list, with this week marked reviewed.

@@ -17,12 +17,16 @@ Once per repo, before the first pitch. Offline: read files and ask the user; no 
 3. Ask the user where the team's docs live. Offer `shape/` (default), `docs/shape/` and their own folder; one question, in plain words.
    Never pick the folder without asking.
 4. Ask for the product name, then run `scaffold.py init <repo> --product "<name>" --docs <folder>`.
-   It writes `.shapeup.json` and creates `<docs>/team.md`, `ideas.md`, `decisions.md`, `pitches/` and `betting/`.
+   It writes `.shapeup.json` and creates `<docs>/team.md`, `shell.txt`, `ideas.md`, `decisions.md`, `pitches/` and `betting/`.
 5. Fill `<docs>/team.md` from the repo's files: `package.json`, `pyproject.toml` / `requirements*.txt`, `pom.xml` / `build.gradle`, `go.mod`, `Gemfile`, `composer.json`, `*.csproj`, framework settings, CI config, `AGENTS.md` / `CLAUDE.md`.
    - Roles: one row per developer role (role id `<layer>-<stack>`), its agent, its stack pack and its path; one row for the database.
    - Commands: the Small, Medium and Large test commands, lint, build and migration checks per role, as the repo runs them. Write them down; don't run them.
    - Ask the user, in one message, what files can't tell: the base branch, the production database instance name, the largest tables and their size (or "ask per pitch"), PR reviewers.
-6. Load each role's stack pack with the Skill tool. List the missing ones with their install command, or offer `/stack new <name>`.
-7. Grep the repo's files for connection strings; report file paths, never values.
-8. Run the Bootstrap gate (`references/gates.md`) and report in ≤5 lines: the docs folder, the roles and their packs, what's missing, and the next step (`/shape <idea>`).
+6. Fill `<docs>/shell.txt` from the UI code: the layout component, app shell or base template, its nav items, and 2–3 screens
+   for the conventions (tables or cards, forms on a page or in a dialog, where page actions sit). Draw the preview with
+   `scaffold.py wireframe <repo>` and show `<docs>/shell.svg` to the user: "Is this your app's frame?". Fix what they correct.
+   No UI in the repo: `layout: none`.
+7. Load each role's stack pack with the Skill tool. List the missing ones with their install command, or offer `/stack new <name>`.
+8. Grep the repo's files for connection strings; report file paths, never values.
+9. Run the Bootstrap gate (`references/gates.md`) and report in ≤5 lines: the docs folder, the roles and their packs, what's missing, and the next step (`/shape <idea>`).
    Don't commit: the user commits the docs folder and `.shapeup.json`.

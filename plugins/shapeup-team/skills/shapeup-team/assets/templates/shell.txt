@@ -1,0 +1,15 @@
+# App shell: the frame every sketch is drawn in. Filled at /bootstrap from the layout code; ask the user when it's unclear.
+# Preview it with: scaffold.py wireframe <repo>   (draws <docs>/shell.svg)
+# Source: <the layout component or base template this was read from>
+
+layout: <side | top | side+top | none>   # side nav, top bar, both, or no app chrome
+brand: <name shown in the nav>
+nav: <Item | Item | Item>                 # main nav items, in order
+account: <top-right | bottom | none>      # where the account menu sits
+search: <yes | no>                        # global search in the top bar
+mobile: <bottom-tabs | menu>              # how the nav collapses on a phone
+
+# Conventions: how screens in this app are built. Sketches follow them; the renderer ignores them.
+lists: <table | cards>
+forms: <page | dialog | drawer>
+page actions: <top-right | bottom | inline>

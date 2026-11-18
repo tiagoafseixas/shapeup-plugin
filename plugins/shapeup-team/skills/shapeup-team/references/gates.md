@@ -14,7 +14,8 @@ Bootstrap only reads files and asks the user. No network, no database, no test r
 | 2 | Every row in `team.md` › Roles names a stack pack that's installed (or written with `/stack new`) | load each pack with the Skill tool |
 | 3 | `team.md` › Table volumes lists the largest tables (rows, size), as the user gave them, or says "ask per pitch" | ask the user |
 | 4 | No production credentials in the repo (`.env*`, config files) | grep the repo's files for connection strings; report file paths, never values |
-| 5 | Ponytail plugin installed | if missing, give the user the install command (`/plugin install ponytail@ponytail`); don't install it |
+| 5 | `<docs>/shell.txt` filled from the UI code (or `layout: none`), and the user confirmed `<docs>/shell.svg` looks like the app | read the layout code; `scaffold.py wireframe <repo>`; show the user |
+| 6 | Ponytail plugin installed | if missing, give the user the install command (`/plugin install ponytail@ponytail`); don't install it |
 
 ## Ready gate (Shaper, before a pitch goes to the betting table)
 
@@ -22,13 +23,13 @@ Bootstrap only reads files and asks the user. No network, no database, no test r
 |---|---|
 | 1 | Problem: baseline → workaround → cost, no solution words (`roles/shaper.md` › Writing the problem); its evidence is logged in log.md |
 | 2 | Appetite: size in the header table (its review budget comes from `team.md`); one imperative sentence on what the bet builds |
-| 3 | Solution: the elements are concrete enough to start, rough enough to leave design room |
-| 4 | Wireframes: present when a screen is new or changes layout, at fat-marker level |
+| 3 | Solution: the elements are concrete enough to start, rough enough to leave design room; the breadboard shows every place and where each affordance leads |
+| 4 | Wireframes: a sketch per screen that is new or changes layout, drawn in the app shell (`references/diagrams.md` › Sketches), each marker explained in its notes; or "None: no screen changes" |
 | 5 | Every rabbit hole has a patch, or has become a no-go |
 | 6 | No-gos listed explicitly |
 | 7 | Tech check logged in log.md whenever the pitch touches the schema, a new integration or a new library; its risks are in Rabbit holes |
 | 8 | Works when: 3–5 outcomes a user can observe |
-| 9 | Within `team.md` › Pitch word limit (default 600) outside code blocks (wireframes excluded). Passes the final check in `writing-style.md`. No task lists. |
+| 9 | Within `team.md` › Pitch word limit (default 600) outside code blocks (diagrams and sketches excluded). Passes the final check in `writing-style.md`. No task lists. |
 | 10 | log.md records the shaping decisions taken with the user |
 | 11 | `scaffold.py lint <repo> <slug>` is clean |
 | 12 | The pitch stands alone: no other pitch named, no justifications (they live in log.md) |

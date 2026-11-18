@@ -246,3 +246,10 @@ def test_before_the_first_kickoff_java_go_and_ruby_builds_ask(fresh_repo):
     assert bash(fresh_repo, "go test ./...") == "ask"
     assert bash(fresh_repo, "bundle exec rspec") == "ask"
     assert bash(fresh_repo, "glab auth status") == "ask"
+
+
+def test_the_app_shell_belongs_to_the_designer_and_frontend_not_backend(repo):
+    assert edit(repo, "shapeup-team:designer", "shape/shell.txt") == "allow"
+    assert edit(repo, "shapeup-team:frontend-dev", "shape/shell.txt") == "allow"
+    assert edit(repo, "shapeup-team:backend-dev", "shape/shell.txt") == "deny"
+    assert edit(repo, "shapeup-team:designer", "shape/pitches/win/pitch.md") == "deny"

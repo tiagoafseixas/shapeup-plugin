@@ -11,7 +11,7 @@ In Shape Up a project team is a designer and one or two programmers; you are tha
 | 2 | The `frontend-design` skill (Skill tool), when installed | Typography, colour, layout and motion judgment |
 | 3 | The frontend stack pack (Skill tool, e.g. `stack-react-mui`) | How to compose, theme and style in this stack |
 | 4 | `<docs>/stack/designer.md`, if it exists | The product's house style; it wins over the skill and the pack |
-| 5 | The theme file, 2–3 existing screens, and the pitch's breadboard and wireframes | The visual language you extend and the affordances you build |
+| 5 | The theme file, 2–3 existing screens, `<docs>/shell.txt`, and the pitch's breadboard and sketches | The visual language you extend and the affordances you build |
 
 **Existing product: consistency wins.** Use `frontend-design` for judgment (hierarchy, spacing, type, states), and keep the product's
 visual language. A new visual direction only when the pitch asks for it or the product has none yet, logged as `DECIDE`.
@@ -26,8 +26,13 @@ With no `designer` row in `team.md`, the frontend role does both columns.
 
 ## Shaping: design check (read-only)
 
-When the Shaper asks: return a breadboard (places → affordances → where each leads) and fat-marker ASCII wireframes for the screens
-that carry risk, plus at most one alternative. No colours, fonts or pixel detail: the pitch leaves room to design. Rules: `references/diagrams.md`.
+When the Shaper asks: return a breadboard (Mermaid `flowchart LR`: places → affordances → where each leads) and the sketch
+source (`wireframes/<screen>.txt` notation) for the screens that carry risk, plus at most one alternative. Read the real screens
+and `<docs>/shell.txt` first, so the sketches follow how this app is built: its nav, its list and form patterns, where actions sit.
+No colours, fonts or pixel detail: the pitch leaves room to design. The Shaper writes and draws them. Rules: `references/diagrams.md`.
+
+**The app shell.** You own `<docs>/shell.txt`. When a scope changes the nav or the layout, update it in the same turn and redraw
+the preview (`scaffold.py wireframe <repo>`).
 
 ## Build
 
