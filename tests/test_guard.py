@@ -253,3 +253,121 @@ def test_the_app_shell_belongs_to_the_designer_and_frontend_not_backend(repo):
     assert edit(repo, "shapeup-team:frontend-dev", "shape/shell.txt") == "allow"
     assert edit(repo, "shapeup-team:backend-dev", "shape/shell.txt") == "deny"
     assert edit(repo, "shapeup-team:designer", "shape/pitches/win/pitch.md") == "deny"
+
+
+@pytest.fixture
+def ops_repo(repo):
+    team = repo / "shape" / "team.md"
+    team.write_text(team.read_text().replace("| backend-drf | backend-dev | stack-django-drf | backend/ |",
+                                             "| backend-drf | backend-dev | stack-django-drf | . |")
+                    + "| devops-gcp | devops | stack-gcp-devops | infra/ |\n")
+    return repo
+
+
+def test_devops_owns_delivery_files_anywhere_in_the_repo(ops_repo):
+    for path in (".github/workflows/ci.yml", "cloudbuild.yaml", "backend/Dockerfile", "infra/main.tf", "docker-compose.yml"):
+        assert edit(ops_repo, "shapeup-team:devops", path) == "allow", path
+    assert edit(ops_repo, "shapeup-team:devops", "shape/pitches/win/runbook.md") == "allow"
+
+
+def test_devops_cannot_edit_application_code_or_env_files(ops_repo):
+    assert edit(ops_repo, "shapeup-team:devops", "backend/deals/services.py") == "deny"
+    assert edit(ops_repo, "shapeup-team:devops", ".env.production") == "deny"
+
+
+def test_with_a_devops_row_developers_hand_delivery_files_over(ops_repo):
+    assert edit(ops_repo, "shapeup-team:backend-dev", "Dockerfile") == "deny"
+    assert edit(ops_repo, "shapeup-team:backend-dev", ".github/workflows/ci.yml") == "deny"
+    assert edit(ops_repo, "shapeup-team:backend-dev", "backend/infrastructure/email.py") == "allow"
+
+
+def test_without_a_devops_row_the_backend_keeps_its_dockerfile(repo):
+    assert edit(repo, "shapeup-team:backend-dev", "backend/Dockerfile") == "allow"
+
+
+@pytest.mark.parametrize("command", [
+    "terraform apply -auto-approve", "terraform state rm google_sql_database_instance.main",
+    "gcloud run deploy api --image=x", "gcloud deploy releases create r1 --delivery-pipeline=p",
+    "gcloud projects add-iam-policy-binding p --member=user:x --role=roles/owner",
+    "kubectl apply -f k8s/", "kubectl exec -it api-0 -- sh", "helm upgrade api charts/api",
+    "docker push europe-docker.pkg.dev/p/r/api:1", "gcloud secrets versions access latest --secret=db-password",
+])
+def test_devops_never_changes_a_shared_environment(ops_repo, command):
+    assert bash(ops_repo, command, "shapeup-team:devops") == "deny"
+
+
+@pytest.mark.parametrize("command", [
+    "terraform plan", "gcloud run services describe api --region=europe-west1",
+    "gcloud logging read 'severity>=ERROR' --limit=20", "kubectl get pods", "helm status api",
+])
+def test_devops_reads_production_only_after_the_user_approves(ops_repo, command):
+    assert bash(ops_repo, command, "shapeup-team:devops") == "ask"
+
+
+def test_roles_without_production_access_cannot_read_the_cloud(ops_repo):
+    assert bash(ops_repo, "gcloud run services list", "shapeup-team:frontend-dev") == "deny"
+    assert bash(ops_repo, "terraform plan", "shapeup-team:qa-engineer") == "deny"
+
+
+@pytest.mark.parametrize("command", [
+    "terraform fmt -check -recursive infra", "terraform validate", "terraform init -backend=false",
+    "helm lint charts/api", "helm template charts/api", "kubectl kustomize k8s/overlays/prod",
+    "gcloud config list", "hadolint Dockerfile",
+])
+def test_local_checks_on_delivery_code_run_freely(ops_repo, command):
+    assert bash(ops_repo, command, "shapeup-team:devops") == "allow"
+
+
+def test_before_kickoff_a_terraform_init_asks(ops_repo):
+    (ops_repo / "shape" / "pitches" / "win" / "board.md").unlink()
+    assert bash(ops_repo, "terraform init -backend=false", "shapeup-team:devops") == "ask"
+
+
+@pytest.fixture
+def staging_repo(ops_repo):
+    team = ops_repo / "shape" / "team.md"
+    team.write_text(team.read_text() + "\n## Settings\n\n| Key | Value |\n|---|---|\n"
+                    "| Staging target | staging |\n| Staging project | acme-staging |\n| Production project | acme-prod |\n")
+    return ops_repo
+
+
+@pytest.mark.parametrize("command", [
+    "gcloud deploy releases promote --release=rel-42 --delivery-pipeline=api --region=europe-west1 --to-target=staging",
+    "gcloud deploy releases create rel-42 --delivery-pipeline=api --region=europe-west1 --to-target=staging --images=api=img@sha256:ab",
+    "gcloud deploy rollouts advance rel-42-to-staging-0001 --delivery-pipeline=api --release=rel-42 --region=europe-west1",
+    "gcloud deploy targets rollback staging --delivery-pipeline=api --region=europe-west1",
+    "gcloud run deploy api --image=img@sha256:ab --region=europe-west1 --project=acme-staging",
+    "gcloud run services update-traffic api --to-latest --region=europe-west1 --project=acme-staging",
+    "gcloud run services describe api --region=europe-west1 --project=acme-staging",
+])
+def test_devops_promotes_to_staging_and_checks_it_without_asking(staging_repo, command):
+    assert bash(staging_repo, command, "shapeup-team:devops") == "allow"
+
+
+@pytest.mark.parametrize("command", [
+    "gcloud deploy releases promote --release=rel-42 --delivery-pipeline=api --region=europe-west1 --to-target=prod",
+    "gcloud deploy releases promote --release=rel-42 --delivery-pipeline=api --region=europe-west1",
+    "gcloud run deploy api --image=img --project=acme-prod",
+    "gcloud run deploy api --image=img",
+    "gcloud run deploy api --image=img --project=acme-staging && gcloud run deploy api --image=img --project=acme-prod",
+    "gcloud run jobs execute migrate --project=acme-staging",
+])
+def test_devops_never_promotes_beyond_staging(staging_repo, command):
+    assert bash(staging_repo, command, "shapeup-team:devops") == "deny"
+
+
+def test_only_devops_promotes_to_staging(staging_repo):
+    cmd = "gcloud deploy releases promote --release=rel-42 --delivery-pipeline=api --region=europe-west1 --to-target=staging"
+    assert bash(staging_repo, cmd, "shapeup-team:backend-dev") == "deny"
+    assert bash(staging_repo, cmd) == "deny"
+
+
+def test_no_staging_promotes_when_staging_is_production(staging_repo):
+    team = staging_repo / "shape" / "team.md"
+    team.write_text(team.read_text().replace("| Production project | acme-prod |", "| Production project | acme-staging |"))
+    assert bash(staging_repo, "gcloud run deploy api --image=img --project=acme-staging", "shapeup-team:devops") == "deny"
+
+
+def test_no_staging_promotes_without_the_settings(ops_repo):
+    cmd = "gcloud deploy releases promote --release=rel-42 --delivery-pipeline=api --region=europe-west1 --to-target=staging"
+    assert bash(ops_repo, cmd, "shapeup-team:devops") == "deny"

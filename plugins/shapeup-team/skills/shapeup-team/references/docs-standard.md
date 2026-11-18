@@ -11,8 +11,8 @@ A fact lives in exactly one doc. If it isn't listed here, the team doesn't write
 | `<docs>/pitches/<slug>/wireframes/` | One `<screen>.txt` per sketch and the `<screen>.svg` drawn from it | Hand-edited SVGs | Shaper + user | `diagrams.md` › Sketches |
 | `<docs>/pitches/<slug>/log.md` | Audit trail: every decision, cut, gate result, phase change and action, with who, when and why | Discussion, questions (they go on the board) | everyone, append-only | `log.md` |
 | `<docs>/pitches/<slug>/board.md` | Scopes and hill, the message Log, QA findings, retro | Decisions (they go to log.md), long explanations | everyone (own rows) | `board.md` |
-| `<docs>/pitches/<slug>/tech.md` | Mermaid diagrams of what changes: entities, classes, flows, processes; API contract table | Anything the code states plainly; history (that's log.md) | backend-drf, DBA, frontend-react | `tech.md` |
-| `<docs>/pitches/<slug>/runbook.md` | Manual ops for one release: Before, Steps, Rollback tables | Background or rationale beyond one clause per step | DBA | `runbook.md` |
+| `<docs>/pitches/<slug>/tech.md` | Mermaid diagrams of what changes: entities, classes, flows, processes, delivery; API contract table | Anything the code states plainly; history (that's log.md) | backend role, DBA, frontend role, DevOps | `tech.md` |
+| `<docs>/pitches/<slug>/runbook.md` | Manual ops for one release: Release (strategy, success metrics), Before, Steps, Rollback tables | Background or rationale beyond one clause per step; secret values | DBA, DevOps | `runbook.md` |
 | `<docs>/betting/<date>.md` | Ready pitches side by side | Recommendations on which to bet | Shaper | `betting.md` |
 | `<docs>/decisions.md` | Conventions that outlive a pitch (architecture, vendors, patterns) | Pitch-level decisions (log.md) | whoever decides | `decisions.md` |
 | `<docs>/ideas.md` | Raw ideas, cut items, shortcuts to revisit | Commitments, priorities | Shaper | `ideas.md` |

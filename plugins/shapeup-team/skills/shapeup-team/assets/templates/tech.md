@@ -31,6 +31,12 @@ sequenceDiagram
 flowchart TD
 ```
 
+## Delivery (DevOps)
+<Caption: what runs where after this release: services, jobs, schedules, queues, secrets by name, and what calls what. Only what changes.>
+```mermaid
+flowchart LR
+```
+
 ## API contract (backend)
 
 | Method | Path | Request | Response | Errors | Permission |

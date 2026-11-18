@@ -19,7 +19,9 @@ House rules in the repo (`<docs>/stack/<role id>.md`) win over this pack. Where 
 ## Layering
 
 <Backend and frontend packs. A database pack replaces this section with `## Commands the role file refers to` (backup, confirm backup,
-read-only check, read-only user setup) and `## Migration review` (each change, its risk on a big table, the safe pattern).>
+read-only check, read-only user setup) and `## Migration review` (each change, its risk on a big table, the safe pattern).
+An infra pack replaces it with `## Commands the role file refers to` (local checks, production reads, release commands for the user's runbook)
+and `## Delivery` (pipeline, artifacts, environments, release strategies), and adds `## Observability` and `## Cost and performance`.>
 
 | Logic | Goes in | Never in |
 |---|---|---|

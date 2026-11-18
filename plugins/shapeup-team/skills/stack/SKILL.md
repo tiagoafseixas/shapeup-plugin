@@ -22,7 +22,7 @@ Stack packs hold the how for one stack; the team's roles stay stack-agnostic. Lo
 
 ## new <name>
 
-1. Ask once for anything the name doesn't settle: layer (backend, frontend, database), the technologies and majors (e.g. "React 19 + MUI v7"), and where to write it.
+1. Ask once for anything the name doesn't settle: layer (backend, frontend, database, infra), the technologies and majors (e.g. "React 19 + MUI v7"), and where to write it.
    Default location: `stack-<name>/` beside the repo, or `plugins/` when working inside the shapeup-plugin marketplace repo.
 2. `scaffold.py pack <dir> <name> --layer <layer> --tech "<technologies>"`.
 3. Index the official docs before writing any rule. Fetch the docs' index (`llms.txt` when the site has one) and read the main pages per area:

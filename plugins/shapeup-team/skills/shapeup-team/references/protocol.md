@@ -39,6 +39,8 @@ A HANDOFF row without its contract is invalid, and the Conductor sends it back.
 | backend → frontend | The endpoints (`METHOD path`), with the full contract in the tech.md API table, committed. Permissions in one line. |
 | backend → DBA | Migration file paths and what each does, in plain words. Expected size of the tables touched. |
 | DBA → backend | Verdict: `approve`, or `rewrite` with the exact change (or the rewritten files). Whether a runbook is needed. |
+| Dev → DevOps | What the scope needs to run: a setting or secret (name, who reads it), a resource (job, queue, bucket, schedule), a port, a health check, a traffic change |
+| DevOps → dev | The names to read (env var, secret, resource), how to run it locally, the commands already green. A secret value the user must set is a separate `HUMAN` row with its name only. |
 | Dev → QA | Scope, what changed (≤2 sentences), how to run it locally, commands already green |
 | QA → Dev | One QA table row per finding: severity, case, expected vs actual |
 | Shaper → anyone | The decision, and what is now cut or kept |

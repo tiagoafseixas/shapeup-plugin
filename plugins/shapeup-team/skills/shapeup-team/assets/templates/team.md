@@ -11,6 +11,7 @@ Add a row for each extra stack (a second backend, a mobile app). Paths are relat
 | designer | designer | <the frontend role's pack> | <the frontend path> (optional row: without it, the frontend role designs) |
 | <frontend-<stack>: frontend-react, …> | frontend-dev | <stack-<name>: stack-react-mui, stack-nextjs-chakra, …> | <frontend/, or ../<web-repo> when it's a separate repo> |
 | <database> | dba | <stack-<name>: stack-postgres-cloudsql, …> | — |
+| <devops-<platform>: devops-gcp, …> | devops | <stack-<name>: stack-gcp-devops, …> | <infra/> (optional row: without it, delivery files stay with the developers and releases with the DBA) |
 
 House rules per role, when the repo has its own conventions: `<docs>/stack/<role id>.md`.
 
@@ -27,6 +28,9 @@ House rules per role, when the repo has its own conventions: `<docs>/stack/<role
 | <frontend role id> lint + build | <…> |
 | Large tests | <the e2e command> · <API journeys command> |
 | Local DB | <how a local database runs> |
+| <devops role id> IaC check | <format + validate + lint of the infrastructure code, no network> |
+| <devops role id> pipeline check | <lint of the CI config and the Dockerfile> |
+| <devops role id> image build | <how the deployable artifact builds locally> |
 
 ## Table volumes
 
@@ -60,3 +64,6 @@ when the user answers a volume question. Agents never connect to production to f
 | Model: mechanical turn (downhill, fully specified) | haiku |
 | Model: DBA review and runbooks | opus |
 | PR reviewers | <github logins> |
+| Staging target | <the Cloud Deploy target DevOps may promote to, or none> |
+| Staging project | <the cloud project DevOps may deploy to and read without asking, or none; never the production project> |
+| Production project | <the production cloud project; staging promotes are off when it equals the staging project> |

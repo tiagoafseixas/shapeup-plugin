@@ -8,8 +8,8 @@ Status: kickoff → building → hammering → shipping → shipped | stopped. D
 
 ## Scopes
 
-| ID | Scope (≤5 words) | Must/~ | Owner | Schema? | Hill | Moved | Done when (QA) |
-|---|---|---|---|---|---|---|---|
+| ID | Scope (≤5 words) | Must/~ | Owner | Schema? | Infra? | Hill | Moved | Done when (QA) |
+|---|---|---|---|---|---|---|---|---|
 
 ## Log
 

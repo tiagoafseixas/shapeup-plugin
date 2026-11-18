@@ -15,7 +15,7 @@ One round = from a goal to a review with the user. Load the `shapeup-team` skill
 
 1. **Goal.** With the Shaper, pick the scopes to bring to a reviewable state; write "Round <n> goal: …" as a `NOTE` to `ALL`.
 2. **Work loop**, one turn at a time, no fixed order: pick the next turn with the Routing table and Turn priority; spawn the role's agent
-   (`shaper`, `dba`, `backend-dev`, `designer`, `frontend-dev`, `qa-engineer`) with its role id from `team.md` › Roles;
+   (`shaper`, `dba`, `backend-dev`, `designer`, `frontend-dev`, `qa-engineer`, `devops`) with its role id from `team.md` › Roles;
    override `model` only per the Models table. After each turn: check the turn report against the board (red commit first for dev turns with code),
    run `scaffold.py lint`, add 1 to the turn counters, act on new rows at once.
 3. **Stop the loop** when every goal scope has a QA `DONE` row, when a `HUMAN` row blocks everything left (ask the user now), or at the turn cap

@@ -43,12 +43,12 @@ Bootstrap only reads files and asks the user. No network, no database, no test r
 | 1 | Branch exists and is pushed; draft PR is open |
 | 2 | Scope count within `team.md` › Scopes per pitch (default 2–7), each a vertical slice named in ≤5 domain words |
 | 3 | Each scope has an owner, must or `~`, and a "Done when" written by QA |
-| 4 | DBA has marked the scopes that touch the schema |
+| 4 | DBA has marked the scopes that touch the schema; DevOps (if `team.md` has one) has marked `Infra?` |
 | 5 | Shaper confirmed: every scope traces back to the pitch, and no no-go appears |
 | 6 | The first scope is the most core and the most unknown |
 | 7 | tech.md exists if any scope touches the schema (Entities) or adds an endpoint (Flows + API contract), with sections that don't apply deleted |
 | 8 | `scaffold.py lint <repo> <slug>` is clean |
-| 9 | First run of the environment, now that the cycle starts: the PR tool's auth check OK and the remote reachable; the local or test database (same engine and major as production) runs the migrations; the Small and Medium test commands in `team.md` run green on the base branch | run them; a failure is a `HUMAN` row, not a fix |
+| 9 | First run of the environment, now that the cycle starts: the PR tool's auth check OK and the remote reachable; the local or test database (same engine and major as production) runs the migrations; the Small and Medium test commands in `team.md` run green on the base branch; with a DevOps row, the pipeline runs on the cycle branch | run them; a failure is a `HUMAN` row, not a fix |
 
 ## Scope gate (QA, per scope)
 
@@ -61,7 +61,7 @@ Bootstrap only reads files and asks the user. No network, no database, no test r
 | 5 | Code review done | `/ponytail-review` on the scope's commits; its `must fix` items become QA rows |
 | 6 | Edge cases tried: empty, zero, max, another user's object, unauthenticated, double submit | by hand or with tests |
 | 7 | List endpoints have a test that the query count stays flat as rows grow | read the tests |
-| 8 | Every migration has a DBA `approve` | board Log |
+| 8 | Every migration has a DBA `approve`; a scope marked `Infra? yes` has DevOps's `HANDOFF` with its checks green (IaC, pipeline, image) and logs, metrics and alerts for what it adds | board Log |
 | 9 | No no-go was built | compare against pitch.md |
 | 10 | tech.md diagrams and the API contract match the scope's code | read both |
 | 11 | No open `must` QA rows for this scope | QA table |
@@ -76,7 +76,8 @@ Pass → QA writes `DONE` and sets Hill to 100.
 | 2 | Small, Medium and Large tests, lint and typecheck green on the branch | `team.md` commands |
 | 3 | `/ponytail-review` on the whole branch vs the base: no `must fix` left | run it |
 | 4 | `makemigrations --check` clean; migrations apply from zero on an empty DB | run them |
-| 5 | runbook.md written if the release needs manual ops; otherwise the PR body says "No ops" | DBA |
+| 5 | runbook.md written if the release needs manual ops, with DevOps's Release section (strategy, success metrics, rollback) when infrastructure, config or secrets change; otherwise the PR body says "No ops" | DBA, DevOps |
+| 5b | The PR's pipeline is green; the credential sweep of the diff is clean (no secret value in the branch) | DevOps, or QA without one |
 | 6 | tech.md matches the branch; log.md has every decision, cut and gate result | read both |
 | 7 | PR body updated from the board: shipped, cut, risks | Conductor |
 | 8 | No `open` rows on the board | board Log |

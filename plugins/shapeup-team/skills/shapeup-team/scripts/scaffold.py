@@ -13,7 +13,7 @@ The docs folder is chosen at bootstrap and recorded in <repo>/.shapeup.json ({"d
   scaffold.py wireframe <repo> [<slug> [<name>]] [--png]   draw <docs>/pitches/<slug>/wireframes/*.txt as SVG sketches
                                          in the app shell; with no slug, draw the shell alone (<docs>/shell.svg).
                                          Regenerates. Prints layout problems; --png also writes PNGs to look at.
-  scaffold.py pack     <out-dir> <name> --layer backend|frontend|database --tech "Django + DRF"   new stack pack plugin
+  scaffold.py pack     <out-dir> <name> --layer backend|frontend|database|infra --tech "Django + DRF"   new stack pack plugin
   scaffold.py house    <repo> <role-id> --pack stack-<name>   house rules for one role: <docs>/stack/<role-id>.md
   scaffold.py lint-pack <pack-dir>       required sections, Small/Medium/Large rows, sources, no placeholders
 """
@@ -407,9 +407,10 @@ def cmd_lint(repo: Path, slug: str) -> None:
     sys.exit(1)
 
 
-AGENT_FOR_LAYER = {"backend": "backend-dev", "frontend": "frontend-dev", "database": "dba"}
+AGENT_FOR_LAYER = {"backend": "backend-dev", "frontend": "frontend-dev", "database": "dba", "infra": "devops"}
 PACK_SECTIONS = ("Layering", "Rules", "Tests per size", "Performance", "Review checklist", "Sources")
 DB_PACK_SECTIONS = ("Commands", "Migration review", "Rules", "Tests per size", "Performance", "Review checklist", "Sources")
+INFRA_PACK_SECTIONS = ("Commands", "Delivery", "Rules", "Tests per size", "Observability", "Cost and performance", "Review checklist", "Sources")
 PACK_MAX_LINES = 220
 
 
@@ -449,7 +450,8 @@ def cmd_lint_pack(root: Path) -> None:
             problems.append(f"{name}: description missing, over 1024 chars, or has angle brackets")
         headings = re.findall(r"^## (.+)$", text, re.M)
         is_db = re.search(r"^\|\s*database\s*\|", text, re.M)
-        for section in (DB_PACK_SECTIONS if is_db else PACK_SECTIONS):
+        is_infra = re.search(r"^\|\s*infra\s*\|", text, re.M)
+        for section in (DB_PACK_SECTIONS if is_db else INFRA_PACK_SECTIONS if is_infra else PACK_SECTIONS):
             if not any(h.startswith(section) for h in headings):
                 problems.append(f"{name}: missing section '## {section}'")
         tests = text.split("## Tests per size", 1)[-1].split("\n## ", 1)[0]

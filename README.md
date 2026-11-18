@@ -4,7 +4,7 @@
 
 <h1 align="center">shapeup-team</h1>
 
-<p align="center"><em>Six agents. One hill. Work gets done.</em></p>
+<p align="center"><em>Seven agents. One hill. Work gets done.</em></p>
 
 ---
 
@@ -28,6 +28,9 @@ Then the crew walks up the hill.
 **QA** comes down the other side with a magnifier. Wrote "Done when" before anyone wrote code. Will not let you change a test to make it pass.
 
 **The DBA** carries the database like it's fragile, because it is. In production: backups. Only backups. And asks first.
+
+**DevOps** isn't in the picture. DevOps paved the road the others walk on: the pipeline that turns red before you do, the image built once,
+the alert that says what to do. Puts each round's build on staging before you review it. Writes the release plan with a rollback in it. Production is yours: you press the button.
 
 Every so often they stop and show you what works. Two reviews for a small batch, six for a big one. Near the end, the scope gets hammered.
 When the reviews run out, the build stops. Nobody extends it but you.
@@ -143,8 +146,8 @@ Every decision and its reason goes into `log.md`; the pitch states only the deci
 | Creates the branch `cycle/<cycle>-<slug>` and the board | `shape/pitches/<slug>/board.md`; status `building` |
 | Runs the environment for the first time: `gh auth status`, migrations on the local or test database, Small and Medium tests | Green, or a question to you; the team doesn't fix your environment |
 | Commits, pushes, opens a draft PR | The PR link in the board header |
-| Each developer role and the DBA read the pitch and the code it touches | ≤3 notes each on the board |
-| The backend roles draft the scopes, frontend roles amend them, the DBA marks the ones that touch the schema, QA writes "Done when", the Shaper checks them against the pitch | 2–7 scopes on the board: vertical slices named in domain words, each with an owner, must or `~` (nice to have) and checks |
+| Each developer role, the DBA and DevOps read the pitch and the code it touches | ≤3 notes each on the board |
+| The backend roles draft the scopes, frontend roles amend them, the DBA marks the ones that touch the schema, DevOps the ones that need infrastructure (`Infra?`), QA writes "Done when", the Shaper checks them against the pitch | 2–7 scopes on the board: vertical slices named in domain words, each with an owner, must or `~` (nice to have) and checks |
 | The DBA and the backend role draw the structure | `tech.md`: Mermaid entity, class and sequence diagrams and the API contract |
 
 Done when the Kickoff gate passes. You get a 5-line summary: branch, PR, scopes, first scope, open questions.
@@ -159,6 +162,7 @@ on them with no fixed order and no waiting: a handoff, a question or a QA findin
 | Designer | Lays out the scope's screens first (affordances, copy, states) against the API contract, then does the visual pass once data is wired |
 | Backend / frontend | Writes the Small and Medium tests first and commits them failing (`red`), then the code until they pass; hands the API contract to the frontend and migrations to the DBA |
 | DBA | Reviews each migration against the table sizes in `team.md`: approve, or rewrite it safely |
+| DevOps | Gives a scope what it needs to run (a setting, a secret's name, a job, a schedule, monitoring) as code on the cycle branch; keeps the pipeline green; promotes the build to staging before each review |
 | QA | Writes the Large tests for the scope's journeys and runs the Scope gate as soon as a scope is handed over: tests by size, tests written first, no change-detector tests, every "Done when" check. Findings are nice-to-haves (`~`) unless they break a promise of the scope, as in Shape Up. |
 | Shaper | Answers questions, cuts scope when the reviews run low, guards the no-gos |
 
@@ -180,7 +184,8 @@ review is done and must scopes remain, the build stops; the default is drop and 
 ### 5. Ship
 
 Starts when you've accepted every must scope. QA runs the full suite, Large tests included, and the Ship gate. The DBA writes `runbook.md`
-if the release needs manual steps (a backfill, an ordered deploy). Then a **final review** with you: each "Works when" line of the pitch
+if the release needs manual steps (a backfill, an ordered deploy); DevOps adds its Release section when infrastructure, config or secrets
+change: the strategy (rolling, canary, blue/green, a flag), what to watch and for how long, and the rollback. Then a **final review** with you: each "Works when" line of the pitch
 with its evidence, the cut list and the runbook. It doesn't use the review budget.
 
 Expected: after your sign-off, the PR marked ready and a 5-line summary of what shipped, what was cut and what the runbook says.
@@ -229,7 +234,7 @@ The method is Basecamp's [Shape Up](https://basecamp.com/shapeup). What agents n
 | A pitch: problem, appetite, solution, rabbit holes, no-gos | `pitch.md` with those five, plus wireframes and **Works when** (addition) |
 | Betting table, no backlog | The betting pack and your bet; unchosen pitches stay `ready`, nothing is queued |
 | Six-week cycle; small batch 1–2 weeks | **Review rounds** (addition): about one review with you per human week, so Small batch 2 reviews and Big batch 6; a turn cap bounds each round |
-| A team of a designer and one or two programmers, QA later in the cycle | Designer, backend and frontend developers, QA; plus a **DBA** (addition, optional) |
+| A team of a designer and one or two programmers, QA later in the cycle | Designer, backend and frontend developers, QA; plus a **DBA** and **DevOps** (additions, optional) |
 | Scopes, hill charts, get one piece done | Scopes on the board with a hill position; the first scope is the most core and most unknown |
 | Scope hammering, must-haves and `~` nice-to-haves; QA issues are nice-to-haves unless the team decides otherwise | The same; the Shaper hammers when a quarter of the reviews is left |
 | Circuit breaker; rare extensions | When the reviews run out the build stops; the default is drop and re-shape; only you extend |
@@ -257,6 +262,7 @@ The method is Basecamp's [Shape Up](https://basecamp.com/shapeup). What agents n
 | `frontend-dev` | Frontend developer, any stack: data, state, logic and tests of the screens (and their design when there's no designer) | Sonnet | Its role's path; the pitch's `tech.md`, `board.md`, `log.md` |
 | `qa-engineer` | QA: "Done when" checks, Scope and Ship gates, Large tests | Sonnet | Test files; the pitch's `board.md`, `log.md` |
 | `dba` | DBA, any database: migration review, indexes, runbooks, backups | Opus | Migrations; the pitch's `tech.md`, `runbook.md`, `board.md`, `log.md` |
+| `devops` | DevOps (optional), any platform: pipeline, images, infrastructure as code, config and secret names, observability, the release plan; promotes to staging, never to production. | Sonnet (Opus for production IaC and release plans) | Its path; CI, Dockerfiles, IaC and manifests anywhere in the repo; the pitch's `tech.md`, `runbook.md`, `board.md`, `log.md` |
 
 Shaping runs in the main session on Opus. The Conductor drops a turn to Haiku when the work is fully specified, and escalates one
 step up when a turn fails. Call a role directly: "DBA, review migration 0008 on deal-win-tracking", "frontend-react, pick up S1".
@@ -277,6 +283,7 @@ Three layers of knowledge, each with one job:
 | `stack-nextjs-chakra` | frontend | Next.js App Router, React 18–19, Chakra UI v3 |
 | `stack-react-mui` | frontend | React 18–19, Material UI v7 and v9, MUI X; Vite or Next.js |
 | `stack-postgres-cloudsql` | database | PostgreSQL 13–18 on Cloud SQL: zero-downtime migrations (Django operations included), read-only user, backups |
+| `stack-gcp-devops` | infra | Google Cloud: Cloud Build or GitHub Actions with Workload Identity Federation, Artifact Registry, Cloud Deploy, Cloud Run, GKE, Terraform, Secret Manager, Cloud Observability, SLOs and FinOps; follows the Professional Cloud DevOps Engineer guide |
 
 Your project wires roles to packs in `shape/team.md`. Each developer role is an agent plus a pack; a project with two backends has two rows:
 
@@ -286,6 +293,7 @@ Your project wires roles to packs in `shape/team.md`. Each developer role is an 
 | backend-drf    | backend-dev  | stack-django-drf        | backend/  |
 | frontend-react | frontend-dev | stack-react-mui         | ../web    |
 | database       | dba          | stack-postgres-cloudsql | —         |
+| devops-gcp     | devops       | stack-gcp-devops        | infra/    |
 ```
 
 Moving from Chakra to MUI is one cell: change the pack, install it. No stack in the list? `/stack new <name>` scaffolds a pack,
@@ -298,15 +306,18 @@ The guard runs before every `Write`, `Edit` and `Bash` call in a repo with `shap
 
 | Blocked | Asks the user first |
 |---|---|
-| Edits outside the role's area (Roles table) | Before the first kickoff: any `gh` call, git remote call, install, database client, test run, container or `curl` |
+| Edits outside the role's area (Roles table); with a DevOps row, CI, Dockerfiles, IaC and manifests by anyone but DevOps | Before the first kickoff: any `gh` call, git remote call, install, database client, test run, container, `terraform init` or `curl` |
 | | Any production connection: `$READONLY_DATABASE_URL`, a database client aimed at a remote host, `cloud-sql-proxy`, `gcloud sql` / `aws rds` reads (backend role and DBA only) |
+| | Any cloud read: `gcloud` reads, `kubectl get`/`logs`, `helm status`, `terraform plan` (backend role, DBA and DevOps only) |
 | `.env*` writes | `gcloud sql backups create`, `aws rds create-db-snapshot` (DBA only) |
 | Force-push, push to `main`/`master`, merge, rebase, `gh pr merge`, `glab mr merge`, `--no-verify` | |
-| Deploys and infrastructure changes, e.g. `deploy.sh`, `terraform apply`, `kubectl apply`, `helm upgrade`, `fly deploy`, `vercel --prod`, `gcloud app deploy`; migrations against shared databases (`flyway migrate`, `liquibase update`) | |
+| Deploys and infrastructure changes, e.g. `deploy.sh`, `terraform apply`/`state rm`, `kubectl apply`/`exec`, `helm upgrade`, `docker push`, `fly deploy`, `vercel --prod`, any `gcloud` write (`deploy`, `create`, `update`, IAM bindings); migrations against shared databases (`flyway migrate`, `liquibase update`) | |
+| Reading secret values: `gcloud secrets versions access`, `kubectl get secret -o yaml` | |
+| | Allowed without asking, for DevOps only: a single promote, canary advance or rollback to `team.md` › Staging target or Staging project, and reads of that project; off when staging is the production project |
 | Every other `gcloud sql` or `aws rds` write; any production access by the Shaper, designer, QA or frontend roles | |
 | Any `…DATABASE_URL` other than `READONLY_DATABASE_URL`, `PGPASSWORD=`, `MYSQL_PWD=`, literal non-local database URLs, production settings | |
 
-Production is off by default. When the backend role or the DBA needs a production fact (table volumes, a plan), it reads
+Production is off by default. When the backend role, the DBA or DevOps needs a production fact (table volumes, a plan, a service's config), it reads
 `team.md` › Table volumes, then asks you: state it, run a read-only query it hands you, or let it connect read-only for that one
 question. It connects only on that last answer, and the hook asks you again first. Backups by the DBA follow the same pattern.
 Everything else in production becomes a runbook step for you. Only you merge.
@@ -347,7 +358,7 @@ shape/                     or the folder you chose
 | Path | Holds |
 |---|---|
 | `.claude-plugin/marketplace.json` | The `shapeup` marketplace: the team and the stack packs |
-| `plugins/shapeup-team/` | The team: Conductor skill (process, role files, gates, standards, templates, `scaffold.py`), the six commands, six agents, the guard hook |
+| `plugins/shapeup-team/` | The team: Conductor skill (process, role files, gates, standards, templates, `scaffold.py`), the six commands, seven agents, the guard hook |
 | `plugins/stack-<name>/` | One stack pack each: `skills/stack-<name>/SKILL.md` and `references/sources.md` |
 | `docs/` | Logo and the script that draws it (`python3 docs/make_logo.py` redraws the logo and the icon); `sketches/`, the sample sketches |
 | `tests/` | Guard, sketch renderer and lint behaviour tests |

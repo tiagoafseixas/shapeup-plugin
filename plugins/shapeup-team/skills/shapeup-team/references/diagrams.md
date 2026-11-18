@@ -14,6 +14,7 @@ the code doesn't answer at a glance.
 | Sequence | `sequenceDiagram` | A use case crosses 3+ participants (UI → API → service → DB → task/external) | backend (frontend for UI-only flows) | tech.md · Flows |
 | Activity | `flowchart TD` (Mermaid has no activity type) | A process has branches, loops or retries: backfill, import, job | Owner of the process | tech.md · Processes |
 | State | `stateDiagram-v2` | An entity has a lifecycle with rules about which transitions are allowed | backend | tech.md · Processes |
+| Delivery | `flowchart LR`: services, jobs, schedules, queues and secrets (by name) as nodes, calls as arrows | A scope marked `Infra? yes` adds or changes what runs where | DevOps | tech.md · Delivery |
 | Flow | `swimlane-beta TB`: one lane per actor, plus a touchpoint lane (Email, notifications) | Every pitch with a user-facing journey: **one** for the whole journey | Shaper + user | pitch.md · Solution › Flow |
 | Breadboard | `flowchart LR`: places as subgraphs named `Step n · Place`, affordances inside, arrows to where each leads | **One per process** (one actor goal: Request, Fulfil, View), never several processes in one | Shaper + user (designer on a design check) | pitch.md · Solution › Breadboard |
 | Sketch | `wireframes/<screen>.txt` → `scaffold.py wireframe` → `<screen>.svg`, embedded with `![…]()` | The pitch adds a screen or changes a screen's layout: ≤4 per pitch | Shaper + user (designer on a design check) | pitch.md · Wireframes |

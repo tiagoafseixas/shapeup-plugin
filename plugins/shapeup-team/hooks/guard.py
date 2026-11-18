@@ -11,8 +11,18 @@ import re
 import sys
 from fnmatch import fnmatch
 
-AGENT_ROLES = {"shaper": "shaper", "qa-engineer": "qa", "backend-dev": "backend", "frontend-dev": "frontend", "designer": "designer", "dba": "dba"}
-LAYER_OF_AGENT = {"backend-dev": "backend", "frontend-dev": "frontend", "designer": "frontend", "dba": "database"}
+AGENT_ROLES = {"shaper": "shaper", "qa-engineer": "qa", "backend-dev": "backend", "frontend-dev": "frontend", "designer": "designer",
+               "dba": "dba", "devops": "devops"}
+LAYER_OF_AGENT = {"backend-dev": "backend", "frontend-dev": "frontend", "designer": "frontend", "dba": "database", "devops": "infra"}
+# Delivery files (CI, builds, containers, IaC, manifests): the DevOps role's when team.md has a devops row.
+# Directories count only at the repo root, so a backend's own `infrastructure/` package stays the backend's.
+DELIVERY_DIRS = (".github/workflows", ".circleci", ".buildkite", ".gitlab", "terraform", "infra", "infrastructure", "deploy",
+                 "deployment", "k8s", "kubernetes", "helm", "charts", "kustomize", ".cloudbuild")
+DELIVERY_FILES = ("Dockerfile", "Dockerfile.*", "*.dockerfile", ".dockerignore", "docker-compose*.y*ml", "compose*.y*ml",
+                  "cloudbuild*.y*ml", "cloudbuild*.json", "skaffold*.y*ml", "clouddeploy*.y*ml",
+                  ".gitlab-ci.yml", "Jenkinsfile", "azure-pipelines*.yml", "bitbucket-pipelines.yml", "Procfile", "fly.toml",
+                  "*.tf", "*.tfvars", "*.tf.json", ".terraform.lock.hcl", "*.hcl", "kustomization.y*ml", "Chart.yaml",
+                  "Pulumi*.yaml", "serverless.y*ml", "netlify.toml", "vercel.json", "render.yaml")
 MIGRATION_DIRS = ("/migrations/", "/migrate/", "/alembic/versions/", "/db/migrations/", "/db/migration/", "/db/changelog/", "/changelog/")
 LOCAL_HOSTS = {"localhost", "127.0.0.1", "::1", "db", "postgres", "mysql", "mongo", "host.docker.internal"}
 PITCH_DOCS = ("board.md", "log.md")
@@ -64,7 +74,7 @@ def clean_path(repo, cell):
 def team_paths(repo):
     """Paths per layer from team.md › Roles (Role id | Agent | Stack pack | Path), resolved against the repo root.
     Also reads the older single-row keys `Backend path` / `Frontend path`."""
-    paths = {"backend": [], "frontend": [], "database": []}
+    paths = {"backend": [], "frontend": [], "database": [], "infra": [], "agents": []}
     try:
         lines = open(os.path.join(repo, docs_folder(repo), "team.md"), encoding="utf-8").read().splitlines()
     except OSError:
@@ -72,6 +82,7 @@ def team_paths(repo):
     for line in lines:
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if len(cells) >= 4 and cells[1].strip("`") in LAYER_OF_AGENT:
+            paths["agents"].append(cells[1].strip("`"))
             path = clean_path(repo, cells[3])
             if path:
                 paths[LAYER_OF_AGENT[cells[1].strip("`")]].append(path)
@@ -81,6 +92,47 @@ def team_paths(repo):
             if path:
                 paths[m.group(1).lower()].append(path)
     return paths
+
+
+def team_setting(repo, key):
+    """A text value from team.md › Settings (`| Key | Value |`); None when absent, a placeholder or `none`."""
+    try:
+        text = open(os.path.join(repo, docs_folder(repo), "team.md"), encoding="utf-8").read()
+    except OSError:
+        return None
+    m = re.search(rf"^\|\s*{re.escape(key)}\s*\|\s*([^|]*?)\s*\|", text, re.M | re.I)
+    value = m.group(1).strip("` ") if m else ""
+    return None if not value or value.startswith("<") or value.lower() in ("none", "-", "—") else value
+
+
+def staging_promote(cmd, repo):
+    """DevOps may promote to staging, and only there: a single gcloud command aimed at team.md's Staging target
+    (Cloud Deploy) or Staging project (Cloud Run), never one equal to the Production project."""
+    target, project = team_setting(repo, "Staging target"), team_setting(repo, "Staging project")
+    if project and project == team_setting(repo, "Production project"):
+        project = None
+    cmd = cmd.strip()
+    if re.search(r"[;&|`]|\$\(", cmd) or not cmd.startswith("gcloud "):
+        return False
+    flag = lambda name, value: bool(value) and re.search(rf"\s--{name}[= ]{re.escape(value)}(\s|$)", cmd)
+    if target and re.match(r"gcloud\s+(beta\s+)?deploy\s+releases\s+(create|promote)\b", cmd) and flag("to-target", target):
+        return True
+    if target and re.match(rf"gcloud\s+(beta\s+)?deploy\s+targets\s+rollback\s+{re.escape(target)}(\s|$)", cmd):
+        return True
+    if target and re.match(r"gcloud\s+(beta\s+)?deploy\s+rollouts\s+advance\s+\S*-to-" + re.escape(target) + r"-\d+(\s|$)", cmd):
+        return True
+    if project and re.match(r"gcloud\s+(beta\s+)?run\s+(deploy|services\s+update-traffic)\b", cmd) and flag("project", project):
+        return True
+    return False
+
+
+def staging_read(cmd, repo):
+    """A DevOps read of the staging project, to check a promote: no approval needed."""
+    project = team_setting(repo, "Staging project")
+    if not project or project == team_setting(repo, "Production project"):
+        return False
+    return cmd.strip().startswith("gcloud ") and not re.search(r"[;&|`]|\$\(", cmd) \
+        and not re.search(GCLOUD_WRITE, cmd) and re.search(rf"\s--project[= ]{re.escape(project)}(\s|$)", cmd)
 
 
 def role_of(event):
@@ -97,6 +149,14 @@ def is_test_file(rel):
     patterns = ("test_*.py", "*_test.py", "conftest.py", "*.test.*", "*.spec.*", "cypress.config.*", "playwright.config.*",
                 "*Test.java", "*Tests.java", "*IT.java", "*Test.kt", "*_test.go", "*_spec.rb", "*Test.php", "*Tests.cs")
     return any(fnmatch(name, p) for p in patterns)
+
+
+def is_delivery_file(rel):
+    parts = rel.split("/")
+    joined = "/".join(parts[:-1])
+    if any(joined == d or joined.startswith(d + "/") for d in DELIVERY_DIRS):
+        return True
+    return any(fnmatch(parts[-1], p) for p in DELIVERY_FILES)
 
 
 def pitch_doc(rel, names, docs="shape"):
@@ -136,6 +196,7 @@ def check_file(event, role):
         "qa": PITCH_DOCS,
         "designer": PITCH_DOCS,
         "dba": PITCH_DOCS + ("tech.md", "runbook.md"),
+        "devops": PITCH_DOCS + ("tech.md", "runbook.md"),
     }
     docs = docs_folder(repo)
     if rel.startswith(docs + "/"):
@@ -145,6 +206,12 @@ def check_file(event, role):
         ok = False
     elif role == "shaper":
         ok = False
+    elif role == "devops":
+        ok = inside_any(path, paths["infra"]) is not None or (not rel.startswith("..") and is_delivery_file(rel))
+    elif "devops" in paths["agents"] and is_delivery_file(rel) and not is_test_file(rel):
+        ok = False
+        deny(f"{rel} is a delivery file (CI, build, container or infrastructure): it belongs to the DevOps role. "
+             "Write a HANDOFF to DevOps with what the scope needs.")
     elif role in ("backend", "frontend"):
         ok = inside_any(path, paths[role]) is not None
     elif role == "designer":
@@ -158,7 +225,7 @@ def check_file(event, role):
     else:
         ok = True
     if not ok:
-        who = {"shaper": "the Shaper", "qa": "QA", "dba": "the DBA", "designer": "the designer"}.get(role, f"a {role} role")
+        who = {"shaper": "the Shaper", "qa": "QA", "dba": "the DBA", "designer": "the designer", "devops": "DevOps"}.get(role, f"a {role} role")
         deny(f"{who} may not edit {rel}: it's outside the role's area in team.md › Roles. Write a row on the board for the owner instead.")
 
 
@@ -179,17 +246,25 @@ DEPLOY_DENY = [
     (r"\b(fly(ctl)?\s+deploy|vercel\s+(deploy\s+)?--prod|netlify\s+deploy\s+--prod|eb\s+deploy|kamal\s+deploy|cap\s+\S+\s+deploy|heroku\s+(releases:rollback|container:release))\b", "deploys are the user's"),
     (r"\bgit\s+push\s+heroku\b", "deploys are the user's"),
     (r"\b(flyway\s+(migrate|clean|repair|undo)|liquibase\s+(update|rollback|drop-all))\b", "migrations against a shared database are the user's (runbook step)"),
+    (r"\bterraform\s+(state\s+(rm|mv|push|replace-provider)|taint|untaint|force-unlock|refresh|workspace\s+(new|delete))\b", "infrastructure state changes are the user's"),
+    (r"\bkubectl\s+(exec|cp|port-forward|attach|debug|drain|cordon|uncordon|label|annotate|set|create|replace|run|expose|autoscale|taint)\b", "infrastructure changes are the user's"),
+    (r"\bdocker\s+push\b|\bgcloud\s+artifacts\s+docker\s+(tags\s+add|images\s+delete)\b", "publishing an artifact is the pipeline's or the user's"),
+    (r"\bgcloud\s+secrets\s+versions\s+access\b|\bkubectl\s+get\s+secrets?\b[^;&|]*-o\s*(yaml|json)", "secret values are the user's; refer to secrets by name"),
 ]
+GCLOUD_LOCAL = r"^\s*gcloud\s+(config|auth|components|version|help|info|topic|init|cheat-sheet|meta)\b"
+GCLOUD_WRITE = (r"\s(create|delete|update|patch|deploy|apply|import|export|set-iam-policy|add-iam-policy-binding|remove-iam-policy-binding"
+                r"|enable|disable|resize|start|stop|reset|rollback|promote|cancel|submit|undelete|restore|execute|attach|detach|move"
+                r"|replace|scale|rotate|destroy|approve|reject|abandon|retry|suspend|resume|set-[\w-]+|add-[\w-]+|remove-[\w-]+)(\s|$)")
 SQL_READ = r"\bgcloud\s+sql\s+(backups\s+(list|describe)|instances\s+(list|describe)|operations\s+(list|describe|wait)|databases\s+(list|describe)|users\s+list|flags\s+list|tiers\s+list)\b"
 
 
-NO_PROD_ROLES = ("shaper", "qa", "frontend", "designer")
+NO_PROD_ROLES = ("shaper", "qa", "frontend", "designer")  # backend, DBA, DevOps may read production, each time the user approves
 
 
 def prod_connection(role, what):
-    """Production is off by default: only the backend role and the DBA may connect, and only after the user approves."""
+    """Production is off by default: only the backend role, the DBA and DevOps may read it, and only after the user approves."""
     if role in NO_PROD_ROLES:
-        deny(f"{what}: this role has no production access. ASK the backend role or the DBA, who ask the user.")
+        deny(f"{what}: this role has no production access. ASK the backend role, the DBA or DevOps, who ask the user.")
     ask(f"{what}. Approve only if you chose to let the agent connect read-only for this one question "
         "(otherwise answer with the numbers or run the query yourself).")
 
@@ -204,7 +279,8 @@ OFFLINE_ASK = [
     (r"\b(pytest|jest|vitest|cypress|playwright|rspec|phpunit)\b|\b(npm|yarn|pnpm)\s+(run\s+)?(test|e2e|dev|start)\b"
      r"|\b(mvn|mvnw|gradle|gradlew)\b[^;&|]*\b(test|verify|bootRun|run|install|build)\b|\b(go|cargo|dotnet|mix|swift)\s+(test|run)\b"
      r"|\brails\s+(s|server|test|db:\w+)\b|\bbundle\s+exec\s+(rspec|rails|rake)\b", "a test run, a build or a server"),
-    (r"\bdocker(\s+compose|-compose)?\s+(up|run|start|exec|pull|build)\b", "a container"),
+    (r"\bdocker(\s+compose|-compose)?\s+(up|run|start|exec|pull|build)\b|\b(podman|buildah)\s+(build|run|pull)\b", "a container"),
+    (r"\bterraform\s+init\b|\bhelm\s+(dep|dependency|repo)\b|\b(tflint|checkov|trivy)\b[^;&|]*--(init|update|download)", "a download"),
     (r"\b(curl|wget)\s", "a network request"),
 ]
 
@@ -229,6 +305,9 @@ def check_bash(event, role):
     cmd = (event.get("tool_input") or {}).get("command") or ""
     repo = find_repo(event.get("cwd") or os.getcwd())
     if repo is None and role is None:
+        return
+
+    if role == "devops" and repo is not None and (staging_promote(cmd, repo) or staging_read(cmd, repo)):
         return
 
     for pattern, reason in GIT_DENY + DEPLOY_DENY:
@@ -256,6 +335,25 @@ def check_bash(event, role):
         if not re.search(r"\baws\s+rds\s+(describe|list)-", cmd):
             deny("the only production write allowed is an on-demand backup by the DBA (SKILL.md › Production access).")
         prod_connection(role, "aws rds reads production metadata")
+
+    for segment in re.findall(r"\bgcloud\b[^;&|]*", cmd):
+        if re.match(r"gcloud\s+sql\b", segment) or re.match(GCLOUD_LOCAL, segment):
+            continue
+        if re.search(GCLOUD_WRITE, segment):
+            deny("changing cloud resources is the user's (a runbook step). Reads ask the user first.")
+        prod_connection(role, "gcloud reads cloud resources (production by default)")
+
+    for segment in re.findall(r"\bkubectl\b[^;&|]*", cmd):
+        if not re.match(r"kubectl\s+(kustomize|explain|completion|version\s+--client|config\s+view)\b", segment):
+            prod_connection(role, "kubectl reads a cluster (production by default)")
+
+    for segment in re.findall(r"\bhelm\s+(list|ls|status|get|history)\b[^;&|]*", cmd):
+        prod_connection(role, "helm reads a cluster (production by default)")
+
+    if re.search(r"\bterraform\s+(plan|output|show|state\s+(list|show|pull)|console|test)\b", cmd) \
+            or re.search(r"\bterraform\s+init\b(?![^;&|]*-backend=false)", cmd):
+        prod_connection(role, "terraform reads real infrastructure state (a plan or init against the remote backend; "
+                              "`terraform test` can create real resources unless every run uses mock providers)")
 
     if re.search(r"\bcloud[-_]sql[-_]proxy\b", cmd):
         prod_connection(role, "Cloud SQL proxy opens a production connection")

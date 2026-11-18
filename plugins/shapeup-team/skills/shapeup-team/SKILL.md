@@ -1,6 +1,6 @@
 ---
 name: shapeup-team
-description: Runs a Shape Up product team of agents (Shaper, designer, backend and frontend developers, QA, DBA) for any stack, with the stack knowledge in installable stack packs (for example Django/DRF, React/MUI, Postgres), a fixed way of working, a board-based message protocol, an audit log per pitch and minimal, direct, table-first docs with Mermaid diagrams and wireframes. Use whenever the user wants to shape or refine a pitch, prepare the betting table, hand a bet over to the team, kick off or continue a cycle, map scopes, update hill charts, route questions between roles, hammer scope, hit the circuit breaker, ship a PR or run cool-down — and whenever they mention the Shaper, designer, QA or DBA agents, the backend or frontend devs (BE, FE, or a role id like backend-drf), a stack pack, "the team", a pitch, appetite, rabbit holes, no-gos, or the team docs folder (shape/ by default), even if they don't say "Shape Up".
+description: Runs a Shape Up product team of agents (Shaper, designer, backend and frontend developers, QA, DBA, DevOps) for any stack, with the stack knowledge in installable stack packs (for example Django/DRF, React/MUI, Postgres, GCP DevOps), a fixed way of working, a board-based message protocol, an audit log per pitch and minimal, direct, table-first docs with Mermaid diagrams and wireframes. Use whenever the user wants to shape or refine a pitch, prepare the betting table, hand a bet over to the team, kick off or continue a cycle, map scopes, update hill charts, route questions between roles, hammer scope, hit the circuit breaker, ship a PR or run cool-down — and whenever they mention the Shaper, designer, QA, DBA or DevOps agents, the backend or frontend devs (BE, FE, or a role id like backend-drf), a stack pack, "the team", a pitch, appetite, rabbit holes, no-gos, or the team docs folder (shape/ by default), even if they don't say "Shape Up".
 ---
 
 # Shape Up team
@@ -21,6 +21,7 @@ product or technical calls for a role. The process is fixed. How each role solve
 | Frontend role (e.g. `frontend-react`) | agent `frontend-dev` | Screens, components, Small and Medium tests written first; UI flows in tech.md when needed | `references/roles/frontend.md` + its stack pack | its path, tech.md, board rows |
 | QA | agent | Writes "Done when" checks, gates each scope and the ship, owns Large (end-to-end) tests | `references/roles/qa.md` | tests, board rows |
 | DBA | agent `dba` | Reviews every migration, indexes, query plans; tech.md Entities; runbooks; backups | `references/roles/dba.md` + its stack pack | migrations (rewrite only), tech.md, runbook.md, board rows |
+| DevOps (role id e.g. `devops-gcp`, optional) | agent `devops` | Pipeline, artifacts, infrastructure as code, config and secret names, observability, promotes to staging, the release plan. Never deploys to production or applies infrastructure. | `references/roles/devops.md` + its stack pack | its path, delivery files (CI, Dockerfiles, IaC, manifests), tech.md, runbook.md, board rows |
 
 ## Roles and stack packs
 
@@ -30,7 +31,7 @@ the agent that plays it, the stack pack that tells it how, and its path. A proje
 | Layer | Knowledge | Wins when they disagree |
 |---|---|---|
 | Process: what and when | this skill and `references/roles/*.md` | always, on process (tests first, handoffs, gates, guardrails) |
-| Stack: how, in this stack | a stack pack, installed as its own plugin (`stack-django-drf`, `stack-nextjs-chakra`, `stack-react-mui`, `stack-postgres-cloudsql`, …) | over the generic role file, on how |
+| Stack: how, in this stack | a stack pack, installed as its own plugin (`stack-django-drf`, `stack-nextjs-chakra`, `stack-react-mui`, `stack-postgres-cloudsql`, `stack-gcp-devops`, …) | over the generic role file, on how |
 | House rules: how, in this repo | `<docs>/stack/<role id>.md` | over the pack |
 
 No pack for a stack yet: run `/stack new <name>` before kickoff. Missing packs fail the Bootstrap gate.
@@ -39,8 +40,9 @@ No pack for a stack yet: run `/stack new <name>` before kickoff. Missing packs f
 
 Installed as the shapeup-team plugin, the team adds commands `/shape`, `/kickoff`, `/round`, `/gate` and `/stack`, one agent per role
 (spawn by role name; the user can also call a role directly), and a hook that blocks what the Git rules and Production access
-tables forbid: file edits outside a role's area, force-push, merge, push to the base branch, deploys, managed-database writes (`gcloud sql`, `aws rds`),
-non-read-only DB URLs and `.env` writes. Any production connection or backup asks the user before it runs.
+tables forbid: file edits outside a role's area, force-push, merge, push to the base branch, deploys, infrastructure changes (`terraform apply`,
+`kubectl apply`, `helm upgrade`, any `gcloud` write), managed-database writes (`gcloud sql`, `aws rds`), secret reads,
+non-read-only DB URLs and `.env` writes. Any production read (a connection, `gcloud`/`kubectl` reads, `terraform plan`) or backup asks the user before it runs.
 
 ## Fixed vs free
 
@@ -122,7 +124,8 @@ The board's Log is the conversation. log.md is the record. A decision lives on t
 
 Read `references/roles/shaper.md` and act as the Shaper yourself. Shaping is a conversation, so don't spawn it out.
 `scaffold.py pitch` creates `pitch.md` and `log.md`. Challenge, then write. Log each shaping decision.
-When a rabbit hole is technical, spawn the backend, frontend or DBA role for a **tech check**: read-only, returns risks with a proposed patch.
+When a rabbit hole is technical, spawn the backend, frontend, DBA or DevOps role for a **tech check**: read-only, returns risks with a proposed patch.
+DevOps checks what the pitch adds to run it: a service, job, schedule, secret, integration or traffic pattern.
 When the screens are the risk, spawn the designer for a **design check**: read-only, returns a breadboard and sketch sources that follow the app's shell.
 Risks that survive become Rabbit holes rows; log the check and its findings in log.md. The pitch has no tech-check section. Several checks can run in parallel. Mark the pitch `ready` only after the Ready gate passes.
 
@@ -137,11 +140,12 @@ Pitches that weren't chosen stay `ready`. They are not queued, and can go to a l
    (Kickoff gate row 9: the PR tool's auth check, migrations on the local or test database, Small and Medium tests green); a failure is a `HUMAN` row.
    Then commit (`S0 Conductor: kickoff`), push, and open a
    **draft** PR with `team.md` › PR tool (`gh pr create --draft`, `glab mr create --draft`; `none`: the user opens it), body from `assets/templates/pr.md`. Put the PR URL in the board header and log the `action`.
-2. **Orient** (parallel, read-only): spawn every developer role, the designer (if `team.md` has one) and the DBA with "read the pitch and the code it touches; write ≤3 `NOTE` rows".
+2. **Orient** (parallel, read-only): spawn every developer role, the designer and DevOps (if `team.md` has them) and the DBA with "read the pitch and the code it touches; write ≤3 `NOTE` rows".
 3. **Map scopes** (sequential, each one amends the Scopes table): backend roles draft → designer and frontend roles amend → DBA marks the scopes that touch the schema →
+   DevOps marks the scopes that need pipeline, infrastructure, config or monitoring changes (`Infra?`) →
    QA writes "Done when" → Shaper checks the scopes against the pitch and marks must vs `~`.
-4. **Tech doc** (only if a scope touches the schema or adds an endpoint): `scaffold.py add <repo> <slug> tech`. DBA draws
-   Entities, the backend role draws Classes, Flows and the API contract. Each diagram answers one question (`references/diagrams.md`).
+4. **Tech doc** (only if a scope touches the schema, adds an endpoint or is marked `Infra? yes`): `scaffold.py add <repo> <slug> tech`. DBA draws
+   Entities, the backend role draws Classes, Flows and the API contract, DevOps draws Delivery. Each diagram answers one question (`references/diagrams.md`).
 5. Run the Kickoff gate, log it, and set the status to `building`.
 
 Scopes are **vertical slices** named in domain language, in ≤5 words ("Win a deal", not "API" or "UI"). Details go in "Done when".
@@ -157,7 +161,7 @@ boundary. A row on the board is acted on as soon as it's written.
 | 1 | Set the round's goal | With the Shaper: the scopes to bring to a reviewable state this round (at least one; in round 1, the most core and most unknown scope, end to end). Write it as a `NOTE` to `ALL`: "Round <n> goal: S1, S3". |
 | 2 | Work loop | Pick the next turn with the Routing table and Turn priority below; spawn the role; check its turn report against the board (rows added, hill updated, commit made, a dev turn with code has its red commit first, log.md updated for every DECIDE) and run `scaffold.py lint <repo> <slug>`. A gap or lint failure: send the role back once; still missing: a `FLAG` row, move on. Act on new rows at once: a QA `must` goes straight back to the owner, a `HANDOFF` to the next role. Add 1 to the board's turn counters. One turn at a time per working copy, because roles share the files and the board. |
 | 3 | End the work loop | When every goal scope has a QA `DONE` row (go to 4); or a `HUMAN` row blocks everything left (ask the user now, then continue); or the turn cap is reached (`team.md` › Turn cap per round, default 30: stop and send a status report instead of a demo). |
-| 4 | Review with the user | Per goal scope: what it does (the "Done when" checks it passes), how to try it (commands, URL, test data), screenshots when a browser tool is available, what was cut. Add the open non-blocking `HUMAN` rows. The user accepts each scope or gives findings. |
+| 4 | Review with the user | With a DevOps row and a staging target, DevOps first promotes the round's build to staging, so the user tries it there. Per goal scope: what it does (the "Done when" checks it passes), how to try it (commands, URL, test data), screenshots when a browser tool is available, what was cut. Add the open non-blocking `HUMAN` rows. The user accepts each scope or gives findings. |
 | 5 | After the review | Accepted: the scope stays `DONE`. Findings: one row each to the owner (`must` when they break a promise of the scope, otherwise `~`), and the scope's hill drops below 100. Log the review (`gate`: "Review <n>: S1 accepted, S3 2 findings"). Add 1 to Reviews, reset the round's turn counter, push the branch, apply the circuit breaker, start the next round. |
 
 Questions for the user: a `HUMAN` row that blocks all remaining work goes to the user at once; the rest wait for the review.
@@ -175,6 +179,9 @@ The user runs exactly what he receives.
 | `HANDOFF` designer → frontend (screens laid out) | that frontend role |
 | `HANDOFF` frontend → designer (data wired, ready for the visual pass) | designer |
 | `HANDOFF` backend → DBA (migration ready) | DBA |
+| `HANDOFF` dev → DevOps (the scope needs a setting, secret, resource or pipeline change) | DevOps |
+| `HANDOFF` DevOps → dev (names to read, how to run it locally) | that developer role |
+| The cycle branch's pipeline is red | DevOps when the pipeline config or environment broke; otherwise the author of the failing commit |
 | `HANDOFF` dev→QA (scope ready) | QA |
 | QA finding, severity `must` | the scope's owner |
 | `FLAG` (stall, scope creep, budget) | Shaper |
@@ -203,7 +210,9 @@ turns and wall-clock hours; recalibrate from those numbers, never from human est
 Starts when the user has accepted every must scope.
 
 1. QA runs the Ship gate: the full suite, Large tests included.
-2. DBA writes `runbook.md` (`scaffold.py add <repo> <slug> runbook`) if the release needs manual ops: a large backfill, a flag change, an ordered deploy.
+2. DBA writes `runbook.md` (`scaffold.py add <repo> <slug> runbook`) if the release needs manual database ops: a large backfill, an ordered deploy.
+   DevOps writes its Release section when the release changes infrastructure, configuration, secrets or the deploy order, or adds something to watch:
+   strategy, success metrics, rollback. With no DevOps row, the DBA covers a flag change or deploy order as before.
 3. **Final review with the user**: each "Works when" line of the pitch with its evidence (test, demo step, screenshot), the cut list, the runbook.
    It doesn't use the review budget. Findings: `must` ones go back to their owners; `~` ones go to `<docs>/ideas.md`.
 4. After the user's sign-off, update the PR body from the board, mark it ready (`gh pr ready`, `glab mr update --ready`, or ask the user),
@@ -235,6 +244,8 @@ Match the model to the judgment a turn needs, not to the role's seniority. Pass 
 | Designer turn, design check | **Sonnet**; **Opus** for the first screen of a new visual pattern | Visual judgment matters most where nothing exists to copy |
 | Backend / frontend role / QA, mechanical turn | **Haiku** | Downhill (Hill ≥ 50) with a precise spec: a QA `must` with repro steps, applying a DBA rewrite, writing tests for given "Done when" checks, lint fixes |
 | DBA migration review, runbooks | **Opus** | Few turns, irreversible prod impact: locks, data loss, failed deploys |
+| DevOps turn: pipeline, image, config, observability | **Sonnet** | Bounded changes, checked by the pipeline |
+| DevOps: IaC for shared or production resources, IAM, the release plan | **Opus** | Merged IaC changes production; a bad plan or rollback costs an outage |
 | QA scope and ship gates | **Sonnet** | Review needs judgment; `/ponytail-review` runs inside it |
 | Conductor during the build | the session's model: **Sonnet** is enough | Routing and gates follow fixed rules |
 
@@ -248,7 +259,7 @@ Escalation, always one step up and logged as a `NOTE` row:
 
 ## Spawning a role
 
-Spawn each role with the Agent tool, `subagent_type` = its agent: `shaper`, `backend-dev`, `designer`, `frontend-dev`, `qa-engineer`, `dba`. Name the role id in the brief.
+Spawn each role with the Agent tool, `subagent_type` = its agent: `shaper`, `backend-dev`, `designer`, `frontend-dev`, `qa-engineer`, `dba`, `devops`. Name the role id in the brief.
 These agents come with the shapeup-team plugin: each loads its role file, pins its default model and has its file and command
 guards enforced by the plugin's hooks. Override `model` only when the Models table says so for this turn (e.g. `haiku` for a mechanical turn).
 Without the plugin, use `general-purpose`, set `model` from the Models table, and add the three "Read first" lines below.
@@ -272,7 +283,8 @@ Without the plugin, prepend: `You are the <ROLE> of a Shape Up team. Read first:
 |---|---|
 | Work on the cycle branch only (`team.md` › Branch pattern). In cool-down, a fix the user asks for gets its own `fix/<name>` branch and PR. | Commit or push to the base branch |
 | Commit the failing tests first (`S<n> <ROLE>: red — <behaviour>`), then the code at the end of the turn (`S<n> <ROLE>: <what>`) | Force-push, rebase pushed commits, merge |
-| Push the cycle branch; open a draft PR; mark it ready at ship | Change CI, branch protection, secrets or `.env` |
+| Push the cycle branch; open a draft PR; mark it ready at ship | Change branch protection, secret values or `.env` |
+| DevOps: change CI, build, container and infrastructure files on the cycle branch (they reach production only when the user merges and applies); promote builds to the staging target in `team.md` | Any other role: change delivery files when the team has a DevOps role (a `HANDOFF` to DevOps instead) |
 | Commit `<docs>/pitches/<slug>/*` on the cycle branch | Deploy |
 | Run migrations against the local or test DB | Touch production beyond the "Production access" table below |
 
@@ -282,13 +294,15 @@ shaping files (pitch, log, betting pack, `team.md`, `ideas.md`) stay uncommitted
 ## Production access
 
 Production (and staging) is off-limits. No agent connects to it on its own: not at bootstrap, not in a gate, not to check a hunch.
+The one exception: DevOps promotes releases to `team.md` › Staging target or Staging project and reads that project to check them; nothing else in staging.
 Each row below is the whole permission. Nothing is implied beyond it.
 
 | Who | May do | Only like this |
 |---|---|---|
 | Backend role, DBA | Learn a production fact: table volumes, a query plan, statement statistics | 1. Read `team.md` › Table volumes first. 2. Not there: a `HUMAN` row with the fact needed, why, what waits on it, and three options: **(a)** the user states it, **(b)** the user runs a read-only query you attach and pastes the output, **(c)** the user lets you connect read-only for this one question. Recommend (a) or (b). 3. Connect only after the user explicitly picks (c): through `READONLY_DATABASE_URL` from the session environment, after the credential sweep and the database pack's read-only check; one question, then stop. The hook asks the user again before the connection runs. 4. Write the answer to `team.md` › Table volumes (with the date and "user" or "read-only query" as source), so nobody asks twice. |
+| DevOps | Learn a production fact: resource config, quotas, logs, metrics, a dry-run plan of its IaC against real state | The same steps 2–3 as the row above: a `HUMAN` row with options (a), (b), (c); run the read only after the user picks (c), one question, then stop. The hook asks again. Never a write: deploy, apply, promote, roll back, scale, rotate, IAM. |
 | DBA | On-demand backups, nothing else | 1. Before: a `HUMAN` row with the exact command, instance, reason, and expected duration (the database pack's backup command). Wait for the user's explicit go. 2. Run exactly that command, once. 3. After: confirm the backup id and status (the pack's confirm command) in an `ANSWER` row and a log.md `action`. |
-| Shaper, QA, frontend roles, Conductor | Nothing in production | Need a production fact: `ASK` the backend role or the DBA |
+| Shaper, QA, frontend roles, Conductor | Nothing in production | Need a production fact: `ASK` the backend role, the DBA or DevOps |
 | Everyone | Anything else: DDL, DML, migrations, backfills, restores, flags, config, deploys, user or grant changes | Never. Write it as a runbook step for the user. |
 
 Credentials are never written to the repo, the board, log.md or a commit. A query you hand the user for option (b) is read-only and
@@ -320,3 +334,4 @@ doesn't use it, even for reads, and writes a `BLOCK` to the user naming the vari
 | `references/roles/<role>.md` | When acting as or spawning that role |
 | The role's stack pack | Before any developer or DBA turn: how, in that stack |
 | `references/kb/testing.md` | Review and testing sources that apply to every stack |
+| `references/kb/devops.md` | DevOps principles and sources, for the DevOps role |
