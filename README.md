@@ -97,15 +97,17 @@ Shaping is a conversation between you and the Shaper (the main session, best on 
 
 | You say | The Shaper does | Expected result |
 |---|---|---|
-| `/shape send payment reminders for overdue invoices` | Proposes a title and slug for you to confirm, then asks who has the problem, what they do today, and what that costs, until the problem holds up without the solution | `shape/pitches/<slug>/pitch.md` (status `draft`) and `log.md` |
+| `/shape send payment reminders for overdue invoices` | Proposes a title and slug for you to confirm, asks who asked for it and what the product is called, then who has the problem, what they do today, and what that costs, until the problem holds up without the solution | `shape/pitches/<slug>/pitch.md` (status `draft`) and `log.md` with the evidence and the agreed names |
 | — | Proposes the appetite: Small batch (2 reviews with you) or Big batch (6) | The header table and a one-line Appetite |
-| — | Sketches the solution: a breadboard of places, affordances and where each leads (Mermaid), and a rough sketch of each new or changed screen inside your app's own frame | Solution with the breadboard; Wireframes with one SVG per screen |
-| — | Hunts rabbit holes. For technical ones it asks the backend, frontend or DBA agent for a read-only tech check of the code. | Rabbit holes, each with its patch; No-gos |
+| — | Tells the journey as numbered steps, one process per actor goal, and checks them with you | The processes you confirmed, in `log.md` |
+| — | Draws the solution: one swimlane for the whole journey, one breadboard per process (`Step 1 · Place` … `Done`), and up to 4 rough sketches of new or changed screens, read from your real screens and drawn in your app's frame. It looks at every sketch before showing you. | Solution › Flow and Breadboard; Wireframes with one SVG per screen |
+| — | Hunts rabbit holes, always including any step people do by hand. For technical ones it asks the backend, frontend or DBA agent for a read-only tech check of the code. | Rabbit holes, each with its patch; No-gos |
 | — | Writes what "done" looks like from the user's side | Works when |
 | `/shape <slug>` | Picks up where you left off, from `log.md` | — |
 
 A sketch is a few lines of text in `wireframes/<screen>.txt`; `scaffold.py wireframe` draws it in your app's shell, grey, with
-the pitch's parts in ink, numbered notes and extra states beside it. Rough on purpose: nobody reviews pixels.
+the pitch's parts in ink, numbered notes and extra states below it. Rough on purpose: nobody reviews pixels.
+The flow and breadboards are Mermaid. GitHub draws the breadboards; the swimlane flow needs Mermaid ≥11.16 (beta), so older viewers show nothing, and the VS Code preview needs a Mermaid extension.
 
 ![Sketch of a Won this week page inside an app with a side nav](docs/sketches/won-this-week.svg)
 
@@ -315,7 +317,7 @@ Everything else in production becomes a runbook step for you. Only you merge.
 |---|---|---|
 | Writing | Direct, affirmative, imperative; tables over prose; every block stands alone; decisions in docs, reasons in `log.md` | `references/writing-style.md` |
 | Testing | Small (≤0.5 s, memory only) and Medium written before the code in a `red` commit; QA owns Large; DAMP; behaviour, not implementation; a test changes only when a source proves it wrong | `references/testing.md` |
-| Diagrams | Mermaid: entity, class, sequence, state, activity, and the pitch's breadboard; screen sketches drawn from text in the app's shell | `references/diagrams.md` |
+| Diagrams | Mermaid: entity, class, sequence, state, activity; in pitches, one swimlane flow, a breadboard per process, ≤4 sketches drawn from text in the app's shell | `references/diagrams.md` |
 | Messages | Board Log rows: NOTE, ASK, ANSWER, HANDOFF, BLOCK, FLAG, DECIDE, HUMAN, DONE; fixed turn report | `references/protocol.md` |
 
 Paths are under `plugins/shapeup-team/skills/shapeup-team/`.
@@ -332,7 +334,7 @@ shape/                     or the folder you chose
   decisions.md             conventions that outlive one pitch
   betting/<date>.md        betting pack for the betting table
   pitches/<slug>/
-    pitch.md               one page, a breadboard and the embedded sketches
+    pitch.md               one page: flow, breadboards and the embedded sketches
     wireframes/            <screen>.txt sketch sources and the <screen>.svg drawn from each
     log.md                 audit trail: every decision and action
     board.md               scopes, hill, message log, QA findings
@@ -349,6 +351,7 @@ shape/                     or the folder you chose
 | `plugins/stack-<name>/` | One stack pack each: `skills/stack-<name>/SKILL.md` and `references/sources.md` |
 | `docs/` | Logo and the script that draws it (`python3 docs/make_logo.py` redraws the logo and the icon); `sketches/`, the sample sketches |
 | `tests/` | Guard, sketch renderer and lint behaviour tests |
+| `CHANGELOG.md` | One line per version of `shapeup-team` |
 
 ## Develop
 

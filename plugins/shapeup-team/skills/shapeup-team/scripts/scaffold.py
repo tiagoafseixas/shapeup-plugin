@@ -10,8 +10,9 @@ The docs folder is chosen at bootstrap and recorded in <repo>/.shapeup.json ({"d
   scaffold.py log      <repo> <slug> --by Shaper --kind decision|cut|phase|gate|action --entry "..." --why "..."
   scaffold.py status   <repo>
   scaffold.py lint     <repo> <slug>      writing limits: pitch words, scope names, Log sentences, captions, filler; stale sketches
-  scaffold.py wireframe <repo> [<slug> [<name>]]   draw <docs>/pitches/<slug>/wireframes/*.txt as SVG sketches in the
-                                         app shell; with no slug, draw the shell alone (<docs>/shell.svg). Regenerates.
+  scaffold.py wireframe <repo> [<slug> [<name>]] [--png]   draw <docs>/pitches/<slug>/wireframes/*.txt as SVG sketches
+                                         in the app shell; with no slug, draw the shell alone (<docs>/shell.svg).
+                                         Regenerates. Prints layout problems; --png also writes PNGs to look at.
   scaffold.py pack     <out-dir> <name> --layer backend|frontend|database --tech "Django + DRF"   new stack pack plugin
   scaffold.py house    <repo> <role-id> --pack stack-<name>   house rules for one role: <docs>/stack/<role-id>.md
   scaffold.py lint-pack <pack-dir>       required sections, Small/Medium/Large rows, sources, no placeholders
@@ -175,31 +176,75 @@ def shell_text(repo: Path) -> str | None:
     return shell.read_text() if shell.exists() else None
 
 
-def cmd_wireframe(repo: Path, slug: str | None, name: str | None) -> None:
+PNG_CONVERTERS = (
+    ("rsvg-convert", lambda svg, png: ["rsvg-convert", str(svg), "-o", str(png)]),
+    ("magick", lambda svg, png: ["magick", str(svg), str(png)]),
+    ("convert", lambda svg, png: ["convert", str(svg), str(png)]),
+    ("inkscape", lambda svg, png: ["inkscape", str(svg), "--export-type=png", f"--export-filename={png}"]),
+)
+
+
+def to_png(svg: Path, slug: str) -> Path | None:
+    """Render an SVG to a PNG in the temp folder with the first local converter found; None when there is none."""
+    import shutil
+    import subprocess
+    import tempfile
+    for tool, argv in PNG_CONVERTERS:
+        if shutil.which(tool):
+            out = Path(tempfile.gettempdir()) / "shapeup-sketches" / slug / f"{svg.stem}.png"
+            out.parent.mkdir(parents=True, exist_ok=True)
+            if subprocess.run(argv(svg, out), capture_output=True).returncode == 0:
+                return out
+    return None
+
+
+def cmd_wireframe(repo: Path, slug: str | None, name: str | None, png: bool = False) -> None:
     shell = shell_text(repo)
     if shell is None or not wireframe.parse_shell(shell):
         print(f"note: {docs(repo) / 'shell.txt'} is missing or not filled in; sketches are drawn without the app shell")
+    drawn = []
     if not slug:
         out = docs(repo) / "shell.svg"
         out.write_text(wireframe.render("title: App shell\n", shell, "shell"))
         print(f"drawn: {out}")
-        return
+        drawn.append(out)
+    else:
+        drawn = draw_sketches(repo, slug, name, shell)
+    if png:
+        for svg in drawn:
+            image = to_png(svg, slug or "shell")
+            if image is None:
+                print("look: no SVG converter here (rsvg-convert, ImageMagick, Inkscape): ask the user to open the SVGs and check them")
+                break
+            print(f"look: {image}")
+
+
+def draw_sketches(repo: Path, slug: str, name: str | None, shell: str | None) -> list[Path]:
     sketches = folder(repo, slug) / "wireframes"
     files = [sketches / f"{name}.txt"] if name else sorted(sketches.glob("*.txt"))
     if not files or not files[0].exists():
         sys.exit(f"no sketch: {sketches / ((name or '*') + '.txt')}")
+    drawn = []
     for src in files:
         out = src.with_suffix(".svg")
-        out.write_text(wireframe.render(src.read_text(), shell, src.stem))
+        warnings: list[str] = []
+        out.write_text(wireframe.render(src.read_text(), shell, src.stem, warnings))
         title = wireframe.parse_sketch(src.read_text())[0].get("title", src.stem)
         print(f"drawn: {out}   embed in pitch.md: ![{title}](wireframes/{out.name})")
+        for w in warnings:
+            print(f"  check: {w}")
+        drawn.append(out)
+    return drawn
 
 
 def wireframe_issues(repo: Path, d: Path, pitch: str) -> list[tuple[str, str]]:
     issues = []
     shell = shell_text(repo)
     sketches = d / "wireframes"
-    for src in sorted(sketches.glob("*.txt")) if sketches.exists() else []:
+    sources = sorted(sketches.glob("*.txt")) if sketches.exists() else []
+    if len(sources) > MAX_SKETCHES:
+        issues.append(("wireframes/", f"{len(sources)} sketches (max {MAX_SKETCHES}): keep the screens that carry risk, combine related dialogs"))
+    for src in sources:
         svg = src.with_suffix(".svg")
         rel = f"wireframes/{svg.name}"
         if not svg.exists() or wireframe.svg_digest(svg.read_text()) != wireframe.digest(src.read_text(), shell):
@@ -213,6 +258,34 @@ def wireframe_issues(repo: Path, d: Path, pitch: str) -> list[tuple[str, str]]:
         if lang in ("", "text") and re.search(r"^\s*[+┌╭][-─=]{3,}", block, re.M):
             issues.append(("pitch.md", "ASCII wireframe: write it as wireframes/<name>.txt and run scaffold.py wireframe"))
             break
+    return issues
+
+
+MAX_SKETCHES = 4
+
+
+def solution_issues(pitch: str) -> list[tuple[str, str]]:
+    """Solution layout: one sentence, ### Flow (one swimlane), ### Breadboard (one per process, from Step 1)."""
+    solution = re.search(r"^## Solution\n(.*?)(?=^## |\Z)", pitch, re.S | re.M)
+    if not solution:
+        return []
+    body = solution.group(1)
+    sections = dict(re.findall(r"^### (Flow|Breadboard)\s*\n(.*?)(?=^### |\Z)", body, re.S | re.M))
+    issues = []
+    for name in ("Flow", "Breadboard"):
+        if name not in sections:
+            issues.append(("pitch.md", f"Solution has no '### {name}' (order: one sentence, ### Flow, ### Breadboard)"))
+    if "Flow" in sections and "Breadboard" in sections and body.index("### Flow") > body.index("### Breadboard"):
+        issues.append(("pitch.md", "Solution: ### Flow comes before ### Breadboard"))
+    flows = re.findall(r"^```mermaid\n(.*?)^```", sections.get("Flow", ""), re.S | re.M)
+    if len(flows) > 1:
+        issues.append(("pitch.md", f"Flow has {len(flows)} diagrams: one swimlane for the whole journey"))
+    for flow in flows[:1]:
+        if not flow.lstrip().startswith("swimlane-beta"):
+            issues.append(("pitch.md", "Flow is not a swimlane: start it with `swimlane-beta TB`"))
+    for n, board in enumerate(re.findall(r"^```mermaid\n(.*?)^```", sections.get("Breadboard", ""), re.S | re.M), 1):
+        if "Step 1" not in board:
+            issues.append(("pitch.md", f"breadboard {n} has no 'Step 1 · <Place>': number the places in the order the actor acts"))
     return issues
 
 
@@ -283,6 +356,7 @@ def cmd_lint(repo: Path, slug: str) -> None:
         hedge = re.search(r"\b(should|might|could|ideally|potentially|hopefully)\b", line, re.I)
         if hedge:
             issues.append(("pitch.md", f"hedge '{hedge.group(1)}': use an imperative, must or can: {line.strip()[:60]}"))
+    issues += solution_issues(pitch)
     issues += wireframe_issues(repo, d, pitch)
     if re.search(r"^## Tech check", pitch, re.M):
         issues.append(("pitch.md", "'Tech check' section: move its risks to Rabbit holes and the check to log.md"))
@@ -410,6 +484,7 @@ def main() -> None:
     s = sub.add_parser("status"); s.add_argument("repo")
     s = sub.add_parser("lint"); s.add_argument("repo"); s.add_argument("slug")
     s = sub.add_parser("wireframe"); s.add_argument("repo"); s.add_argument("slug", nargs="?"); s.add_argument("name", nargs="?")
+    s.add_argument("--png", action="store_true")
     s = sub.add_parser("pack"); s.add_argument("repo", metavar="out_dir"); s.add_argument("name")
     s.add_argument("--layer", required=True, choices=sorted(AGENT_FOR_LAYER)); s.add_argument("--tech", required=True)
     s = sub.add_parser("house"); s.add_argument("repo"); s.add_argument("role"); s.add_argument("--pack", required=True)
@@ -429,7 +504,7 @@ def main() -> None:
     elif a.cmd == "lint":
         cmd_lint(repo, a.slug)
     elif a.cmd == "wireframe":
-        cmd_wireframe(repo, a.slug, a.name)
+        cmd_wireframe(repo, a.slug, a.name, a.png)
     elif a.cmd == "pack":
         cmd_pack(repo, a.name, a.layer, a.tech)
     elif a.cmd == "house":

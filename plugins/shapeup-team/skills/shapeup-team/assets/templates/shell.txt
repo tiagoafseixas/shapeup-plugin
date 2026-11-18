@@ -13,3 +13,6 @@ mobile: <bottom-tabs | menu>              # how the nav collapses on a phone
 lists: <table | cards>
 forms: <page | dialog | drawer>
 page actions: <top-right | bottom | inline>
+
+# Per-area conventions: one line per area, read before sketching a screen there. Add a line whenever you read a new area.
+area <name>: <e.g. company pages: action bar with Go back left, primary actions right; tabs as a side card>

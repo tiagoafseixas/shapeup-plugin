@@ -1,21 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1074 736" width="1074" height="736">
-<!-- shapeup-wireframe v1 sha256:862b95292a12ff1a won-this-week -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1074 692" width="1074" height="692">
+<!-- shapeup-wireframe v2 sha256:6bc035d88c85efc5 won-this-week -->
 <title>Won this week</title>
 <rect width="100%" height="100%" fill="#fdfdfb"/>
-<path d="M19.5,20.0 Q401.9,18.8 780.6,21.0" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-<path d="M18.9,18.9 Q398.0,19.9 780.5,19.5" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-<path d="M779.4,20.1 Q781.3,252.1 780.1,486.9" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-<path d="M780.1,19.8 Q779.0,255.2 779.5,487.7" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-<path d="M779.7,487.2 Q401.7,486.1 20.6,487.7" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-<path d="M780.4,488.5 Q401.3,488.6 18.9,488.7" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-<path d="M19.1,487.6 Q20.0,254.4 19.8,19.7" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-<path d="M20.4,488.6 Q21.3,255.6 19.7,20.2" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
-<path d="M19.4,56.6 Q401.2,55.7 780.3,56.8" stroke="#a5a5a5" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+<path d="M21.0,19.0 Q399.1,20.0 779.4,20.2" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M21.2,19.2 Q398.3,20.9 779.2,20.5" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M780.0,20.3 Q780.2,252.5 780.9,487.0" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M780.9,19.8 Q779.5,253.9 780.8,486.9" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M780.1,488.2 Q398.7,487.0 19.0,487.4" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M779.1,486.9 Q401.3,489.4 20.0,488.4" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M20.6,487.6 Q18.2,254.0 20.4,20.6" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M19.7,488.6 Q18.7,254.4 20.3,19.1" stroke="#3a3a3a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+<path d="M19.4,56.1 Q398.5,54.9 780.5,56.6" stroke="#a5a5a5" stroke-width="1.2" fill="none" stroke-linecap="round"/>
 <circle cx="38.0" cy="38.0" r="4" fill="none" stroke="#a5a5a5" stroke-width="1.2"/>
 <circle cx="54.0" cy="38.0" r="4" fill="none" stroke="#a5a5a5" stroke-width="1.2"/>
 <circle cx="70.0" cy="38.0" r="4" fill="none" stroke="#a5a5a5" stroke-width="1.2"/>
 <text x="400.0" y="43.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="13" fill="#a5a5a5" text-anchor="middle" font-weight="normal">Won this week</text>
-<path d="M190.2,55.6 Q191.4,270.4 189.6,487.5" stroke="#a5a5a5" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+<path d="M191.2,54.8 Q189.9,270.0 190.9,487.8" stroke="#a5a5a5" stroke-width="1.2" fill="none" stroke-linecap="round"/>
 <text x="38.0" y="88.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="16" fill="#a5a5a5" text-anchor="start" font-weight="bold">Acme CRM</text>
 <circle cx="46.0" cy="127.0" r="6" fill="none" stroke="#a5a5a5" stroke-width="1.2"/>
 <text x="60.0" y="132.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#a5a5a5" text-anchor="start" font-weight="normal">Dashboard</text>
@@ -26,56 +26,56 @@
 <text x="60.0" y="204.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="start" font-weight="bold">Reports</text>
 <circle cx="46.0" cy="235.0" r="6" fill="none" stroke="#a5a5a5" stroke-width="1.2"/>
 <text x="60.0" y="240.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#a5a5a5" text-anchor="start" font-weight="normal">Settings</text>
-<path d="M189.5,108.0 Q483.8,109.5 780.5,106.9" stroke="#a5a5a5" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+<path d="M191.0,107.9 Q483.9,108.3 779.6,107.5" stroke="#a5a5a5" stroke-width="1.2" fill="none" stroke-linecap="round"/>
 <circle cx="748.0" cy="82.0" r="13" fill="none" stroke="#a5a5a5" stroke-width="1.4"/>
-<path d="M517.7,68.3 Q619.7,68.5 717.9,66.9" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M717.6,67.5 Q717.0,83.8 718.5,96.8" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M718.9,96.7 Q619.4,94.6 519.1,96.7" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M517.4,95.2 Q516.5,83.1 516.8,66.8" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M518.2,68.4 Q618.7,66.6 717.2,67.8" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M717.3,68.7 Q718.6,81.5 717.2,95.9" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M719.1,96.2 Q618.4,94.8 518.4,96.8" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M518.1,97.1 Q517.3,83.3 518.6,67.9" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <text x="528.0" y="87.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="13" fill="#a5a5a5" text-anchor="start" font-weight="normal">Search</text>
 <text x="214.0" y="157.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="22" fill="#3a3a3a" text-anchor="start" font-weight="bold">Won this week</text>
-<path d="M643.2,131.8 Q701.6,130.5 757.2,131.3" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M643.0,131.8 Q701.6,132.5 757.1,132.7" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M756.4,132.5 Q754.7,148.0 756.3,167.2" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M755.6,131.7 Q756.3,150.3 756.1,165.0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M755.7,167.1 Q701.4,165.4 643.0,165.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M756.7,165.3 Q700.1,166.0 643.8,165.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M644.2,165.2 Q643.0,149.6 644.4,132.2" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M643.8,166.9 Q642.8,149.6 642.6,132.3" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M643.0,131.7 Q698.8,132.2 757.1,131.7" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M643.9,133.1 Q698.9,133.6 757.2,131.4" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M755.6,131.2 Q757.4,149.0 756.0,165.0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M755.1,131.4 Q757.6,150.3 756.5,166.2" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M756.6,166.4 Q700.9,164.1 643.4,166.6" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M757.1,165.7 Q699.0,164.2 642.8,165.6" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M644.6,165.9 Q643.1,148.9 643.5,130.9" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M642.8,165.8 Q645.3,147.3 643.0,130.9" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <text x="699.8" y="154.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="middle" font-weight="normal">Export CSV</text>
 <circle cx="756.0" cy="132.0" r="10" fill="#c0392b"/>
 <text x="756.0" y="136.5" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="12" fill="#fff" text-anchor="middle" font-weight="bold">1</text>
-<path d="M213.1,180.2 Q260.1,178.4 303.8,179.5" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M214.2,180.3 Q260.0,178.0 304.3,180.7" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M302.4,179.5 Q302.2,193.2 302.4,209.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M304.1,178.9 Q304.8,195.1 303.8,210.7" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M303.2,209.5 Q258.6,209.4 213.7,210.7" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M304.3,209.7 Q256.8,209.7 213.5,210.1" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M213.6,210.5 Q215.4,196.9 213.4,180.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M214.3,211.2 Q213.2,193.3 213.3,180.3" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M215.1,179.7 Q259.6,180.8 302.7,180.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M214.3,179.0 Q259.3,180.7 302.1,180.0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M303.0,179.5 Q302.5,196.1 302.2,210.9" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M302.4,179.6 Q304.2,193.7 303.9,210.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M302.0,211.2 Q258.8,210.9 213.6,210.2" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M303.3,210.4 Q259.8,208.8 214.8,209.9" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M214.7,210.3 Q215.7,194.0 213.4,181.1" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M213.6,209.0 Q215.1,195.5 214.5,180.2" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <text x="224.0" y="200.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="start" font-weight="normal">Owner</text>
 <text x="287.2" y="200.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="middle" font-weight="normal">▾</text>
-<path d="M315.0,180.8 Q362.8,178.2 412.3,178.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M315.5,179.8 Q364.5,181.3 413.1,179.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M412.4,180.3 Q413.2,195.4 411.1,209.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M413.1,180.5 Q411.4,196.9 412.5,210.9" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M411.1,210.9 Q364.4,210.3 315.2,209.3" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M413.2,210.3 Q364.0,208.4 315.9,209.7" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M314.0,210.5 Q316.7,193.1 315.1,180.0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M314.6,210.3 Q315.3,196.3 315.5,181.0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M314.9,179.9 Q363.7,180.4 412.2,179.1" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M315.7,181.1 Q362.4,180.4 413.0,181.2" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M412.0,179.9 Q412.5,195.4 413.4,209.7" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M413.1,180.8 Q411.1,195.5 412.9,211.1" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M412.7,210.9 Q364.7,210.0 314.2,209.0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M412.8,209.4 Q363.6,208.5 315.3,209.7" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M316.2,210.3 Q315.8,196.9 314.3,179.2" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M315.8,209.8 Q313.7,196.2 315.7,179.5" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <text x="325.2" y="200.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="start" font-weight="normal">Region</text>
 <text x="396.2" y="200.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="middle" font-weight="normal">▾</text>
 <circle cx="412.2" cy="180.0" r="10" fill="#c0392b"/>
 <text x="412.2" y="184.5" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="12" fill="#fff" text-anchor="middle" font-weight="bold">2</text>
-<path d="M214.3,223.9 Q483.1,223.5 756.2,225.1" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M215.0,223.5 Q483.4,223.6 755.5,224.9" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M756.4,223.1 Q756.8,309.0 755.8,397.3" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M756.4,223.7 Q754.7,311.7 755.3,397.4" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M756.6,397.1 Q484.3,399.5 213.1,398.6" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M756.7,398.6 Q485.4,399.5 214.4,397.8" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M213.7,397.4 Q212.2,312.5 213.9,223.0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M213.9,396.8 Q214.9,310.6 213.6,223.6" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M213.7,259.3 Q483.6,259.6 756.3,260.4" stroke="#3a3a3a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+<path d="M214.7,224.4 Q484.1,224.4 755.4,224.4" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M214.0,224.8 Q486.7,224.7 755.1,223.3" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M756.5,224.9 Q757.9,310.1 756.7,397.2" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M757.1,222.8 Q754.5,310.9 756.6,398.1" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M757.0,397.6 Q485.4,399.5 213.2,398.6" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M755.5,398.8 Q484.2,398.4 214.8,397.0" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M214.8,397.5 Q212.5,310.2 213.8,225.2" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M214.3,398.3 Q213.4,309.7 212.9,223.5" stroke="#3a3a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M215.0,260.3 Q485.0,259.4 756.7,259.9" stroke="#3a3a3a" stroke-width="1.4" fill="none" stroke-linecap="round"/>
 <text x="226.0" y="248.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="start" font-weight="bold">Deal</text>
 <text x="361.5" y="248.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="start" font-weight="bold">Owner</text>
 <text x="497.0" y="248.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="start" font-weight="bold">Amount</text>
@@ -84,12 +84,12 @@
 <path d="M361.5,284.0 L369.5,286.5 L377.5,281.5 L385.5,286.5 L393.5,281.5 L401.5,286.5 L409.5,281.5 L417.5,286.5 L425.5,281.5 L433.5,286.5 L441.5,281.5 L449.5,286.5 L457.5,281.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <path d="M497.0,284.0 L505.0,286.5 L513.0,281.5 L521.0,286.5 L529.0,281.5 L537.0,286.5 L545.0,281.5 L553.0,286.5 L561.0,281.5 L569.0,286.5 L577.0,281.5 L585.0,286.5 L593.0,281.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <path d="M632.5,284.0 L640.5,286.5 L648.5,281.5 L656.5,286.5 L664.5,281.5 L672.5,286.5 L680.5,281.5 L688.5,286.5 L696.5,281.5 L704.5,286.5 L712.5,281.5 L720.5,286.5 L728.5,281.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M219.7,305.3 Q486.7,305.2 749.1,307.1" stroke="#a5a5a5" stroke-width="1" fill="none" stroke-linecap="round"/>
+<path d="M219.0,306.6 Q485.0,305.5 750.3,306.4" stroke="#a5a5a5" stroke-width="1" fill="none" stroke-linecap="round"/>
 <path d="M226.0,330.0 L234.0,332.5 L242.0,327.5 L250.0,332.5 L258.0,327.5 L266.0,332.5 L274.0,327.5 L282.0,332.5 L290.0,327.5 L298.0,332.5 L306.0,327.5 L314.0,332.5 L322.0,327.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <path d="M361.5,330.0 L369.5,332.5 L377.5,327.5 L385.5,332.5 L393.5,327.5 L401.5,332.5 L409.5,327.5 L417.5,332.5 L425.5,327.5 L433.5,332.5 L441.5,327.5 L449.5,332.5 L457.5,327.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <path d="M497.0,330.0 L505.0,332.5 L513.0,327.5 L521.0,332.5 L529.0,327.5 L537.0,332.5 L545.0,327.5 L553.0,332.5 L561.0,327.5 L569.0,332.5 L577.0,327.5 L585.0,332.5 L593.0,327.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <path d="M632.5,330.0 L640.5,332.5 L648.5,327.5 L656.5,332.5 L664.5,327.5 L672.5,332.5 L680.5,327.5 L688.5,332.5 L696.5,327.5 L704.5,332.5 L712.5,327.5 L720.5,332.5 L728.5,327.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M219.7,350.8 Q486.8,351.4 750.2,352.9" stroke="#a5a5a5" stroke-width="1" fill="none" stroke-linecap="round"/>
+<path d="M220.4,351.6 Q485.4,352.6 750.0,350.9" stroke="#a5a5a5" stroke-width="1" fill="none" stroke-linecap="round"/>
 <path d="M226.0,376.0 L234.0,378.5 L242.0,373.5 L250.0,378.5 L258.0,373.5 L266.0,378.5 L274.0,373.5 L282.0,378.5 L290.0,373.5 L298.0,378.5 L306.0,373.5 L314.0,378.5 L322.0,373.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <path d="M361.5,376.0 L369.5,378.5 L377.5,373.5 L385.5,378.5 L393.5,373.5 L401.5,378.5 L409.5,373.5 L417.5,378.5 L425.5,373.5 L433.5,378.5 L441.5,373.5 L449.5,378.5 L457.5,373.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <path d="M497.0,376.0 L505.0,378.5 L513.0,373.5 L521.0,378.5 L529.0,373.5 L537.0,378.5 L545.0,373.5 L553.0,378.5 L561.0,373.5 L569.0,378.5 L577.0,373.5 L585.0,378.5 L593.0,373.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
@@ -97,14 +97,14 @@
 <circle cx="756.0" cy="224.0" r="10" fill="#c0392b"/>
 <text x="756.0" y="228.5" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="12" fill="#fff" text-anchor="middle" font-weight="bold">3</text>
 <rect x="620.1" y="412.0" width="135.9" height="34.0" rx="3" fill="#e4e4e4"/>
-<path d="M620.0,413.1 Q687.9,410.3 756.0,411.2" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-<path d="M620.6,410.9 Q688.2,410.1 757.0,412.9" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-<path d="M755.7,412.2 Q754.8,427.8 756.6,446.8" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-<path d="M755.8,412.7 Q757.7,428.8 756.7,446.9" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-<path d="M757.1,445.3 Q687.7,444.8 620.7,445.5" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-<path d="M755.4,446.4 Q688.2,444.5 621.1,446.4" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-<path d="M621.2,445.1 Q621.5,430.8 620.8,411.1" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-<path d="M620.5,446.3 Q621.7,427.6 619.4,411.2" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M619.0,412.4 Q686.4,413.8 754.8,412.5" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M619.9,411.0 Q686.2,413.1 755.0,412.8" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M754.9,411.7 Q754.4,427.0 755.8,446.7" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M756.8,411.0 Q754.9,430.8 755.8,446.6" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M756.4,445.1 Q689.4,446.0 619.8,446.3" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M756.4,445.7 Q686.1,445.7 621.2,446.8" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M619.4,446.2 Q619.3,430.4 620.3,413.0" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+<path d="M620.7,446.4 Q619.6,430.3 621.2,412.8" stroke="#3a3a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>
 <text x="688.0" y="434.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#3a3a3a" text-anchor="middle" font-weight="normal">Mark reviewed</text>
 <circle cx="756.0" cy="412.0" r="10" fill="#c0392b"/>
 <text x="756.0" y="416.5" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="12" fill="#fff" text-anchor="middle" font-weight="bold">4</text>
@@ -121,25 +121,29 @@
 <text x="814.0" y="214.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="13" fill="#c0392b" text-anchor="start" font-weight="bold">4</text>
 <text x="832.0" y="214.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="13" fill="#3a3a3a" text-anchor="start" font-weight="normal">→ Deals list, with this week</text>
 <text x="832.0" y="234.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="13" fill="#3a3a3a" text-anchor="start" font-weight="normal">marked reviewed.</text>
+<text x="814.0" y="262.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="13" fill="#c0392b" text-anchor="start" font-weight="bold">5</text>
+<text x="832.0" y="262.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="13" fill="#3a3a3a" text-anchor="start" font-weight="normal">Replaces the table when the</text>
+<text x="832.0" y="282.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="13" fill="#3a3a3a" text-anchor="start" font-weight="normal">week has no wins.</text>
 <text x="20.0" y="522.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="15" fill="#c0392b" text-anchor="start" font-weight="bold">State: Empty</text>
-<path d="M18.9,533.8 Q189.3,535.7 360.2,533.6" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M360.9,533.4 Q359.5,625.7 360.3,715.3" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M360.0,716.9 Q191.9,714.5 19.8,715.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M21.1,715.6 Q18.2,624.9 20.0,534.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<text x="44.0" y="581.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="22" fill="#3a3a3a" text-anchor="start" font-weight="bold">Won this week</text>
-<path d="M42.8,601.0 Q190.6,602.0 336.2,600.9" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M335.9,602.7 Q334.1,648.0 335.5,693.1" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M335.0,692.0 Q191.8,692.7 44.9,691.8" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M44.9,690.9 Q43.2,645.5 43.6,600.8" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<text x="190.0" y="652.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#a5a5a5" text-anchor="middle" font-weight="normal">No deals won this week</text>
+<path d="M19.9,534.7 Q191.3,532.3 360.8,535.0" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M360.5,533.1 Q359.9,603.0 360.9,671.9" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M359.3,671.5 Q190.2,670.7 21.1,671.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M19.7,672.1 Q18.6,604.1 19.9,535.0" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M42.8,558.2 Q189.1,558.3 337.0,558.0" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M335.9,558.4 Q334.1,602.3 337.0,647.3" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M335.1,648.7 Q191.3,648.2 44.2,648.4" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M44.2,647.0 Q43.2,604.9 42.9,558.2" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<text x="190.0" y="608.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#a5a5a5" text-anchor="middle" font-weight="normal">No deals won this week</text>
+<circle cx="336.0" cy="558.0" r="10" fill="#c0392b"/>
+<text x="336.0" y="562.5" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="12" fill="#fff" text-anchor="middle" font-weight="bold">5</text>
 <text x="390.0" y="522.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="15" fill="#c0392b" text-anchor="start" font-weight="bold">State: Not a manager</text>
-<path d="M389.1,535.0 Q560.9,534.4 730.1,534.3" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M729.2,533.9 Q728.7,602.1 730.8,671.2" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M729.4,672.1 Q560.2,670.5 390.0,671.4" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M389.3,671.3 Q389.0,604.6 390.1,533.1" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M414.5,558.2 Q559.1,558.4 706.0,557.7" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M704.9,558.7 Q707.3,604.8 705.4,648.7" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M706.4,647.9 Q559.2,647.3 414.1,648.1" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-<path d="M413.6,648.8 Q415.2,602.2 413.1,558.0" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M389.0,533.1 Q561.9,533.5 729.0,534.0" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M731.0,534.5 Q730.6,604.5 730.6,672.2" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M731.2,672.1 Q560.8,670.7 389.4,672.8" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M390.7,673.1 Q388.9,602.2 390.0,534.7" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M414.3,558.7 Q561.8,557.6 706.2,558.5" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M705.6,557.3 Q705.5,603.4 707.0,648.4" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M706.9,649.0 Q560.1,647.4 414.1,647.6" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+<path d="M412.9,648.4 Q415.7,604.3 415.0,558.3" stroke="#a5a5a5" stroke-width="1.6" fill="none" stroke-linecap="round"/>
 <text x="560.0" y="608.0" font-family="'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive" font-size="14" fill="#a5a5a5" text-anchor="middle" font-weight="normal">Only managers see this page</text>
 </svg>

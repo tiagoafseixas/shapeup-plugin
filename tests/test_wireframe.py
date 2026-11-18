@@ -123,3 +123,60 @@ def test_lint_flags_an_ascii_wireframe_left_in_the_pitch(pitch):
     p = pitch / "shape" / "pitches" / "win" / "pitch.md"
     p.write_text(p.read_text() + "\n```text\n+--------+\n| Deals  |\n+--------+\n```\n")
     assert any("ASCII wireframe" in r for r in lint_rows(pitch))
+
+
+def test_a_right_hand_group_too_wide_for_a_state_box_moves_below_and_is_reported():
+    warnings = []
+    svg = wireframe.render("# Northwind\nstate: Requested\n# Northwind  >>  [Go back]  [Request Account 360]  [Cancel request]\n",
+                           SHELL, "w", warnings)
+    assert any("doesn't fit on one line" in w for w in warnings)
+    xs = [float(x) for x in __import__("re").findall(r'<text x="([\d.]+)"[^>]*>Go back<', svg)]
+    assert xs and min(xs) > 20  # inside the state box, not pushed off its left edge
+
+
+def test_a_sketch_that_fits_reports_nothing():
+    warnings = []
+    wireframe.render(SKETCH, SHELL, "w", warnings)
+    assert warnings == []
+
+
+def test_wireframe_prints_check_lines_for_layout_problems(pitch):
+    src = pitch / "shape" / "pitches" / "win" / "wireframes" / "won-this-week.txt"
+    src.write_text(SKETCH + "state: Busy\n# Won  >>  [Export CSV]  [Mark every deal reviewed]  [Share]\n")
+    assert "check:" in scaffold("wireframe", pitch, "win").stdout
+
+
+def solution_rows(repo):
+    return [l for l in scaffold("lint", repo, "win").stdout.splitlines() if "Solution" in l or "Flow" in l or "breadboard" in l]
+
+
+def set_solution(repo, body):
+    p = repo / "shape" / "pitches" / "win" / "pitch.md"
+    text = p.read_text()
+    start, end = text.index("## Solution"), text.index("## Wireframes")
+    p.write_text(text[:start] + "## Solution\nReps mark their own deals as won.\n\n" + body + "\n" + text[end:])
+
+
+def test_the_pitch_template_passes_the_solution_checks(pitch):
+    assert solution_rows(pitch) == []
+
+
+def test_lint_flags_a_solution_without_flow_or_breadboard(pitch):
+    set_solution(pitch, "| Place | Affordances |\n|---|---|\n| Deals | Mark won |\n")
+    rows = solution_rows(pitch)
+    assert any("### Flow" in r for r in rows) and any("### Breadboard" in r for r in rows)
+
+
+def test_lint_flags_a_breadboard_without_numbered_steps_and_a_flow_that_is_not_a_swimlane(pitch):
+    set_solution(pitch, "### Flow\n```mermaid\nflowchart TB\n  a --> b\n```\n\n### Breadboard\n"
+                        "```mermaid\nflowchart LR\n  subgraph Deals\n    win[Mark won]\n  end\n```\n")
+    rows = solution_rows(pitch)
+    assert any("not a swimlane" in r for r in rows)
+    assert any("no 'Step 1" in r for r in rows)
+
+
+def test_lint_flags_more_than_four_sketches(pitch):
+    sketches = pitch / "shape" / "pitches" / "win" / "wireframes"
+    for n in range(4):
+        (sketches / f"extra-{n}.txt").write_text(SKETCH)
+    assert any("max 4" in r for r in lint_rows(pitch))

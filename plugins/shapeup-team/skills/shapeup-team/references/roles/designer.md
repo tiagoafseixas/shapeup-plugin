@@ -26,9 +26,10 @@ With no `designer` row in `team.md`, the frontend role does both columns.
 
 ## Shaping: design check (read-only)
 
-When the Shaper asks: return a breadboard (Mermaid `flowchart LR`: places → affordances → where each leads) and the sketch
-source (`wireframes/<screen>.txt` notation) for the screens that carry risk, plus at most one alternative. Read the real screens
-and `<docs>/shell.txt` first, so the sketches follow how this app is built: its nav, its list and form patterns, where actions sit.
+When the Shaper asks: return one breadboard per process (Mermaid `flowchart LR`, places `Step n · Place`, from the trigger to `Done`)
+and the sketch source (`wireframes/<screen>.txt` notation) for at most 4 screens that carry risk, plus at most one alternative.
+Read the real screens' layout code and `<docs>/shell.txt` first, so the sketches follow how this app is built: its nav, its list and
+form patterns, where actions and tabs sit. Return any new `area` conventions you found for shell.txt.
 No colours, fonts or pixel detail: the pitch leaves room to design. The Shaper writes and draws them. Rules: `references/diagrams.md`.
 
 **The app shell.** You own `<docs>/shell.txt`. When a scope changes the nav or the layout, update it in the same turn and redraw

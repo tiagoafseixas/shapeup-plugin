@@ -13,7 +13,7 @@ import re
 import sys
 from pathlib import Path
 
-VERSION = "1"
+VERSION = "2"
 INK, GREY, PAPER, NOTE, SHADE, FILL = "#3a3a3a", "#a5a5a5", "#fdfdfb", "#c0392b", "#ececec", "#e4e4e4"
 FONT = "'Comic Sans MS','Comic Neue','Chalkboard SE','Segoe Print','Bradley Hand',cursive"
 META_KEYS = ("title", "screen", "frame", "nav")
@@ -31,6 +31,7 @@ class Pen:
     def __init__(self, seed: int):
         self.rnd = random.Random(seed)
         self.out: list[str] = []
+        self.warnings: list[str] = []
 
     def _j(self, v: float, a: float = 1.2) -> float:
         return v + self.rnd.uniform(-a, a)
@@ -227,21 +228,42 @@ def draw_inline_row(pen: Pen, row: str, x: float, y: float, w: float, color: str
     left, right = sized(left), sized(right)
     lines, cur, used = [], [], 0.0
     for t in left:  # wrap the left group when it overflows
+        if t[3] > w:
+            pen.warnings.append(f"'{t[1]}' is wider than its box ({t[3]:.0f} > {w:.0f}px): shorten the label")
         if cur and used + t[3] > w:
             lines.append(cur)
             cur, used = [], 0.0
         cur.append(t)
         used += t[3] + GAP
     lines.append(cur)
+    right_lines, cur, used = [], [], 0.0
+    for t in right:  # the right group wraps too, each line right-aligned
+        if cur and used + t[3] > w:
+            right_lines.append(cur)
+            cur, used = [], 0.0
+        cur.append(t)
+        used += t[3] + GAP
+    if cur:
+        right_lines.append(cur)
+    span = lambda group: sum(t[3] for t in group) + GAP * max(0, len(group) - 1)
+    first = 0
+    if right_lines and lines[0] and (len(right_lines) > 1 or len(lines) > 1
+                                     or span(lines[0]) + GAP + span(right_lines[0]) > w):  # never overlap the left part
+        pen.warnings.append(f"row '{row[:40]}' doesn't fit on one line ({span(lines[0]) + GAP + span(right):.0f} > {w:.0f}px): "
+                            "the right-hand part moved below; draw only what changes")
+        first = len(lines)
+    elif len(right_lines) > 1:
+        pen.warnings.append(f"row '{row[:40]}': the right-hand part is wider than the box ({span(right):.0f} > {w:.0f}px) and wraps")
+    lines += [[] for _ in range(max(0, first + len(right_lines) - len(lines)))]
     total = 0.0
     for i, line in enumerate(lines):
-        group_right = right if i == 0 else []
+        group_right = right_lines[i - first] if 0 <= i - first < len(right_lines) else []
         h = max([t[4] for t in line + group_right] or [20])
         cx = x
         for t in line:
             draw_inline(pen, t, cx, y + total, h, color)
             cx += t[3] + (6 if t[0] in ("check", "radio") else GAP)
-        cx = x + w - sum(t[3] for t in group_right) - GAP * max(0, len(group_right) - 1)
+        cx = x + w - span(group_right)
         for t in group_right:
             draw_inline(pen, t, cx, y + total, h, color)
             cx += t[3] + GAP
@@ -301,6 +323,9 @@ def draw_block(pen: Pen, kind: str, m, x: float, y: float, w: float, color: str)
         pen.box(x, y, w, h, color)
         pen.line(x, y + 36, x + w, y + 36, color, 1.4, 1)
         cw = w / len(cols)
+        for label in cols:
+            if width_of(label, 14) + 24 > cw:
+                pen.warnings.append(f"table column '{label}' is wider than its column ({cw:.0f}px): fewer or shorter columns")
         for c, label in enumerate(cols):
             pen.text(x + 12 + c * cw, y + 24, label, 14, color, weight="bold")
         for r in range(n):
@@ -319,6 +344,8 @@ def draw_block(pen: Pen, kind: str, m, x: float, y: float, w: float, color: str)
             cx, cy = x + (i % per) * (cw + GAP), y + (i // per) * (110 + GAP)
             pen.box(cx, cy, cw, 110, color)
             if title:
+                if width_of(title, 14) + 24 > cw and i == 0:
+                    pen.warnings.append(f"card title '{title}' is wider than the card ({cw:.0f}px)")
                 pen.text(cx + 12, cy + 26, title, 14, color, weight="bold")
             else:
                 pen.scribble(cx + 12, cy + 22, min(cw - 40, 100), color)
@@ -410,7 +437,8 @@ def draw_shell_desktop(pen: Pen, shell: dict, active: str, x, y, w, h) -> tuple[
     return cx, cy, cw, ch
 
 
-def render(sketch: str, shell_text: str | None = None, name: str = "") -> str:
+def render(sketch: str, shell_text: str | None = None, name: str = "", warnings: list | None = None) -> str:
+    """Draw a sketch. Layout problems (overflow, clipped labels) are appended to `warnings`."""
     meta, main, states, notes = parse_sketch(sketch)
     shell = parse_shell(shell_text)
     frame = meta.get("frame", "page")
@@ -531,6 +559,8 @@ def render(sketch: str, shell_text: str | None = None, name: str = "") -> str:
             row_h = max(row_h, h)
         height = sy + 12 + row_h + 20
     width = max(width, ox + fw + 20)
+    if warnings is not None:
+        warnings.extend(dict.fromkeys(pen.warnings))
     return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width:.0f} {height:.0f}" width="{width:.0f}" '
             f'height="{height:.0f}">\n<!-- shapeup-wireframe v{VERSION} sha256:{source} {html.escape(name)} -->\n'
             f'<title>{html.escape(title)}</title>\n<rect width="100%" height="100%" fill="{PAPER}"/>\n'
@@ -567,8 +597,11 @@ def main() -> None:
     src = Path(a.sketch)
     shell = Path(a.shell).read_text() if a.shell else None
     out = Path(a.out) if a.out else src.with_suffix(".svg")
-    out.write_text(render(src.read_text(), shell, src.stem))
+    warnings: list[str] = []
+    out.write_text(render(src.read_text(), shell, src.stem, warnings))
     print(f"drawn: {out}")
+    for w in warnings:
+        print(f"  check: {w}")
 
 
 if __name__ == "__main__":

@@ -16,7 +16,10 @@ metadata:
 4. No argument: ask for the raw idea. An idea: propose a title and a slug (kebab-case, ≤5 words), confirm them with the user, then run
    `scripts/scaffold.py pitch <repo> <slug> --title "<title>"`. A slug: open `<docs>/pitches/<slug>/pitch.md` and its log.md.
 5. Stay offline (SKILL.md › Offline until kickoff): read the repo, ask the user; no `gh`, database, test runs or installs. Challenge, then write. Log every shaping decision with `scaffold.py log`.
-6. For a technical rabbit hole, spawn `backend-dev`, `frontend-dev` or `dba` with the role id from `team.md` › Roles and `Mode: tech check (read-only)`, in parallel when several apply. When the screens are the risk, spawn `designer` with `Mode: design check (read-only)` for a breadboard and sketch sources.
-7. Screens that are new or change layout: write `wireframes/<screen>.txt`, draw with `scaffold.py wireframe <repo> <slug>`, embed each SVG
-   under Wireframes, and show it to the user. A missing or unfilled `<docs>/shell.txt`: fill it as `/bootstrap` step 6 does, first.
+6. For a technical rabbit hole, spawn `backend-dev`, `frontend-dev` or `dba` with the role id from `team.md` › Roles and `Mode: tech check (read-only)`, in parallel when several apply. When the screens are the risk, spawn `designer` with `Mode: design check (read-only)` for breadboards and sketch sources.
+7. Journey before diagrams: confirm the processes with the user as numbered steps (`roles/shaper.md` step 3), then write Solution ›
+   Flow and one breadboard per process. Tell the user you can't render Mermaid here and name the viewer limits (`diagrams.md` › Viewers).
+   Screens that are new or change layout (≤4): read their layout code, write `wireframes/<screen>.txt`, draw with
+   `scaffold.py wireframe <repo> <slug> --png`, open every PNG and fix what's broken before you show the user. A missing or unfilled
+   `<docs>/shell.txt`: fill it as `/bootstrap` step 6 does, first.
 8. Run the Ready gate (`references/gates.md`) and `scaffold.py lint`. Set status `ready` only when every row passes; log the gate result.

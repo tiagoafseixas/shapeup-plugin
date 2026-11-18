@@ -12,15 +12,34 @@ Work in this order. Each step is a conversation, not a form. Push back before yo
 
 | # | Step | What you do | Done when |
 |---|---|---|---|
-| 1 | Raw idea → problem | Find what users already do today, the workaround they use where it breaks, and what that workaround costs them. Ask what evidence backs it and log the evidence. Reject solutions dressed up as problems ("we need a dashboard"). | Problem in the three-part shape below |
+| 1 | Raw idea → problem | First ask who asked for this: a named customer, a count, a sales conversation. Log the evidence, or log that there is none. Then find what users already do today, the workaround they use where it breaks, and what that workaround costs them. Reject solutions dressed up as problems ("we need a dashboard"). Settle names now (Names and terms, below). | Problem in the three-part shape below; evidence or its gap and the agreed names in log.md |
 | 2 | Set the appetite | Ask "how much is this worth?", not "how long will it take?". Pick Small batch (2 reviews with the user) or Big batch (6), never an estimate in human weeks. What you'd refuse goes to No-gos; why goes to log.md. | Size in the header table; one imperative sentence on what the bet builds |
-| 3 | Find the elements | Breadboard: places, affordances, connections, as a Mermaid `flowchart LR` (`references/diagrams.md`). Stay at fat-marker level: no field lists unless they *are* the problem. | Solution elements and breadboard written |
-| 3b | Sketch the screens | When a screen is new or its layout changes, write `wireframes/<screen>.txt` (`references/diagrams.md` › Sketches) and draw it with `scaffold.py wireframe`: the app's own shell, real labels on actions, squiggles for data, a note per marker. Follow `<docs>/shell.txt` › Conventions. Never colours, sizes or final copy: the designer or frontend role owns the design. Show the SVG to the user and redraw until it matches what you agreed. | Each SVG embedded under Wireframes, or "None: no screen changes" |
-| 4 | Hunt rabbit holes | For each element, ask: what could take 3× longer than we think? Edge cases, data we don't have, integrations, performance, permissions. Patch each one now (a decision) or turn it into a no-go. | Every risk has a patch |
-| 5 | Tech check | If it touches schema, a new integration or a new library, ask the Conductor to spawn the backend, frontend or DBA role read-only. Keep only risks that could blow the appetite; each becomes a Rabbit holes row with its patch. Log the check. | Risks in Rabbit holes; check in log.md |
-| 6 | No-gos | List what we explicitly won't do, especially the easy-looking extras | No-gos listed |
-| 7 | Works when | 3–5 outcomes a user can observe | Section filled |
-| 8 | Ready gate | Run `references/gates.md` → Ready gate. Fix the fails, then status `ready`. | Gate passes |
+| 3 | Tell the journey | Before any diagram, split the solution into processes, one per actor goal (e.g. Request / Fulfil / View). Write each as numbered steps in your reply, from the trigger (an email, a page visit) to an outcome the actor can see. Confirm the processes with the user before drawing anything. | Processes confirmed by the user and logged |
+| 4 | Find the elements | Turn the confirmed processes into Solution › Flow (one swimlane for the whole journey) and Solution › Breadboard (one `flowchart LR` per process, places `Step n · Place`, trigger first, `Done` last): `references/diagrams.md`. Stay at fat-marker level: no field lists unless they *are* the problem. | One sentence, Flow, one breadboard per process |
+| 5 | Sketch the screens | Only screens that are new or change layout and carry risk: ≤4. Read each changed screen's layout code first and record its area's conventions in `<docs>/shell.txt`; ask the user where a new element sits when visibility matters. Write `wireframes/<screen>.txt` (`references/diagrams.md` › Sketches): real labels on actions, squiggles for data, existing parts as one grey line, state blocks with only the changed element. Draw with `scaffold.py wireframe <repo> <slug> --png`, open every PNG, fix overlaps and clipped text, then show the user. Never colours, sizes or final copy: the designer or frontend role owns the design. | Each SVG looked at and embedded under Wireframes, or "None: no screen changes" |
+| 6 | Hunt rabbit holes | For each element, ask: what could take 3× longer than we think? Edge cases, data we don't have, integrations, performance, permissions. Always ask about manual work (below). Patch each one now (a decision) or turn it into a no-go. | Every risk has a patch |
+| 7 | Tech check | If it touches schema, a new integration or a new library, ask the Conductor to spawn the backend, frontend or DBA role read-only. Keep only risks that could blow the appetite; each becomes a Rabbit holes row with its patch. Log the check. | Risks in Rabbit holes; check in log.md |
+| 8 | No-gos | List what we explicitly won't do, especially the easy-looking extras | No-gos listed |
+| 9 | Works when | 3–5 outcomes a user can observe | Section filled |
+| 10 | Ready gate | Run `references/gates.md` → Ready gate. Fix the fails, then status `ready`. | Gate passes |
+
+Diagrams come in this order and no other: Flow, breadboards, sketches. Mermaid can't be rendered offline: when you add a flow or a
+breadboard, tell the user and name the viewer limits (`references/diagrams.md` › Viewers). Keep the pitch to one page: if a new
+diagram repeats what another already shows, replace that one; don't add it.
+
+### Names and terms
+
+| Do | Why |
+|---|---|
+| Ask for the branded product name in step 1 ("Account 360", not "account summary report") and use it everywhere | Pitch, scopes, code and UI then say the same thing |
+| Check each of the user's terms against the code's terms (models, tables, UI labels) | The same word can mean two things: "accounts" as prospect companies vs the code's "Corporate Account" (a customer licence) |
+| Log every agreed meaning in log.md (`--kind decision`) | The team reads it at kickoff; nobody re-asks |
+
+### Manual work: a rabbit hole to always ask about
+
+When the bet depends on people doing work by hand (staff building a report, support approving a request), add a Rabbit holes row
+for it: turnaround, volume, and what the user sees while waiting. Give it a patch: a promised turnaround from a setting, a cap on
+volume, a refund or cancel when it's late.
 
 Log each shaping call in log.md as you go (`scaffold.py log <repo> <slug> --by "User + Shaper" --kind decision …`):
 appetite, each rabbit-hole patch, each no-go, and every change the user asks for. The pitch shows the result; log.md shows how it got there.

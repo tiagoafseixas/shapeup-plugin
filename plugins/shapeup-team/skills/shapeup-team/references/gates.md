@@ -21,18 +21,20 @@ Bootstrap only reads files and asks the user. No network, no database, no test r
 
 | # | Check |
 |---|---|
-| 1 | Problem: baseline → workaround → cost, no solution words (`roles/shaper.md` › Writing the problem); its evidence is logged in log.md |
+| 1 | Problem: baseline → workaround → cost, no solution words (`roles/shaper.md` › Writing the problem); its evidence, or the lack of it, is logged in log.md |
 | 2 | Appetite: size in the header table (its review budget comes from `team.md`); one imperative sentence on what the bet builds |
-| 3 | Solution: the elements are concrete enough to start, rough enough to leave design room; the breadboard shows every place and where each affordance leads |
-| 4 | Wireframes: a sketch per screen that is new or changes layout, drawn in the app shell (`references/diagrams.md` › Sketches), each marker explained in its notes; or "None: no screen changes" |
-| 5 | Every rabbit hole has a patch, or has become a no-go |
-| 6 | No-gos listed explicitly |
-| 7 | Tech check logged in log.md whenever the pitch touches the schema, a new integration or a new library; its risks are in Rabbit holes |
-| 8 | Works when: 3–5 outcomes a user can observe |
-| 9 | Within `team.md` › Pitch word limit (default 600) outside code blocks (diagrams and sketches excluded). Passes the final check in `writing-style.md`. No task lists. |
-| 10 | log.md records the shaping decisions taken with the user |
-| 11 | `scaffold.py lint <repo> <slug>` is clean |
-| 12 | The pitch stands alone: no other pitch named, no justifications (they live in log.md) |
+| 3 | Solution: one sentence on who can do it and the core constraint, then Flow (one swimlane for the whole journey), then Breadboard (one per process, places `Step n · Place`, left to right from the trigger to `Done`) |
+| 4 | Wireframes: ≤4 fat-marker sketches, each of a screen that is new or changes layout, drawn from the real screen's layout recorded in `<docs>/shell.txt`, each marker explained in its notes; or "None: no screen changes" |
+| 5 | Every sketch was rendered and looked at: no `check:` lines left, no overlaps, no clipped text, no empty boxes |
+| 6 | The branded name and every term that collides with the code are recorded in log.md |
+| 7 | Every rabbit hole has a patch, or has become a no-go; every manual human step in the flow has a row (turnaround, volume, what the user sees while waiting) |
+| 8 | No-gos listed explicitly |
+| 9 | Tech check logged in log.md whenever the pitch touches the schema, a new integration or a new library; its risks are in Rabbit holes |
+| 10 | Works when: 3–5 outcomes a user can observe |
+| 11 | Within `team.md` › Pitch word limit (default 600) outside code blocks (diagrams and sketches excluded). No diagram repeats another. Passes the final check in `writing-style.md`. No task lists. |
+| 12 | log.md records the shaping decisions taken with the user |
+| 13 | `scaffold.py lint <repo> <slug>` is clean |
+| 14 | The pitch stands alone: no other pitch named, no justifications (they live in log.md) |
 
 ## Kickoff gate (Conductor)
 

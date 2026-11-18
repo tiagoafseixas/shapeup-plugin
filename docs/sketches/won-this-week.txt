@@ -6,8 +6,7 @@ nav: Reports
 >> [*Mark reviewed]^4
 
 state: Empty
-# Won this week
-? No deals won this week
+? No deals won this week^5
 
 state: Not a manager
 ? Only managers see this page
@@ -17,3 +16,4 @@ notes:
 2 Filters the table. Default: everyone.
 3 One row per deal won Mon–Sun. Click a row → Deal page.
 4 → Deals list, with this week marked reviewed.
+5 Replaces the table when the week has no wins.
