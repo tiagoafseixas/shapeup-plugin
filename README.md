@@ -162,7 +162,7 @@ on them with no fixed order and no waiting: a handoff, a question or a QA findin
 | Designer | Lays out the scope's screens first (affordances, copy, states) against the API contract, then does the visual pass once data is wired |
 | Backend / frontend | Writes the Small and Medium tests first and commits them failing (`red`), then the code until they pass; hands the API contract to the frontend and migrations to the DBA |
 | DBA | Reviews each migration against the table sizes in `team.md`: approve, or rewrite it safely |
-| DevOps | Gives a scope what it needs to run (a setting, a secret's name, a job, a schedule, monitoring) as code on the cycle branch; keeps the pipeline green; promotes the build to staging before each review |
+| DevOps | Starts each turn with a one-line brief (kind of change, the service and its tier, what changes, how it's undone) that sets how carefully it releases; gives a scope what it needs to run (a setting, a secret's name, a job, a schedule, monitoring) as code on the cycle branch; keeps the pipeline green; promotes the build to staging before each review |
 | QA | Writes the Large tests for the scope's journeys and runs the Scope gate as soon as a scope is handed over: tests by size, tests written first, no change-detector tests, every "Done when" check. Findings are nice-to-haves (`~`) unless they break a promise of the scope, as in Shape Up. |
 | Shaper | Answers questions, cuts scope when the reviews run low, guards the no-gos |
 
@@ -197,6 +197,16 @@ Tell the team you merged. As in Shape Up, cool-down is the break between cycles:
 
 Expected: status `shipped` (or `stopped`), reviews, turns and hours logged, cut items and shortcuts copied to `shape/ideas.md` (nothing carries over),
 three retro rows on the board (keep, change, try), and an offer to prepare the next betting table. Small fixes you ask for meanwhile get their own branch and PR.
+
+### Readiness review: `/audit <service or process>`
+
+Any time, usually in cool-down: "audit the release process", "is the billing job production-ready?". DevOps reviews it read-only,
+in the style of Google SRE's Production Readiness Review: evidence from the repo (production facts only if you allow them), findings
+by the six Well-Architected pillars (operational excellence, security, reliability, cost, performance, sustainability) plus DORA's
+delivery capabilities, each `must` or `~`.
+
+Expected: `shape/audits/<date>-<slug>.md`, one line per `must` finding in `shape/ideas.md`, and a 5-line summary. Nothing is fixed:
+a finding becomes work only when you shape and bet on it.
 
 ### Gates
 
@@ -239,6 +249,7 @@ The method is Basecamp's [Shape Up](https://basecamp.com/shapeup). What agents n
 | Scope hammering, must-haves and `~` nice-to-haves; QA issues are nice-to-haves unless the team decides otherwise | The same; the Shaper hammers when a quarter of the reviews is left |
 | Circuit breaker; rare extensions | When the reviews run out the build stops; the default is drop and re-shape; only you extend |
 | Cool-down: no scheduled work, the next betting table | The same, plus a short retro and cut items moved to `ideas.md` |
+| — (Shape Up says nothing about running software) | **Operations** (addition, borrowed rather than invented): service tiers 0–3 from Atlassian's operational-readiness guide; DevOps's playbooks per kind of change from the SRE launch checklist, postmortems, Terraform's `moved` refactoring and DORA; approval by review plus automation as DORA recommends; `/audit` from SRE's Production Readiness Review and the Well-Architected pillars |
 | — | **Additions for agents**: the Conductor, gates, "Done when" checks per scope, `log.md`, the board's message protocol, the testing and writing standards, stack packs, production and git guardrails, offline until kickoff |
 
 ## Commands
@@ -251,6 +262,7 @@ The method is Basecamp's [Shape Up](https://basecamp.com/shapeup). What agents n
 | `/bootstrap` | Once per repo: you pick the docs folder; fills `team.md` from the repo's files and your answers; offline |
 | `/gate <ready / kickoff / scope S<n> / ship> <slug>` | Runs one gate again by hand and logs the result |
 | `/stack [list / new <name> / house <role id> / lint <dir>]` | Lists the project's packs, writes a new pack from the stack's official docs, adds house rules |
+| `/audit <service or process>` | DevOps's readiness review: findings by pillar and DORA, `must` findings filed as ideas; read-only |
 
 ## Roles
 
@@ -338,10 +350,11 @@ Paths are under `plugins/shapeup-team/skills/shapeup-team/`.
 ```
 .shapeup.json              {"docs": "shape"}: the docs folder you chose at bootstrap
 shape/                     or the folder you chose
-  team.md                  roles and their stack packs, commands per role and size, table volumes, versions, budgets
+  team.md                  roles and their stack packs, commands per role and size, services and their tiers, table volumes, versions, budgets
   shell.txt, shell.svg     your app's frame (nav, brand, conventions) and its preview: every sketch is drawn in it
   stack/<role id>.md       house rules, when the repo differs from the pack
   ideas.md                 raw ideas, not a backlog
+  audits/<date>-<slug>.md  readiness reviews (`/audit`)
   decisions.md             conventions that outlive one pitch
   betting/<date>.md        betting pack for the betting table
   pitches/<slug>/
@@ -358,7 +371,7 @@ shape/                     or the folder you chose
 | Path | Holds |
 |---|---|
 | `.claude-plugin/marketplace.json` | The `shapeup` marketplace: the team and the stack packs |
-| `plugins/shapeup-team/` | The team: Conductor skill (process, role files, gates, standards, templates, `scaffold.py`), the six commands, seven agents, the guard hook |
+| `plugins/shapeup-team/` | The team: Conductor skill (process, role files, gates, standards, templates, `scaffold.py`), the seven commands, seven agents, the guard hook |
 | `plugins/stack-<name>/` | One stack pack each: `skills/stack-<name>/SKILL.md` and `references/sources.md` |
 | `docs/` | Logo and the script that draws it (`python3 docs/make_logo.py` redraws the logo and the icon); `sketches/`, the sample sketches |
 | `tests/` | Guard, sketch renderer and lint behaviour tests |

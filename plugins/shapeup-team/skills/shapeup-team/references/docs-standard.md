@@ -8,6 +8,7 @@ A fact lives in exactly one doc. If it isn't listed here, the team doesn't write
 | `<docs>/team.md` | Paths, commands, versions, budgets | Process rules | Conductor + user | `team.md` |
 | `<docs>/shell.txt` | The app shell every sketch is drawn in, and the app's screen conventions | Pitch-specific screens | designer (frontend role without one); filled at bootstrap | `shell.txt` |
 | `<docs>/pitches/<slug>/pitch.md` | Problem, appetite, solution elements and breadboard, embedded sketches, rabbit holes, no-gos, works-when | Tasks, estimates, inventories of what exists or must be built, decisions taken after shaping | Shaper + user | `pitch.md` |
+| `<docs>/audits/<date>-<slug>.md` | One readiness review: target, evidence, findings by pillar, DORA keys, ideas filed | Fixes; work plans | DevOps | `audit.md` |
 | `<docs>/pitches/<slug>/wireframes/` | One `<screen>.txt` per sketch and the `<screen>.svg` drawn from it | Hand-edited SVGs | Shaper + user | `diagrams.md` › Sketches |
 | `<docs>/pitches/<slug>/log.md` | Audit trail: every decision, cut, gate result, phase change and action, with who, when and why | Discussion, questions (they go on the board) | everyone, append-only | `log.md` |
 | `<docs>/pitches/<slug>/board.md` | Scopes and hill, the message Log, QA findings, retro | Decisions (they go to log.md), long explanations | everyone (own rows) | `board.md` |

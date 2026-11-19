@@ -101,6 +101,10 @@ drain a bad zone or region at the load balancer. Blameless postmortem notes go t
 | Artifacts | Artifact Registry cleanup policies: keep the deployed and recent digests |
 | Budgets | A budget with alerts per project; the release plan states the monthly change |
 
+## Readiness review checks
+
+`/audit` on Google Cloud: the platform checks by pillar, and Google's official Well-Architected skills, are in `references/readiness-gcp.md`.
+
 ## Review checklist
 
 | Finding | Sev |

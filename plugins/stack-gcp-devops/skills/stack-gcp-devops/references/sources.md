@@ -32,6 +32,14 @@ Google Cloud's docs moved to `docs.cloud.google.com`; `cloud.google.com/...` lin
 | Terraform: security | https://docs.cloud.google.com/docs/terraform/best-practices/security | Remote state in Cloud Storage, state encryption |
 | Terraform: version control | https://docs.cloud.google.com/docs/terraform/best-practices/version-control | Repository layout, branch per environment for root configs |
 
+## Readiness reviews
+
+| Source | URL | Use it for |
+|---|---|---|
+| Google Cloud Well-Architected Framework | https://docs.cloud.google.com/architecture/framework | The six pillars; Google's `google-cloud-waf-*` agent skills |
+| Google SRE: Launch Coordination Checklist | https://sre.google/sre-book/launch-checklist/ | The launch questions for a new service |
+| Google SRE: Production Readiness Review | https://sre.google/sre-book/evolving-sre-engagement-model/ | Reviewing a service at any point of its life |
+
 ## Reliability and observability
 
 | Source | URL | Use it for |

@@ -7,6 +7,7 @@ The docs folder is chosen at bootstrap and recorded in <repo>/.shapeup.json ({"d
   scaffold.py pitch    <repo> <slug> --title "Title" [--why "reason"]
   scaffold.py kickoff  <repo> <slug> --cycle 2026-C1
   scaffold.py add      <repo> <slug> tech|runbook
+  scaffold.py audit    <repo> <slug> --title "Target"   a readiness review: <docs>/audits/<date>-<slug>.md
   scaffold.py log      <repo> <slug> --by Shaper --kind decision|cut|phase|gate|action --entry "..." --why "..."
   scaffold.py status   <repo>
   scaffold.py lint     <repo> <slug>      writing limits: pitch words, scope names, Log sentences, captions, filler; stale sketches
@@ -135,6 +136,10 @@ def cmd_pitch(repo: Path, slug: str, title: str, why: str) -> None:
     d = docs(repo) / "pitches" / slug
     write_new(d / "pitch.md", render("pitch.md", title=title, date=TODAY))
     write_new(d / "log.md", render("log.md", title=title, date=TODAY, why=why))
+
+
+def cmd_audit(repo: Path, slug: str, title: str) -> None:
+    write_new(docs(repo) / "audits" / f"{TODAY}-{slug}.md", render("audit.md", title=title, date=TODAY))
 
 
 def cmd_kickoff(repo: Path, slug: str, cycle: str) -> None:
@@ -476,6 +481,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("init"); s.add_argument("repo"); s.add_argument("--product", default="<product>"); s.add_argument("--docs", default="shape")
+    s = sub.add_parser("audit"); s.add_argument("repo"); s.add_argument("slug"); s.add_argument("--title", required=True)
     s = sub.add_parser("pitch"); s.add_argument("repo"); s.add_argument("slug")
     s.add_argument("--title", required=True); s.add_argument("--why", default="Raw idea brought to shaping")
     s = sub.add_parser("kickoff"); s.add_argument("repo"); s.add_argument("slug"); s.add_argument("--cycle", required=True)
@@ -495,6 +501,8 @@ def main() -> None:
     repo = Path(a.repo).resolve()
     if a.cmd == "init":
         cmd_init(repo, a.product, a.docs)
+    elif a.cmd == "audit":
+        cmd_audit(repo, a.slug, a.title)
     elif a.cmd == "pitch":
         cmd_pitch(repo, a.slug, a.title, a.why)
     elif a.cmd == "kickoff":

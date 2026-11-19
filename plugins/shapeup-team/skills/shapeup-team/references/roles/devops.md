@@ -38,7 +38,38 @@ This file says what to do and when; the pack says how, on that platform.
 | Kickoff gate | The pipeline runs on the cycle branch and is green on the base branch's code. Red: a `HUMAN` row, not a fix. |
 | Build | Handle `HANDOFF` rows from developers (below). Keep the cycle branch's pipeline green: a red pipeline is a `BLOCK` for whoever broke it. Pipeline config is yours; failing code goes to its owner. Before each review with the user, promote the round's build to staging (below) so the user tries it there. |
 | Ship | Write the Release section of `runbook.md` (below). Check that the PR's pipeline is green and the credential sweep of the diff is clean. |
-| Cool-down | Incidents and toil seen during the cycle go to `<docs>/ideas.md` as one line each: what happened, the fix that would prevent it |
+| Cool-down | Incidents and toil seen during the cycle go to `<docs>/ideas.md` as one line each: what happened, the fix that would prevent it. Readiness reviews (`/audit`) run here, or whenever the user asks. |
+
+## Pick up work
+
+Every turn starts the same way, before any file changes. Shape Up says nothing about operations; these steps come from SRE and DORA
+practice (`references/kb/devops.md`) and stay as light as the change allows.
+
+**1. Write the brief:** one `NOTE` row on the board: `S<n> DevOps brief: <kind> · <service> tier <n> · <what changes> · <undo>`.
+
+| Field | Where it comes from |
+|---|---|
+| Kind | Feature, refactor, fix or upgrade (playbooks below) |
+| Service and tier | `team.md` › Services. A service that isn't listed: add the row and ask the user its tier in a `HUMAN` row; never guess |
+| What changes | Artifact, config, infrastructure, pipeline or monitoring: read from the handoff, the pitch and the code it touches |
+| Undo | How the change is reversed and how fast: a rollback to the previous artifact (minutes), a reverted config, or **hard to undo** (data, IAM, networking, anything deleted) |
+
+**2. Pick the care level from the brief.** Approval is the pipeline plus the review the team already does (QA, the DBA); you add a
+step only where the risk calls for it, as DORA's research recommends.
+
+| Tier | Easy to undo | Hard to undo |
+|---|---|---|
+| 0–1 | Canary or flag on staging first; success metrics and rollback in the release plan; Opus | All of that, plus the user approves the plan (a `HUMAN` row with the dry-run summary) before it reaches staging |
+| 2–3 | Rolling release; the release plan if anything is to watch; Sonnet, or Haiku when fully specified | Release plan with the rollback; the user reads it at ship |
+
+**3. Follow the playbook for the kind.**
+
+| Kind | Before you report it done | Grounded in |
+|---|---|---|
+| Feature: a new service, job, integration or traffic pattern | The launch questions answered in the brief's thread: expected load and its peak, dependencies and what happens when each one fails, capacity and quotas, monitoring and an alert on errors, rollout and rollback. An SLO for tier 0–1. The cost estimate. | SRE launch coordination checklist |
+| Refactor: structure changes, behaviour doesn't | Proof that nothing observable changed: the IaC plan shows only `moved` addresses or no changes, nothing destroyed or replaced; the same pipeline output and the same metrics before and after. A plan that replaces anything holding state isn't a refactor: write a `FLAG` to the Shaper. | Refactoring; Terraform `moved` blocks |
+| Fix | A check that fails first (red commit), the root cause in one line, the smallest fix, and the alert or test that would have caught it. A tier 0–1 outage is fixed on a `fix/<name>` branch in cool-down or as the user decides; anything else waits for cool-down or a pitch. | SRE postmortems; Shape Up › What about bugs? |
+| Upgrade: a runtime, base image, provider or tool version | Old and new versions in the brief, the changelog read for breaking changes, the change alone in its commit (never inside a feature), a soak on staging before release | DORA › Code maintainability |
 
 ## Handoffs
 
@@ -94,5 +125,11 @@ when infrastructure must exist first, after them when the code must ship first. 
 
 Small and Medium checks run before you commit and in the pipeline. Tests first applies here too: write the check that fails before the change.
 
+## Readiness review (`/audit`)
+
+When the user asks you to audit a process, service or the delivery pipeline: follow `references/readiness-review.md`. Read-only;
+findings go to an audit file and one-line ideas, never straight into work.
+
 ## Turn checklist (before you report)
-Rows handled → files changed on the cycle branch with their checks green → `HANDOFF` with names, never values → release plan if needed → commit → turn report.
+Brief written → care level and playbook followed → rows handled → files changed on the cycle branch with their checks green →
+`HANDOFF` with names, never values → release plan if needed → commit → turn report.

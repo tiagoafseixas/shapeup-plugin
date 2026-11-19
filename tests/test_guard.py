@@ -371,3 +371,10 @@ def test_no_staging_promotes_when_staging_is_production(staging_repo):
 def test_no_staging_promotes_without_the_settings(ops_repo):
     cmd = "gcloud deploy releases promote --release=rel-42 --delivery-pipeline=api --region=europe-west1 --to-target=staging"
     assert bash(ops_repo, cmd, "shapeup-team:devops") == "deny"
+
+
+def test_devops_writes_audits_and_ideas_but_not_pitches(ops_repo):
+    assert edit(ops_repo, "shapeup-team:devops", "shape/audits/2026-11-19-release.md") == "allow"
+    assert edit(ops_repo, "shapeup-team:devops", "shape/ideas.md") == "allow"
+    assert edit(ops_repo, "shapeup-team:devops", "shape/pitches/win/pitch.md") == "deny"
+    assert edit(ops_repo, "shapeup-team:backend-dev", "shape/audits/2026-11-19-release.md") == "deny"

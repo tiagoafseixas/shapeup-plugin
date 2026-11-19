@@ -38,7 +38,7 @@ No pack for a stack yet: run `/stack new <name>` before kickoff. Missing packs f
 
 ## Plugin
 
-Installed as the shapeup-team plugin, the team adds commands `/shape`, `/kickoff`, `/round`, `/gate` and `/stack`, one agent per role
+Installed as the shapeup-team plugin, the team adds commands `/shape`, `/kickoff`, `/round`, `/gate`, `/stack` and `/audit`, one agent per role
 (spawn by role name; the user can also call a role directly), and a hook that blocks what the Git rules and Production access
 tables forbid: file edits outside a role's area, force-push, merge, push to the base branch, deploys, infrastructure changes (`terraform apply`,
 `kubectl apply`, `helm upgrade`, any `gcloud` write), managed-database writes (`gcloud sql`, `aws rds`), secret reads,
@@ -69,6 +69,7 @@ Never assume `shape/`: read `.shapeup.json`.
   team.md                  config: paths, commands, versions, budgets (one table)
   shell.txt                the app shell every sketch is drawn in, plus the app's screen conventions
   ideas.md                 raw ideas, not a backlog: anything built must be re-pitched
+  audits/<date>-<slug>.md  readiness reviews by DevOps (`/audit`): findings by pillar; the must findings also go to ideas.md
   decisions.md             conventions that outlive one pitch (one table, append-only)
   betting/<date>.md        betting pack for the betting table
   pitches/<slug>/
@@ -227,6 +228,7 @@ After the user reports the merge (or the stop):
 2. Copy the cut `~` items and the `shortcut:` comments (`/ponytail-debt`) into `<docs>/ideas.md`. Nothing carries over: anything left must be re-pitched.
 3. Write 3 retro rows on the board (keep / change / try).
 4. Take no scheduled work. Small fixes the user asks for during cool-down are fine, each on its own branch and PR, outside the pitch.
+   A readiness review (`/audit`) fits here too, when the user asks for one.
 5. Offer the next betting table: `ready` pitches, plus pitches the user wants to shape now.
 
 ## Models
@@ -268,7 +270,7 @@ Each role starts cold, so the brief plus the board must be enough. That's also w
 
 ```
 Repo: <path>   Team config: <docs>/team.md   Pitch folder: <docs>/pitches/<slug>/
-Role id: <role id from team.md › Roles>   Phase: <phase>   Round: <n>/<review budget>   Turn: <t>/<cap>   Mode: <turn | tech check (read-only) | design check (read-only) | orient (read-only)>
+Role id: <role id from team.md › Roles>   Phase: <phase>   Round: <n>/<review budget>   Turn: <t>/<cap>   Mode: <turn | tech check (read-only) | design check (read-only) | orient (read-only) | readiness review (DevOps, read-only)>
 Your turn: <the routed Log rows, copied verbatim, or "continue scope S<n>">
 Ponytail: level <level>
 Finish by updating the board (and log.md for any decision), committing per the git rules, and returning the turn report from protocol.md.
@@ -335,3 +337,4 @@ doesn't use it, even for reads, and writes a `BLOCK` to the user naming the vari
 | The role's stack pack | Before any developer or DBA turn: how, in that stack |
 | `references/kb/testing.md` | Review and testing sources that apply to every stack |
 | `references/kb/devops.md` | DevOps principles and sources, for the DevOps role |
+| `references/readiness-review.md` | `/audit`: the steps and the checks by pillar |

@@ -1,6 +1,6 @@
 {
   "name": "stack-gcp-devops",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Stack pack for the shapeup-team plugin: DevOps on Google Cloud (Cloud Build, Artifact Registry, Cloud Deploy, Cloud Run, GKE, Terraform, Cloud Observability, SRE), following the Professional Cloud DevOps Engineer guide.",
   "author": {
     "name": "Tiago Seixas"

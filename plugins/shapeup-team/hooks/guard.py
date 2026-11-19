@@ -201,6 +201,7 @@ def check_file(event, role):
     docs = docs_folder(repo)
     if rel.startswith(docs + "/"):
         shell = rel in (f"{docs}/shell.txt", f"{docs}/shell.svg") and role in ("designer", "frontend")
+        shell = shell or (role == "devops" and (rel == f"{docs}/ideas.md" or rel.startswith(f"{docs}/audits/")))
         ok = rel != f"{docs}/team.md" if role == "shaper" else (shell or pitch_doc(rel, shape_docs[role], docs))
     elif rel == ".shapeup.json":
         ok = False

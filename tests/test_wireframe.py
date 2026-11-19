@@ -180,3 +180,17 @@ def test_lint_flags_more_than_four_sketches(pitch):
     for n in range(4):
         (sketches / f"extra-{n}.txt").write_text(SKETCH)
     assert any("max 4" in r for r in lint_rows(pitch))
+
+
+def test_audit_creates_a_dated_review_from_the_template(tmp_path):
+    scaffold("init", tmp_path)
+    scaffold("audit", tmp_path, "release", "--title", "Release process")
+    files = list((tmp_path / "shape" / "audits").glob("*-release.md"))
+    assert len(files) == 1
+    text = files[0].read_text()
+    assert "# Readiness review: Release process" in text and "| Pillar |" in text
+
+
+def test_init_adds_the_services_table(tmp_path):
+    scaffold("init", tmp_path)
+    assert "## Services" in (tmp_path / "shape" / "team.md").read_text()

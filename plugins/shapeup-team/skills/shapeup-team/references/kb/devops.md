@@ -34,6 +34,22 @@ Code to Release happen in the cycle, Deploy is the user's runbook, and Operate/M
 | Testing shifts further left | Infrastructure gets tests too (the sizes in the role file) |
 | Platform engineering: internal developer platforms | Reuse the repo's existing pipeline and modules before adding new ones |
 
+## Frameworks behind the intake, the playbooks and `/audit`
+
+Shape Up covers shaping, betting and building; it says nothing about operations. These are borrowed, kept as light as possible:
+
+| Piece | From | Source |
+|---|---|---|
+| Service tiers 0–3 and their availability targets | Atlassian's operational-readiness tiers | https://www.atlassian.com/devops/what-is-devops/operational-readiness |
+| Approval by peer review plus automation, no change board | DORA › Streamlining change approval | https://dora.dev/capabilities/streamlining-change-approval/ |
+| Feature playbook: the launch questions | Google SRE › Launch Coordination Checklist | https://sre.google/sre-book/launch-checklist/ |
+| Refactor playbook: nothing destroyed, addresses moved | Terraform › Refactoring with `moved` blocks | https://developer.hashicorp.com/terraform/language/modules/develop/refactoring |
+| Fix playbook: root cause and the check that would have caught it | Google SRE › Postmortem culture | https://sre.google/sre-book/postmortem-culture/ |
+| Bugs aren't special; severity decides | Shape Up › Bets, not backlogs › What about bugs? | https://basecamp.com/shapeup/2.1-chapter-07 |
+| Upgrade playbook: keep dependencies current | DORA › Code maintainability | https://dora.dev/capabilities/code-maintainability/ |
+| `/audit`: a review of a service at any point of its life | Google SRE › Production Readiness Review | https://sre.google/sre-book/evolving-sre-engagement-model/ |
+| `/audit`: findings by pillar | Google Cloud Well-Architected Framework | https://docs.cloud.google.com/architecture/framework |
+
 ## Sources
 
 | Source | URL | Use it for |

@@ -32,6 +32,22 @@ House rules per role, when the repo has its own conventions: `<docs>/stack/<role
 | <devops role id> pipeline check | <lint of the CI config and the Dockerfile> |
 | <devops role id> image build | <how the deployable artifact builds locally> |
 
+## Services
+
+What runs in production and how critical each part is. DevOps reads it at the start of every turn; the tier decides how carefully a
+change is released. The user sets the tiers; agents add a row when a pitch adds a service or job, and ask the user for its tier.
+
+| Tier | Means | Default availability target |
+|---|---|---|
+| 0 | Everything else depends on it: identity, the database, the network, the pipeline | 99.99% |
+| 1 | Customer-facing: users or money stop when it stops | 99.95% |
+| 2 | Business systems: staff work around it for a few hours | 99.9% |
+| 3 | Internal tools, batch work that can wait or be re-run | 99% |
+
+| Service or job | Tier | SLO (overrides the default) | Data it holds | Owner role |
+|---|---|---|---|---|
+| <api> | <1> | <99.95% availability, p95 < 500 ms> | <personal data / none> | <backend-drf> |
+
 ## Table volumes
 
 Production sizes the backend role and the DBA plan migrations and queries against. The user fills this in; agents add a row

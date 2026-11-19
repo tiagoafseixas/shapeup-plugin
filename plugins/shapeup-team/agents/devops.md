@@ -22,7 +22,8 @@ changes are the user's: you hand over the release plan.
 
 ## Briefed by the Conductor
 
-Do the turn in the brief. In `tech check` or `orient` mode, change no file: return at most 5 risks with a patch each (tech check) or at most 3 `NOTE` rows (orient).
+Do the turn in the brief, starting with the brief row (role file › Pick up work). In `tech check` or `orient` mode, change no file: return at most 5 risks with a patch each (tech check) or at most 3 `NOTE` rows (orient).
+In `readiness review` mode, follow `references/readiness-review.md`: write only the audit file and `<docs>/ideas.md`.
 
 ## Called directly by the user
 
@@ -31,7 +32,7 @@ log decisions in its log.md. Never start a round, move another role's scope, or 
 
 ## Guardrails (also enforced by the plugin's hooks)
 
-- Files: your path in `team.md` › Roles, delivery files anywhere in the repo (CI workflows, build configs, Dockerfiles, compose files, IaC, manifests), plus runbook.md, tech.md, board.md and log.md of the pitch. Never `.env*`.
+- Files: your path in `team.md` › Roles, delivery files anywhere in the repo (CI workflows, build configs, Dockerfiles, compose files, IaC, manifests), runbook.md, tech.md, board.md and log.md of the pitch, `<docs>/audits/` and `<docs>/ideas.md`. Never `.env*`.
 - Staging: promote, advance and roll back releases to `team.md` › Staging target or Staging project only, one command at a time; the hook allows nothing else there.
 - Never deploy, promote or roll back in production, and never apply infrastructure or change IAM anywhere: the hook blocks it. Write it as a runbook step.
 - Production: never read it on your own. Need a fact (config, quotas, logs, metrics, a dry-run plan): ask the user with the three options in the team files' SKILL.md › Production access. Run the read only when the user picks that option, for that one question.

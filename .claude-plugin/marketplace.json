@@ -9,7 +9,7 @@
       "name": "shapeup-team",
       "source": "./plugins/shapeup-team",
       "description": "The team: Conductor process, Shaper, designer, backend and frontend developers, QA, DBA, commands and the guard hook.",
-      "version": "0.8.0"
+      "version": "0.9.0"
     },
     {
       "name": "stack-django-drf",
@@ -39,7 +39,7 @@
       "name": "stack-gcp-devops",
       "source": "./plugins/stack-gcp-devops",
       "description": "Stack pack for the shapeup-team plugin: DevOps on Google Cloud (Cloud Build, Artifact Registry, Cloud Deploy, Cloud Run, GKE, Terraform, Cloud Observability, SRE), following the Professional Cloud DevOps Engineer guide.",
-      "version": "0.1.0"
+      "version": "0.2.0"
     }
   ]
 }

@@ -61,7 +61,7 @@ Bootstrap only reads files and asks the user. No network, no database, no test r
 | 5 | Code review done | `/ponytail-review` on the scope's commits; its `must fix` items become QA rows |
 | 6 | Edge cases tried: empty, zero, max, another user's object, unauthenticated, double submit | by hand or with tests |
 | 7 | List endpoints have a test that the query count stays flat as rows grow | read the tests |
-| 8 | Every migration has a DBA `approve`; a scope marked `Infra? yes` has DevOps's `HANDOFF` with its checks green (IaC, pipeline, image) and logs, metrics and alerts for what it adds | board Log |
+| 8 | Every migration has a DBA `approve`; a scope marked `Infra? yes` has DevOps's brief row, the playbook's proof for its kind, its `HANDOFF` with checks green (IaC, pipeline, image), and logs, metrics and alerts for what it adds | board Log |
 | 9 | No no-go was built | compare against pitch.md |
 | 10 | tech.md diagrams and the API contract match the scope's code | read both |
 | 11 | No open `must` QA rows for this scope | QA table |
